@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
         self.controller.logger.display_log_s.connect(lambda log: self.view.display_log(log))
         # example only to show functionality
         self.view.widgets.comparative_file_unload_btn.clicked.connect(
-            lambda: self.controller.logger.log(30, 'User clicked on btn Zrus', True))
+            lambda: self.controller.logger.success('User clicked on btn Zrus', True))
 
     def _connect_graph_controller(self):
         pass
