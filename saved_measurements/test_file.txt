@@ -1,0 +1,2 @@
+This is a dummy file. It is not used by the system. It is only used to make the directory structure visible to the user
+and for debugging purposes.

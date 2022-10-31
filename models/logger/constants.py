@@ -1,0 +1,27 @@
+DEBUG = 50
+INFO = 40
+SUCCESS = 30
+WARNING = 20
+ERROR = 10
+CRITICAL = 0
+
+ALL = [DEBUG, INFO, SUCCESS, WARNING, ERROR, CRITICAL]
+
+STR = {DEBUG: 'DEBUG',
+       INFO: 'INFO',
+       SUCCESS: 'PODARILO SA!',
+       WARNING: 'UPOZORNENIE',
+       ERROR: 'CHYBA',
+       CRITICAL: 'KRITICKA CHYBA',
+       }
+
+COLORS = {DEBUG: (0, 80, 255),
+          INFO: (0, 0, 0),
+          SUCCESS: (0, 219, 29),
+          WARNING: (220, 160, 0),
+          ERROR: (255, 0, 0),
+          CRITICAL: (220, 0, 0),
+          }
+
+MAX_BUFFER_SIZE = 1000
+MIN_LOG_LEVEL = INFO
