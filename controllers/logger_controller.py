@@ -22,6 +22,11 @@ class LoggerController(QObject):
         if show_user:
             self.display_log_s.emit(log)
 
+    def success(self, message, show_user=True):
+        log = self._logger.success(message)
+        if show_user:
+            self.display_log_s.emit(log)
+
     def warning(self, message, show_user=True):
         log = self._logger.warning(message)
         if show_user:
