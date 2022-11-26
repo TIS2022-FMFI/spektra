@@ -5,6 +5,14 @@ from models.file_manager.file_manager import FileManager
 
 class FileManagerController(QObject):
     log_s = Signal(int, str, bool)
+    #tu budem mat vsetky parametre hlavicky
+    #vytvorim si settery na nastavenie konkretnej
+    '''
+    casti hlavicky - tp nereisim to kontrolery nastavia
+    pootom ked sa da ze start meranie tal sa skontroluje ze je 
+    cela hlavicka vyplnena
+    a potom sa vytvori subor 
+    '''
 
     def __init__(self, key):
         super(FileManagerController, self).__init__()

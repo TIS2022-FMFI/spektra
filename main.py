@@ -6,6 +6,7 @@ from datetime import datetime
 from PySide6.QtWidgets import QMainWindow, QApplication
 
 from controllers.main_controller import MainController
+from models.data_processing.data_processing import DataProcessing
 from view.view import View
 from settings import Settings
 
@@ -74,3 +75,5 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
     sys.exit(app.exec())
+
+
