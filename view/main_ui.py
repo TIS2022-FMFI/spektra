@@ -27,6 +27,8 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDockWidget,
 
 from view.file_manager_setup import setup_filemanager_view
 from view.logs_view_setup import logs_view_setup
+import pyqtgraph as pg
+
 
 
 class Ui_MainWindow(object):
@@ -348,6 +350,9 @@ class Ui_MainWindow(object):
         self.graph_view.setObjectName(u"graph_view")
 
         self.gridLayout.addWidget(self.graph_view, 1, 0, 1, 1)
+
+
+
 
         self.gridLayout.setRowStretch(0, 2)
         self.gridLayout.setRowStretch(1, 5)

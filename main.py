@@ -4,11 +4,14 @@ import os
 from datetime import datetime
 
 from PySide6.QtWidgets import QMainWindow, QApplication
+from pyqtgraph.Qt import QtCore
 
 from controllers.main_controller import MainController
 from models.data_processing.data_processing import DataProcessing
+from models.data_processing.graph import Graph
 from view.view import View
 from settings import Settings
+import pyqtgraph as pg
 
 os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
 os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
@@ -25,6 +28,12 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(Settings.TITLE)
         self.set_theme()
         self.show()
+
+        #TOTO ESTE DOKONCIT TAK ABY BOL GRAF TAM KDE MA
+        self.graphWidget = pg.PlotWidget()
+        self.setCentralWidget(self.graphWidget)
+        graph = Graph(self.graphWidget)
+
 
     def set_theme(self):
         theme_file = "themes/" + Settings.THEME + ".qss"
@@ -71,9 +80,12 @@ class MainWindow(QMainWindow):
         event.accept()
 
 
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
     sys.exit(app.exec())
+
+
 
 
