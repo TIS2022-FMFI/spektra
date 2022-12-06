@@ -26,10 +26,12 @@ class MainWindow(QMainWindow):
         self.show()
 
     def set_theme(self):
-        theme_file = "themes/" + Settings.THEME + ".qss"
-        if os.path.exists(theme_file):
-            with open(theme_file, "r") as f:
-                self.setStyleSheet(f.read())
+        pass
+        # apply_stylesheet(app, theme='dark_amber.xml')
+        # theme_file = "themes/" + Settings.THEME + ".qss"
+        # if os.path.exists(theme_file):
+        #     with open(theme_file, "r") as f:
+        #         self.setStyleSheet(f.read())
 
     def _connect_view_controller(self):
         # connect the view with controllers
@@ -54,7 +56,7 @@ class MainWindow(QMainWindow):
         self.controller.logger.display_log_s.connect(lambda log: self.view.display_log(log))
         # example only to show functionality
         self.view.widgets.comparative_file_unload_btn.clicked.connect(
-            lambda: self.controller.logger.success('User clicked on btn Zrus', True))
+            lambda: self.controller.logger.log(40, 'User clicked on btn Zrus', True))
 
     def _connect_graph_controller(self):
         pass
@@ -73,4 +75,5 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
+    window.show()
     sys.exit(app.exec())
