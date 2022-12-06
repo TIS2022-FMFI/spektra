@@ -29,7 +29,7 @@ class settings:
         all = self.mandatory + [key for alter in self.alternatives
                                 for key in alter]
         if key in all:
-            self.legend[key] = param
+            self.legend[key] = str(param)
             return True
 
         return False
@@ -108,7 +108,8 @@ class settings:
     def loadLastLegend(self):
         with open(self.jsonName, 'r') as f:
             self.legend = json.load(f)
-            del self.legend["nameSample"]   #vymazeme pre vacsiu intuitivnost
+            if "nameSample" in self.legend.keys():
+                del self.legend["nameSample"]   #vymazeme pre vacsiu intuitivnost
             return True
         return False
 

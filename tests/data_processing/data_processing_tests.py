@@ -152,7 +152,50 @@ class DataProcessingTests(unittest.TestCase):
                          dp.fileName)
 
 
+    def test_load_measurement_from_file_no_measurements(self):
+        # Arrange
+        dp = DataProcessing()
+        fileName = "C:\\Users\\lucin\\OneDrive\\Desktop\\spektra\\spektra\\saved_measurements\\test_file_no_measurements.txt"
+        # Act
+        listOfMeasurements = dp.loadMeasurements(fileName)
+        # Assert
+        self.assertEqual([], listOfMeasurements)
 
+    def test_load_measurement_from_file_not_enough_collums(self):
+        # Arrange
+        dp = DataProcessing()
+        fileName = "C:\\Users\\lucin\\OneDrive\\Desktop\\spektra\\spektra\\saved_measurements\\test_file_not_enough_collums.txt"
+        # Act
+        listOfMeasurements = dp.loadMeasurements(fileName)
+        # Assert
+        self.assertEqual([], listOfMeasurements)
+
+    def test_load_measurement_from_file_not_float(self):
+        # Arrange
+        dp = DataProcessing()
+        fileName = "C:\\Users\\lucin\\OneDrive\\Desktop\\spektra\\spektra\\saved_measurements\\test_file_not_float.txt"
+        # Act
+        listOfMeasurements = dp.loadMeasurements(fileName)
+        # Assert
+        self.assertEqual([], listOfMeasurements)
+
+    def test_load_measurement_from_file_right_data(self):
+        # Arrange
+        dp = DataProcessing()
+        fileName = "C:\\Users\\lucin\\OneDrive\\Desktop\\spektra\\spektra\\saved_measurements\\test_file_right_data.txt"
+        # Act
+        listOfMeasurements = dp.loadMeasurements(fileName)
+        # Assert
+        self.assertEqual([[13.2, 92], [2.03, 3.00001]], listOfMeasurements)
+
+    def test_load_measurement_from_file_without_start_of_measurments(self):
+        # Arrange
+        dp = DataProcessing()
+        fileName = "C:\\Users\\lucin\\OneDrive\\Desktop\\spektra\\spektra\\saved_measurements\\test_file_without_start_of_measurments.txt"
+        # Act
+        listOfMeasurements = dp.loadMeasurements(fileName)
+        # Assert
+        self.assertEqual([], listOfMeasurements)
 
 if __name__ == "__main__":
     unittest.main()

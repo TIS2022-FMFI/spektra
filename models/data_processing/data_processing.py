@@ -2,11 +2,17 @@
 #zistit co presne sa vykresluje v grafe - ci na y je intenzita
 # a na x je len cas
 
+#skontrolovat ci je dobre ten graf
+#spytat sa ze ako zistim presne z teh tabulkz mriezky spravne udaje
+#od martina zistit ake udaje mam posielat loggerovi
+#ako osetrit chyby - vyhadzovat errory?? poslat spravu loggeru??
+#napriklad ako v loadMeasurement
+
 class DataProcessing:
 
     def __init__(self):
         self.fileName = ""
-        self.beginingOfData = "ALFA[A°]\tVLNOVÁ DĹŽKA[A]\nINTENZITA[mV]°"
+        self.beginingOfData = "ALFA[A°]\tVLNOVÁ DĹŽKA[A]\tINTENZITA[mV]\n"
 
     def createNewFile(self, settings):
         if not settings.checkLegend():
@@ -23,7 +29,7 @@ class DataProcessing:
     def addMeasurement(self, intensity):
         if self.fileName == "":
             return False
-        with open(self.fileName, 'a') as currentFile:
+        with open(self.fileName, 'a', encoding="utf-8") as currentFile:
             #blablabla
             pass
         return True
@@ -46,17 +52,28 @@ class DataProcessing:
         self.fileName = path + self.fileName
 
     def loadMeasurements(self, fileName):
-        #upravit co sa vracia
+
         measurements = []
-        with open(fileName, 'r') as f:
+        with open(fileName, 'r', encoding="utf-8") as f:
             line = f.readline()
-            while line != self.beginingOfData:
+            while line != '' and line != self.beginingOfData:
                 line = f.readline()
+
+            if line == '':
+                return measurements
+
             measurementLine = f.readline()
             while measurementLine != '':
-                alfa, waveLength, intensity = measurementLine.split("\t")
-                measurements.append([alfa, waveLength, intensity])
+                # treba osetrit to ak subor nie je v danom formate
+                try:
+                    alfa, waveLength, intensity = measurementLine.split("\t")
+                    measurements.append([float(waveLength),
+                                         float(intensity)])
+                except:
+                    return []
                 measurementLine = f.readline()
+
+        return measurements
 
 
 

@@ -84,6 +84,29 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
+
+#mV
+    #vlnova dlzka
+    #druhy riadok a prvy - treba prelozit priamku cez tie body a
+    # najst funkciu - linearna funkcia
+    currentX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10.4]
+    currentY = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45.798]
+    old = [[1, 50], [2, 35], [3, 44],
+           [4, 22], [5, 38], [6, 32], [7, 27],
+           [8, 38], [9, 32], [10, 44]]
+
+    g = Graph(window.graphWidget)
+    g.plot()
+
+
+    for i in range(10):
+        g.plot()
+        g.addMeasurement([[currentX[i], currentY[i]]], True)
+
+    g.addMeasurement(old, False)
+    g.plot()
+
+
     sys.exit(app.exec())
 
 

@@ -15,7 +15,7 @@ Si-fotodioda nazov
 BÚDIACE SVETLO:
 Laser nadupany
 MERANIE:
-06-12-2022, 09:21:58
+03-12-2022, 15:37:11
 utorkajsia vzorka
 počiatočná vlnová dĺžka [A°]: 340
 koncová vlnová dĺžka [A°]: 200
@@ -31,3 +31,5 @@ fázový posun: 1
 časová konštanta: 1
 
 ALFA[A°]	VLNOVÁ DĹŽKA[A]	INTENZITA[mV]
+11.3	13.2	92
+12.4	2.03	3.00001

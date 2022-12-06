@@ -11,13 +11,14 @@ class Graph:
         self.oldY = []
 
         self.graphWidget.setBackground('w')
-        styles = {'color': 'r', 'font-size': '20px'}
-        self.graphWidget.setLabel('left', 'Intenzita (????)', **styles)
-        self.graphWidget.setLabel('bottom', 'Angstrom (A°)', **styles)
+        self.styles = {'color': 'r', 'font-size': '20px'}
+        self.graphWidget.setLabel('left', 'Intenzita (????)', **self.styles)
+        self.graphWidget.setLabel('bottom', 'Angstrom (A°)', **self.styles)
 
         self.graphWidget.addLegend()
 
         self.graphWidget.showGrid(x=True, y=True)
+
 
     def addMeasurement(self, measurements, current):
         if current:
@@ -34,6 +35,11 @@ class Graph:
         self.graphWidget.plot(self.currentX, self.currentY, name="Momentálne meranie",
                               pen='b', symbol='o', symbolSize=15,
                               symbolBrush=('b'))
+
+        if len(self.currentX) != 0 and len(self.currentY) != 0:
+            self.graphWidget.setLabel('top',
+                    str([self.currentX[-1], self.currentY[-1]]), **self.styles)
+
 
         if len(self.oldX) != 0 and len(self.oldY) != 0:
             self.graphWidget.plot(self.oldX, self.oldY, name="Staršie meranie",
