@@ -3,14 +3,15 @@ import sys
 import os
 from datetime import datetime
 
-from PySide6.QtWidgets import QMainWindow, QApplication
-
+from PySide6.QtCore import QMetaObject, QThread
+from PySide6.QtGui import Qt
+from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QHeaderView
 from controllers.main_controller import MainController
 from view.view import View
 from settings import Settings
 
-os.environ["QT_FONT_DPI"] = "96"  # FIX Problem for High DPI and Scale above 100%
 os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
+
 
 
 class MainWindow(QMainWindow):
@@ -22,16 +23,9 @@ class MainWindow(QMainWindow):
         self.controller = MainController(self._secret)
         self._connect_view_controller()
         self.setWindowTitle(Settings.TITLE)
-        self.set_theme()
         self.show()
 
-    def set_theme(self):
-        pass
-        # apply_stylesheet(app, theme='dark_amber.xml')
-        # theme_file = "themes/" + Settings.THEME + ".qss"
-        # if os.path.exists(theme_file):
-        #     with open(theme_file, "r") as f:
-        #         self.setStyleSheet(f.read())
+
 
     def _connect_view_controller(self):
         # connect the view with controllers
@@ -45,12 +39,23 @@ class MainWindow(QMainWindow):
         def setup_file_manager_model(file_manager_model):
             self.view.widgets.comparative_file_dir_tree_view.setModel(file_manager_model)
             self.view.widgets.comparative_file_dir_tree_view.setRootIndex(
-                file_manager_model.index(file_manager_model.root_file_path))
+                file_manager_model.index(file_manager_model._root_file_path))
             self.view.widgets.comparative_file_dir_tree_view.hideColumn(1)
             self.view.widgets.comparative_file_dir_tree_view.hideColumn(2)
             self.view.widgets.comparative_file_dir_tree_view.setHeaderHidden(True)
+            self.view.widgets.comparative_file_dir_tree_view.setAnimated(True)
+            header = self.view.widgets.comparative_file_dir_tree_view.header()
+            header.setSectionResizeMode(QHeaderView.ResizeToContents)
 
         setup_file_manager_model(self.controller.file_manager.get_model(self._secret))
+        self.controller.file_manager.log_s.connect(
+            lambda level, msg, show: self.controller.logger.log(level, msg, show))
+        self.view.widgets.change_comparative_dir_btn.clicked.connect(self.change_current_directory)
+
+    def change_current_directory(self):
+        idx = self.controller.file_manager.change_current_directory(QFileDialog.getExistingDirectory())
+        if idx is not None:
+            self.view.widgets.comparative_file_dir_tree_view.setRootIndex(idx)
 
     def _connect_logger_controller(self):
         self.controller.logger.display_log_s.connect(lambda log: self.view.display_log(log))
@@ -65,10 +70,16 @@ class MainWindow(QMainWindow):
         pass
 
     def _connect_measurement_controller(self):
-        pass
+        self.controller._measurement.state_s.connect(lambda x: self.controller.logger.log(40, x, True))
+        self.view.widgets.comparative_file_unload_btn.clicked.connect(self.test)
+
+    def test(self):
+        print("test() thread id: ")
+        print(QThread.currentThread())
 
     def closeEvent(self, event):
         self.controller.logger.save_logs_to_file()
+        self.controller.exit_measurement(self._secret)
         event.accept()
 
 
@@ -77,3 +88,4 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+
