@@ -4,7 +4,7 @@ from datetime import date
 import os
 
 
-class settings:
+class measurementSettings:
     mandatory = ["nameSample", "noteToTech", "thickness", "reference", "temperature", "nameOfDispersingElement",
                  "typeOfDispersingElement", "inputCreviceWidth", "inputCreviceHeight", "outputCreviceWidth",
                  "outputCreviceHeight", "opticalFilter", "typeOfDetector", "additionalInfoDetector",
@@ -20,7 +20,7 @@ class settings:
         self.setSetting("typeSensitivity", "AUTO")
 
         script_dir = os.path.dirname(__file__)
-        rel_path = "lastSettings.txt"
+        rel_path = "models/data_processing/lastSettings.txt"
         self.jsonName = os.path.join(script_dir, rel_path)
 
 
