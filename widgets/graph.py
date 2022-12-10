@@ -2,22 +2,22 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore
 
 
-class Graph:
-    def __init__(self, graphWidget):
-        self.graphWidget = graphWidget
-        self.currentX = []
-        self.currentY = []
+class Graph(pg.PlotWidget):
+    def __init__(self, parent):
+        super(Graph, self).__init__(parent)
+        self.currentX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        self.currentY = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
         self.oldX = []
         self.oldY = []
 
-        self.graphWidget.setBackground('w')
+        self.setBackground('w')
         self.styles = {'color': 'r', 'font-size': '20px'}
-        self.graphWidget.setLabel('left', 'Intenzita (????)', **self.styles)
-        self.graphWidget.setLabel('bottom', 'Angstrom (A°)', **self.styles)
+        self.setLabel('left', 'Intenzita [mV]', **self.styles)
+        self.setLabel('bottom', 'Vlnová dĺžka [A°]', **self.styles)
 
-        self.graphWidget.addLegend()
+        self.addLegend()
 
-        self.graphWidget.showGrid(x=True, y=True)
+        self.showGrid(x=True, y=True)
 
 
     def addMeasurement(self, measurements, current):
@@ -30,19 +30,19 @@ class Graph:
                 self.oldX.append(measurement[0])
                 self.oldY.append(measurement[1])
 
-    def plot(self):
-        self.graphWidget.clear()
-        self.graphWidget.plot(self.currentX, self.currentY, name="Momentálne meranie",
+    def plotGraph(self):
+        self.clear()
+        self.plot(self.currentX, self.currentY, name="Momentálne meranie",
                               pen='b', symbol='o', symbolSize=15,
                               symbolBrush=('b'))
 
         if len(self.currentX) != 0 and len(self.currentY) != 0:
-            self.graphWidget.setLabel('top',
+            self.setLabel('top',
                     str([self.currentX[-1], self.currentY[-1]]), **self.styles)
 
 
         if len(self.oldX) != 0 and len(self.oldY) != 0:
-            self.graphWidget.plot(self.oldX, self.oldY, name="Staršie meranie",
+            self.plot(self.oldX, self.oldY, name="Staršie meranie",
                               pen='r', symbol='o', symbolSize=15,
                               symbolBrush=('r'))
 
