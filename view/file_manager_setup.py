@@ -8,7 +8,7 @@ def show_context_menu(self, point):
 
 def setup_filemanager_view(tree_view: QTreeView):
     tree_view.setRootIsDecorated(False)
-    tree_view.setAlternatingRowColors(True)
+    tree_view.setAlternatingRowColors(False)
     tree_view.setSortingEnabled(True)
     tree_view.setAnimated(True)
     tree_view.setUniformRowHeights(True)
