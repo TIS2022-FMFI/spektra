@@ -1,13 +1,13 @@
 import unittest
 
-from models.data_processing.settings import settings
+from measurementSettings import measurementSettings
 
 
 class SettingsTests(unittest.TestCase):
 
     def test_check_correct_setParam(self):
         # Arrange
-        s = settings()
+        s = measurementSettings()
         # Act
         result = s.setSetting("nameSample", "utorkajsia vzorka")
         # Assert
@@ -15,7 +15,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_check_incorrect_setParam(self):
         # Arrange
-        s = settings()
+        s = measurementSettings()
         # Act
         result = s.setSetting("name", "utorkajsia vzorka")
         # Assert
@@ -39,7 +39,7 @@ class SettingsTests(unittest.TestCase):
             'phaseShift': '1', 'timeConstante': '1'
         }
 
-        s = settings()
+        s = measurementSettings()
         for key, value in settingsDict.items():
             s.setSetting(key, value)
 
@@ -64,7 +64,7 @@ class SettingsTests(unittest.TestCase):
             'lockInReference': '1.4', 'lockInFilter': 'signal filters',
             'phaseShift': '1', 'timeConstante': '1'
         }
-        s = settings()
+        s = measurementSettings()
         for key, value in settingsDict.items():
             s.setSetting(key, value)
 
@@ -91,7 +91,7 @@ class SettingsTests(unittest.TestCase):
             'phaseShift': '1', 'timeConstante': '1'
         }
 
-        s = settings()
+        s = measurementSettings()
         for key, value in settingsDict.items():
             s.setSetting(key, value)
 
@@ -117,7 +117,7 @@ class SettingsTests(unittest.TestCase):
             'lockInReference': '1.4', 'lockInFilter': 'signal filters',
             'phaseShift': '1', 'timeConstante': '1'
         }
-        s = settings()
+        s = measurementSettings()
         for key, value in settingsDict.items():
             s.setSetting(key, value)
 

@@ -30,6 +30,6 @@ filters: signal filters
 fázový posun: 1
 časová konštanta: 1
 
-ALFA[A°]	VLNOVÁ DĹŽKA[A]	INTENZITA[mV]
-11.3	13.2	92
-12.4	2.03	3.00001
+ALFA[A°]            	VLNOVÁ DĹŽKA[A]     	INTENZITA[mV]
+11.3	                13.2	                92
+12.4	                2.03	                3.00001
