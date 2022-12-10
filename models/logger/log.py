@@ -33,3 +33,11 @@ class Log:
 
     def __ne__(self, other):
         return not self == other
+
+    @property
+    def copy(self):
+        ret = Log(self.message, LogLevel(self.level.level))
+        ret.timestamp = self.timestamp
+        ret.next = self.next
+        ret.previous = self.previous
+        return ret

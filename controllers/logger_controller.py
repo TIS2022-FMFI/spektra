@@ -12,33 +12,8 @@ class LoggerController(QObject):
         self._key = key
         self._logger = Logger()
 
-    def debug(self, message, show_user=True):
-        log = self._logger.debug(message)
-        if show_user:
-            self.display_log_s.emit(log)
-
-    def info(self, message, show_user=True):
-        log = self._logger.info(message)
-        if show_user:
-            self.display_log_s.emit(log)
-
-    def success(self, message, show_user=True):
-        log = self._logger.success(message)
-        if show_user:
-            self.display_log_s.emit(log)
-
-    def warning(self, message, show_user=True):
-        log = self._logger.warning(message)
-        if show_user:
-            self.display_log_s.emit(log)
-
-    def error(self, message, show_user=True):
-        log = self._logger.error(message)
-        if show_user:
-            self.display_log_s.emit(log)
-
-    def critical(self, message, show_user=True):
-        log = self._logger.critical(message)
+    def log(self, level, message, show_user=True):
+        log = self._logger.log(message, level)
         if show_user:
             self.display_log_s.emit(log)
 

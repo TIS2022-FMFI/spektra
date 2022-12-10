@@ -94,7 +94,7 @@ class LogBuffer:
         while current is not None:
             log_text += str(current) + "\n"
             current = current.next
-        with open(file_path, "w") as file:
+        with open(file_path, "w", encoding="utf-8") as file:
             file.write(log_text)
         self.head = None
         self.tail = None
