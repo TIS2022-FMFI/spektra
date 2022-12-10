@@ -3,8 +3,7 @@ import sys
 import os
 from datetime import datetime
 
-from PySide6.QtCore import QMetaObject, QThread
-from PySide6.QtGui import Qt
+from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QHeaderView
 from controllers.main_controller import MainController
 from view.view import View
@@ -26,7 +25,6 @@ class MainWindow(QMainWindow):
         self.show()
 
 
-
     def _connect_view_controller(self):
         # connect the view with controllers
         self._connect_file_manager_controller()
@@ -39,7 +37,7 @@ class MainWindow(QMainWindow):
         def setup_file_manager_model(file_manager_model):
             self.view.widgets.comparative_file_dir_tree_view.setModel(file_manager_model)
             self.view.widgets.comparative_file_dir_tree_view.setRootIndex(
-                file_manager_model.index(file_manager_model._root_file_path))
+                file_manager_model.index(file_manager_model.root_file_path))
             self.view.widgets.comparative_file_dir_tree_view.hideColumn(1)
             self.view.widgets.comparative_file_dir_tree_view.hideColumn(2)
             self.view.widgets.comparative_file_dir_tree_view.setHeaderHidden(True)
@@ -88,4 +86,3 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
-
