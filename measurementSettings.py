@@ -108,7 +108,7 @@ class measurementSettings:
             "časová konštanta: " + self.legend["timeConstante"]
 
     def setCurrentTime(self):
-        today = date.today()
+        today = datetime.now()
         timeCurrent = today.strftime("%H:%M:%S")
         if "time" in self.legend.keys():
             timeCurrent = self.legend["time"]
