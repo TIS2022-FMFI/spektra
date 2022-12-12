@@ -2,6 +2,7 @@ import unittest
 
 from measurementSettings import measurementSettings
 from models.data_processing.data_processing import DataProcessing
+from errors.data_processing_error import DataProcessingError
 
 
 class DataProcessingTests(unittest.TestCase):
@@ -10,16 +11,16 @@ class DataProcessingTests(unittest.TestCase):
         settingsDict = {
             'nameSample': 'utorkajsia vzorka',
             'noteToTech': 'blabla', 'thickness': '11.3',
-            'reference': 'ref', 'temperature': '15.4',
-            'nameOfDispersingElement': 'M465645', 'inputCreviceWidth': '3.4',
-            'inputCreviceHeight': '2.4', 'outputCreviceWidth': '5.3',
-            'outputCreviceHeight': '3.4', 'opticalFilter': 'filter',
+            'measurementOfSample': 'ref', 'temperature': '15.4',
+            'nameOfDispersingElement': 'M465645', 'inputCreviceEnd': '3.4',
+            'inputCreviceBegin': '2.4', 'outputCreviceEnd': '5.3',
+            'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
             'startAngstrom': '340', 'endAngstrom': '200',
-            'stepOfMotor': '1.3', 'numberOfMitigations': '1',
+            'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
-            'lockInReference': '1.4', 'lockInFilter': 'signal filters',
+            'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
 
@@ -32,23 +33,26 @@ class DataProcessingTests(unittest.TestCase):
         dp.setFileName("mojPokusOHlavicku")
 
         # Act
-        result = dp.createNewFile()
-        # Assert
-        self.assertTrue(result)
+        try:
+            dp.createNewFile()
+            # Assert
+            self.assertTrue(True)
+        except DataProcessingError:
+            self.assertTrue(False)
 
     def test_unsuccessful_create_file1(self):
         # Arrange
         settingsDict = {
-            'reference': 'ref', 'temperature': '15.4',
-            'nameOfDispersingElement': 'M465645', 'inputCreviceWidth': '3.4',
-            'inputCreviceHeight': '2.4', 'outputCreviceWidth': '5.3',
-            'outputCreviceHeight': '3.4', 'opticalFilter': 'filter',
+            'measurementOfSample': 'ref', 'temperature': '15.4',
+            'nameOfDispersingElement': 'M465645', 'inputCreviceEnd': '3.4',
+            'inputCreviceBegin': '2.4', 'outputCreviceEnd': '5.3',
+            'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
             'startAngstrom': '340', 'endAngstrom': '200',
-            'stepOfMotor': '1.3', 'numberOfMitigations': '1',
+            'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
-            'lockInReference': '1.4', 'lockInFilter': 'signal filters',
+            'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
 
@@ -59,25 +63,29 @@ class DataProcessingTests(unittest.TestCase):
         dp = DataProcessing()
         dp.setSettings(s)
         # Act
-        result = dp.createNewFile()
-        # Assert
-        self.assertFalse(result)
+        try:
+            dp.createNewFile()
+            # Assert
+            self.assertTrue(False)
+        except DataProcessingError as e:
+            self.assertEqual("Legenda nie je kompletne vyplnená. Nie je možne vytvoriť nový súbor pre meranie.",
+                             e.message)
 
     def test_unsuccessful_create_file2(self):
         # Arrange
         settingsDict = {
             'nameSample': 'utorkajsia vzorka',
             'noteToTech': 'blabla', 'thickness': '11.3',
-            'reference': 'ref', 'temperature': '15.4',
-            'nameOfDispersingElement': 'M465645', 'inputCreviceWidth': '3.4',
-            'inputCreviceHeight': '2.4', 'outputCreviceWidth': '5.3',
-            'outputCreviceHeight': '3.4', 'opticalFilter': 'filter',
+            'measurementOfSample': 'ref', 'temperature': '15.4',
+            'nameOfDispersingElement': 'M465645', 'inputCreviceEnd': '3.4',
+            'inputCreviceBegin': '2.4', 'outputCreviceEnd': '5.3',
+            'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
             'startAngstrom': '340', 'endAngle': '200',
-            'stepOfMotor': '1.3', 'numberOfMitigations': '1',
+            'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
-            'lockInReference': '1.4', 'lockInFilter': 'signal filters',
+            'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
 
@@ -87,26 +95,30 @@ class DataProcessingTests(unittest.TestCase):
 
         dp = DataProcessing()
         dp.setSettings(s)
-        # Act
-        result = dp.createNewFile()
-        # Assert
-        self.assertFalse(result)
+        try:
+            #act
+            dp.createNewFile()
+            # Assert
+            self.assertTrue(False)
+        except DataProcessingError as e:
+            self.assertEqual("Legenda nie je kompletne vyplnená. Nie je možne vytvoriť nový súbor pre meranie.",
+                             e.message)
 
     def test_creating_file_without_name(self):
         # Arrange
         settingsDict = {
             'nameSample': 'utorkajsia vzorka',
             'noteToTech': 'blabla', 'thickness': '11.3',
-            'reference': 'ref', 'temperature': '15.4',
-            'nameOfDispersingElement': 'M465645', 'inputCreviceWidth': '3.4',
-            'inputCreviceHeight': '2.4', 'outputCreviceWidth': '5.3',
-            'outputCreviceHeight': '3.4', 'opticalFilter': 'filter',
+            'measurementOfSample': 'ref', 'temperature': '15.4',
+            'nameOfDispersingElement': 'M465645', 'inputCreviceEnd': '3.4',
+            'inputCreviceBegin': '2.4', 'outputCreviceEnd': '5.3',
+            'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
             'startAngstrom': '340', 'endAngstrom': '200',
-            'stepOfMotor': '1.3', 'numberOfMitigations': '1',
+            'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
-            'lockInReference': '1.4', 'lockInFilter': 'signal filters',
+            'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
 
@@ -116,26 +128,30 @@ class DataProcessingTests(unittest.TestCase):
 
         dp = DataProcessing()
         dp.setSettings(s)
-        # Act
-        result = dp.createNewFile()
-        # Assert
-        self.assertFalse(result)
+        try:
+            # Act
+            dp.createNewFile()
+            # Assert
+            self.assertTrue(False)
+        except DataProcessingError as e:
+            self.assertEqual("Nie je vyplnené meno súboru. Nie je možné vytvoriť nový súbor pre meranie.",
+                             e.message)
         
     def test_add_measurement_succesfull(self):
         # Arrange
         settingsDict = {
             'nameSample': 'utorkajsia vzorka',
             'noteToTech': 'blabla', 'thickness': '11.3',
-            'reference': 'ref', 'temperature': '15.4',
-            'nameOfDispersingElement': 'M465645', 'inputCreviceWidth': '3.4',
-            'inputCreviceHeight': '2.4', 'outputCreviceWidth': '5.3',
-            'outputCreviceHeight': '3.4', 'opticalFilter': 'filter',
+            'measurementOfSample': 'ref', 'temperature': '15.4',
+            'nameOfDispersingElement': 'M465645', 'inputCreviceEnd': '3.4',
+            'inputCreviceBegin': '2.4', 'outputCreviceEnd': '5.3',
+            'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
             'startAngstrom': '340', 'endAngstrom': '200',
-            'stepOfMotor': '1.3', 'numberOfMitigations': '1',
+            'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
-            'lockInReference': '1.4', 'lockInFilter': 'signal filters',
+            'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
 
@@ -146,9 +162,15 @@ class DataProcessingTests(unittest.TestCase):
         dp = DataProcessing()
         dp.setSettings(s)
         dp.setFileName("mojPokusOHlavicku")
-        result = dp.createNewFile()
-        # Act
-        dp.addMeasurement(2.34, 5.002, 12.223)
+        dp.createNewFile()
+
+        try:
+            # Act
+            dp.addMeasurement(2.34, 5.002, 12.223)
+        except DataProcessingError as e:
+            self.assertTrue(False)
+            return
+
         # Assert
         with open(dp.path + dp.fileName, 'r', encoding="utf-8") as f:
             line = f.readline()
@@ -164,16 +186,16 @@ class DataProcessingTests(unittest.TestCase):
         settingsDict = {
             'nameSample': 'utorkajsia vzorka',
             'noteToTech': 'blabla', 'thickness': '11.3',
-            'reference': 'ref', 'temperature': '15.4',
-            'nameOfDispersingElement': 'M465645', 'inputCreviceWidth': '3.4',
-            'inputCreviceHeight': '2.4', 'outputCreviceWidth': '5.3',
-            'outputCreviceHeight': '3.4', 'opticalFilter': 'filter',
+            'measurementOfSample': 'ref', 'temperature': '15.4',
+            'nameOfDispersingElement': 'M465645', 'inputCreviceEnd': '3.4',
+            'inputCreviceBegin': '2.4', 'outputCreviceEnd': '5.3',
+            'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
             'startAngstrom': '340', 'endAngstrom': '200',
-            'stepOfMotor': '1.3', 'numberOfMitigations': '1',
+            'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
-            'lockInReference': '1.4', 'lockInFilter': 'signal filters',
+            'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
 
@@ -184,11 +206,16 @@ class DataProcessingTests(unittest.TestCase):
         dp = DataProcessing()
         dp.setSettings(s)
         dp.setFileName("mojPokusOHlavicku")
-        result = dp.createNewFile()
+        dp.createNewFile()
         # Act
-        dp.addMeasurement(2.38928190194, 5.00216871718, 12.22921291829103)
-        dp.addMeasurement(0.24, 19.63727, 1.11)
-        dp.addMeasurement(3, 1, 18)
+        try:
+            dp.addMeasurement(2.38928190194, 5.00216871718, 12.22921291829103)
+            dp.addMeasurement(0.24, 19.63727, 1.11)
+            dp.addMeasurement(3, 1, 18)#
+        except DataProcessingError:
+            self.assertTrue(False)
+            return
+
         # Assert
         with open(dp.path + dp.fileName, 'r', encoding="utf-8") as f:
             line = f.readline()
@@ -230,47 +257,91 @@ class DataProcessingTests(unittest.TestCase):
     def test_load_measurement_from_file_no_measurements(self):
         # Arrange
         dp = DataProcessing()
+        s = measurementSettings()
+        dp.setSettings(s)
         fileName = "test_file_no_measurements.txt"
         # Act
-        listOfMeasurements = dp.loadMeasurements(fileName)
-        # Assert
-        self.assertEqual([], listOfMeasurements)
+        try:
+            dp.loadMeasurements(fileName)
+            self.assertTrue(False)
+        except DataProcessingError as e:
+            self.assertEqual(e.message, "Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
 
     def test_load_measurement_from_file_not_enough_collums(self):
         # Arrange
         dp = DataProcessing()
+        s = measurementSettings()
+        dp.setSettings(s)
         fileName = "test_file_not_enough_collums.txt"
         # Act
-        listOfMeasurements = dp.loadMeasurements(fileName)
-        # Assert
-        self.assertEqual([], listOfMeasurements)
+        try:
+            dp.loadMeasurements(fileName)
+            self.assertTrue(False)
+        except DataProcessingError as e:
+            self.assertEqual(e.message, "Načítaný súbor nie je v správnom formáte. Namerané údaje sú v zlom formáte.")
 
     def test_load_measurement_from_file_not_float(self):
         # Arrange
         dp = DataProcessing()
+        s = measurementSettings()
+        dp.setSettings(s)
         fileName = "test_file_not_float.txt"
         # Act
-        listOfMeasurements = dp.loadMeasurements(fileName)
-        # Assert
-        self.assertEqual([], listOfMeasurements)
+        try:
+            dp.loadMeasurements(fileName)
+            self.assertTrue(False)
+        except DataProcessingError as e:
+            self.assertEqual(e.message, "Načítaný súbor nie je v správnom formáte. Namerané údaje sú v zlom formáte.")
 
     def test_load_measurement_from_file_right_data(self):
         # Arrange
         dp = DataProcessing()
+        s = measurementSettings()
+        dp.setSettings(s)
         fileName = "test_file_right_data.txt"
         # Act
-        listOfMeasurements = dp.loadMeasurements(fileName)
+        legend, listOfMeasurements = dp.loadMeasurements(fileName)
         # Assert
         self.assertEqual([[13.2, 92], [2.03, 3.00001]], listOfMeasurements)
 
     def test_load_measurement_from_file_without_start_of_measurments(self):
         # Arrange
         dp = DataProcessing()
+        s = measurementSettings()
+        dp.setSettings(s)
         fileName = "test_file_without_start_of_measurments.txt"
         # Act
-        listOfMeasurements = dp.loadMeasurements(fileName)
-        # Assert
-        self.assertEqual([], listOfMeasurements)
+        try:
+            dp.loadMeasurements(fileName)
+            self.assertTrue(False)
+        except DataProcessingError as e:
+            self.assertEqual(e.message, "Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
+
+    def test_load_measurement_from_file_wrong_legend(self):
+        # Arrange
+        dp = DataProcessing()
+        s = measurementSettings()
+        dp.setSettings(s)
+        fileName = "test_file_wrong_legend.txt"
+        # Act
+        try:
+            dp.loadMeasurements(fileName)
+            self.assertTrue(False)
+        except DataProcessingError as e:
+            self.assertEqual(e.message, "Legenda v načítanom súbore je v nespravnom formáte.")
+
+    def test_load_measurement_from_file_no_legend(self):
+        # Arrange
+        dp = DataProcessing()
+        s = measurementSettings()
+        dp.setSettings(s)
+        fileName = "test_file_no_legend.txt"
+        # Act
+        try:
+            dp.loadMeasurements(fileName)
+            self.assertTrue(False)
+        except DataProcessingError as e:
+            self.assertEqual(e.message, "Legenda v načítanom súbore je v nespravnom formáte.")
 
 if __name__ == "__main__":
     unittest.main()
