@@ -25,6 +25,9 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDockWidget,
                                QSpinBox, QStatusBar, QTabWidget, QTextBrowser,
                                QToolBar, QToolBox, QTreeView, QVBoxLayout,
                                QWidget, QListWidget)
+import pyqtgraph as pg
+from widgets.graph import Graph
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -85,7 +88,9 @@ class Ui_MainWindow(object):
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(9, 0, 9, 9)
-        self.graph_view = QGraphicsView(self.central_widget)
+
+
+        self.graph_view = Graph(self.central_widget)
         self.graph_view.setObjectName(u"graph_view")
         font2 = QFont()
         font2.setBold(True)
