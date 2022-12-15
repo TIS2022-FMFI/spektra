@@ -1,6 +1,49 @@
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore
 
+class CustomAxis(pg.AxisItem):
+
+    # src: https://stackoverflow.com/questions/56890481/how-to-set-pyqtgraph-axis-label-offset
+    @property
+    def nudge(self):
+        if not hasattr(self, "_nudge"):
+            self._nudge = 5
+        return self._nudge
+
+    @nudge.setter
+    def nudge(self, nudge):
+        self._nudge = nudge
+        s = self.size()
+        # call resizeEvent indirectly
+        self.resize(s + QtCore.QSizeF(1, 1))
+        self.resize(s)
+
+    def resizeEvent(self, ev=None):
+        # s = self.size()
+
+        ## Set the position of the label
+        nudge = 5
+        if self.label is None:  # self.label is set to None on close, but resize events can still occur.
+            self.picture = None
+            return
+
+        br = self.label.boundingRect()
+        p = QtCore.QPointF(0, 0)
+        if self.orientation == 'left':
+            p.setY(int(self.size().height() / 2 + br.width() / 2))
+            p.setX(-nudge)
+        elif self.orientation == 'right':
+            p.setY(int(self.size().height() / 2 + br.width() / 2))
+            p.setX(int(self.size().width() - br.height() + nudge))
+        elif self.orientation == 'top':
+            p.setY(-nudge)
+            p.setX(int(self.size().width() / 2. - br.width() / 2.))
+        elif self.orientation == 'bottom':
+            p.setX(int(self.size().width() / 2. - br.width() / 2.))
+            p.setY(int(self.size().height() - br.height() + nudge))
+        self.label.setPos(p)
+        self.picture = None
+
 
 class Graph(pg.PlotWidget):
     def __init__(self, parent):
@@ -9,18 +52,14 @@ class Graph(pg.PlotWidget):
         self.currentY = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
         self.oldX = []
         self.oldY = []
-
         self.setBackground('w')
         self.styles = {'color': 'r', 'font-size': '20px'}
         self.setLabel('left', 'Intenzita [mV]', **self.styles)
         self.setLabel('bottom', 'Vlnová dĺžka [A°]', **self.styles)
-
+        self.getPlotItem().setAxisItems({"bottom": CustomAxis(orientation="bottom", text="Vlnová dĺžka [A°]")})
         self.addLegend()
-
         self.showGrid(x=True, y=True)
-
         self.plotGraph()
-
 
     def addMeasurement(self, measurements, current):
         if current:

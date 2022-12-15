@@ -15,7 +15,7 @@ PMT: Si-fotodioda, nazov
 BÚDIACE SVETLO:
 Laser, nadupany
 MERANIE:
-12-12-2022, 11:43:42
+15-12-2022, 14:11:50
 počiatočná [A°]: 340
 koncová [A°]: 200
 krok motora [v impulzoch]: 1.3

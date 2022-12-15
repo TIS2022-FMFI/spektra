@@ -1,6 +1,6 @@
 import unittest
 
-from measurementSettings import measurementSettings
+from models.data_processing.measurementSettings import measurementSettings
 from models.data_processing.data_processing import DataProcessing
 from errors.data_processing_error import DataProcessingError
 
