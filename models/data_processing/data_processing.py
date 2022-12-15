@@ -1,11 +1,12 @@
 
 from PySide6.QtCore import Signal, QObject
-
-from measurementSettings import measurementSettings
+from models.data_processing.Constants import *
+from models.data_processing.measurementSettings import measurementSettings
 from errors.data_processing_error import DataProcessingError
 import os
 
-#v navrhu zmenit strukturu suboru
+
+
 
 class DataProcessing(QObject):
     setSettings_ = Signal(measurementSettings)
@@ -14,15 +15,15 @@ class DataProcessing(QObject):
         super(DataProcessing, self).__init__()
         self.fileName = ""
         self.path = self.getDefaultPath()
-        self.beginingOfData = '{: <20s}\t{: <20s}\t{}\n'.format("ALFA[A°]", "VLNOVÁ DĹŽKA[A]", "INTENZITA[mV]")
+        self.beginingOfData = '{: <20s}\t{: <20s}\t{}\n'.format(ALFA_COLLUMN, WAVE_LENGTH_COLLUMN, INTENSITY_COLLUMN)
         self.settings = None
         self.setSettings_.connect(lambda settings: self.setSettings(settings))
 
     def getDefaultPath(self):
         path = os.path.dirname(os.path.abspath(__file__))
         dirs = path.split("\\")
-        rootName = "spektra"
-        targetDir = "\\saved_measurements\\"
+        rootName = ROOT_DIR_NAME
+        targetDir = SAVED_MEASUREMENTS_DIR_NAME
         indexRoot = len(dirs) - dirs[::-1].index(rootName) - 1
         return "\\".join(dirs[:indexRoot + 1]) + targetDir
 
