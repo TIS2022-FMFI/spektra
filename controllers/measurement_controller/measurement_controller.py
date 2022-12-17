@@ -1,7 +1,7 @@
 from PySide6 import QtCore
 from PySide6.QtCore import QObject, Signal, QThread
 
-from models.data_processing.data_processing import DataProcessing
+from models.data_processing.data_processing import data_processing
 from PySide6.QtCore import QEventLoop
 
 
@@ -13,7 +13,7 @@ class MeasurementController(QObject):
         super(MeasurementController, self).__init__()
         self._lockin = None
         self._motor = None
-        self._data_processing = DataProcessing()
+        self._data_processing = data_processing()
         self._measurement_thread = QThread()
         self._measurement_thread.setPriority(QThread.HighestPriority)
         self._measurement_thread.finished.connect(self._measurement_thread.deleteLater)

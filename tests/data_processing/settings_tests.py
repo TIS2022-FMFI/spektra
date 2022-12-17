@@ -1,26 +1,34 @@
 import unittest
 
-from models.data_processing.measurementSettings import measurementSettings
-from errors.data_processing_error import DataProcessingError
+from models.data_processing.measurement_settings import measurement_settings
+from errors.data_processing_error import data_processing_error
 
 
 class SettingsTests(unittest.TestCase):
 
     def test_check_correct_setParam(self):
         # Arrange
-        s = measurementSettings()
+        s = measurement_settings()
         # Act
-        result = s.setSetting("nameSample", "utorkajsia vzorka")
-        # Assert
-        self.assertTrue(result)
+        try:
+            s.set_setting_field("nameSample", "utorkajsia vzorka")
+            # Assert
+            self.assertEqual("utorkajsia vzorka", s.legend["nameSample"])
+        except data_processing_error:
+            self.assertTrue(False)
+
 
     def test_check_incorrect_setParam(self):
         # Arrange
-        s = measurementSettings()
+        s = measurement_settings()
         # Act
-        result = s.setSetting("name", "utorkajsia vzorka")
-        # Assert
-        self.assertFalse(result)
+        try:
+            s.set_setting_field("name", "utorkajsia vzorka")
+            # Assert
+            self.assertTrue(False)
+        except data_processing_error as e:
+            self.assertEqual("Do legendy je vkladaná neexistujúca položka (zly key).", e.message)
+
 
     def test_check_correct_settings(self):
         # Arrange
@@ -33,19 +41,19 @@ class SettingsTests(unittest.TestCase):
             'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
-            'startAngstrom': '340', 'endAngstrom': '200',
+            'startPosition': '340', 'endPosition': '200',
             'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
             'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
 
-        s = measurementSettings()
+        s = measurement_settings()
         for key, value in settingsDict.items():
-            s.setSetting(key, value)
+            s.set_setting_field(key, value)
 
         # Act
-        result = s.checkLegend()
+        result = s.check_completness_of_legend()
         # Assert
         self.assertTrue(result)
 
@@ -59,18 +67,18 @@ class SettingsTests(unittest.TestCase):
             'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
-            'startAngstrom': '340', 'endAngstrom': '200',
+            'startPosition': '340', 'endPosition': '200',
             'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
             'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
-        s = measurementSettings()
+        s = measurement_settings()
         for key, value in settingsDict.items():
-            s.setSetting(key, value)
+            s.set_setting_field(key, value)
 
         # Act
-        result = s.checkLegend()
+        result = s.check_completness_of_legend()
         # Assert
         self.assertFalse(result)
 
@@ -85,19 +93,19 @@ class SettingsTests(unittest.TestCase):
             'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
-            'endAngstrom': '200',
+            'endPosition': '200',
             'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
             'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
 
-        s = measurementSettings()
+        s = measurement_settings()
         for key, value in settingsDict.items():
-            s.setSetting(key, value)
+            s.set_setting_field(key, value)
 
         # Act
-        result = s.checkLegend()
+        result = s.check_completness_of_legend()
         # Assert
         self.assertFalse(result)
 
@@ -112,24 +120,24 @@ class SettingsTests(unittest.TestCase):
             'outputCreviceBegin': '3.4', 'opticalFilter': 'filter',
             'typeOfDetector': 'Si-fotodioda', 'additionalInfoDetector': 'nazov',
             'typeOfLight': 'Laser', 'nameOfLight': 'nadupany',
-            'startAngstrom': '340', 'endAngstrom': '200',
+            'startPosition': '340', 'endPosition': '200',
             'stepOfMotor': '1.3', 'numberOfIntegrations': '1',
             'correction': '2', 'lockIn': 'Lockin nano voltmeter type 232',
             'lockInReference': '1.4', 'range': '2.44',
             'phaseShift': '1', 'timeConstante': '1'
         }
-        s = measurementSettings()
+        s = measurement_settings()
         for key, value in settingsDict.items():
-            s.setSetting(key, value)
+            s.set_setting_field(key, value)
 
         # Act
-        s.storeLastJsonLegend()
+        s.store_last_json_legend()
         old_legend = dict(s.legend)
         del old_legend["nameSample"]
 
-        s.setSetting("lockIn", "iny lockin")
-        s.setSetting("correction", "15")
-        s.loadLastJsonLegend()
+        s.set_setting_field("lockIn", "iny lockin")
+        s.set_setting_field("correction", "15")
+        s.load_last_json_legend()
         # Assert
         self.assertEqual(old_legend, s.legend)
 
@@ -138,14 +146,14 @@ class SettingsTests(unittest.TestCase):
         with open("test_file_without_start_of_measurments.txt", 'r', encoding="utf-8") as f:
             stringLegend = f.read()
 
-        s = measurementSettings()
+        s = measurement_settings()
         # Act
         try:
-            loadedSetttings = s.loadStringLegend(stringLegend)
+            loadedSetttings = s.load_string_legend(stringLegend)
             # Assert
             self.assertEqual(stringLegend,
                              str(loadedSetttings))
-        except DataProcessingError as e:
+        except data_processing_error as e:
             self.assertTrue(False)
 
 
@@ -154,24 +162,25 @@ class SettingsTests(unittest.TestCase):
         with open("test_file_wrong_legend.txt", 'r', encoding="utf-8") as f:
             stringLegend = f.read()
         stringLegend = "\n".join(stringLegend.split("\n")[:-3])
-        s = measurementSettings()
+        s = measurement_settings()
         # Act
         try:
-            s.loadStringLegend(stringLegend)
+            s.load_string_legend(stringLegend)
             self.assertTrue(False)
-        except DataProcessingError as e:
+        except data_processing_error as e:
             self.assertEqual("Legenda v načítanom súbore je v nespravnom formáte.",
                              e.message)
 
     def test_check_load_from_empty_string(self):
         # Arrange
         stringLegend = "\n \n"
-        s = measurementSettings()
+        s = measurement_settings()
+        s.legend = dict()
         # Act
         try:
-            s.loadStringLegend(stringLegend)
+            s.load_string_legend(stringLegend)
             self.assertTrue(False)
-        except DataProcessingError as e:
+        except data_processing_error as e:
             self.assertEqual("Legenda v načítanom súbore je v nespravnom formáte.",
                              e.message)
 

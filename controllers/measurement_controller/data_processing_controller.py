@@ -1,6 +1,6 @@
 from PySide6.QtCore import QObject, Signal
 
-from models.data_processing.data_processing import DataProcessing
+from models.data_processing.data_processing import data_processing
 
 
 class DataProcessingController(QObject):
@@ -9,7 +9,7 @@ class DataProcessingController(QObject):
     def __init__(self, key):
         super(DataProcessingController, self).__init__()
         self._key = key
-        self._data_processing = DataProcessing()
+        self._data_processing = data_processing()
 
     def get_model(self, key):
         if key == self._key:
