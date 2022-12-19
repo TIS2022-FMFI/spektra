@@ -26,14 +26,17 @@ class MeasurementController(QObject):
         # method should report progress
         # method should be able to be stopped, therefore it should check event loop for requests during execution
         pass
+    
 
     def moveReverse(self, steps):
         if not self.running:
             self._motor.moveReverse(steps)
+            
 
     def moveForward(self, steps):
         if not self.running:
             self._motor.moveForward(steps)
+            
 
     def moveToPos(self, stop):
         if self.position is None or self.position == stop or not self._elem.canMove(stop) or self.running:
@@ -49,6 +52,35 @@ class MeasurementController(QObject):
                 self.moveForward(steps)
             else:
                 self.moveReverse(steps)
+                
+    
+    def calibration(self):
+        if not self.running:
+            start = float(input('zadaj startovaciu polohu: '))
+            steps = 0
+            while True:
+                userInput = int(input('pocet krokov dopredu: '))
+                if vstup == 0:
+                    break
+                steps += userInput
+                self.moveForward(userInput)
+
+            if steps <= 0:
+                return
+
+            self.position = end = float(input('zadaj koncovu polohu: '))
+
+            res = (end-start)/steps
+            self._elem.krok = res
+            
+                
+    def initialization(self, p):
+        self.position = p
+        
+
+    def save_calibration(self):
+        self._elem.save()
+        
     
     @QtCore.Slot()
     def stop(self):
