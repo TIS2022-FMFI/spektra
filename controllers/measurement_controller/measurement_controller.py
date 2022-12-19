@@ -82,6 +82,14 @@ class MeasurementController(QObject):
         self._elem.save()
         
     
+    def getDistance(self, stop):
+        return round(stop - self.position, 2)
+
+    
+    def getSteps(self, distance):
+        return self._elem.vlnaNaKroky(abs(distance))
+        
+    
     @QtCore.Slot()
     def stop(self):
         # TODO: implement method to stop measurement. Checks if measurement is running and if so, stops it and emits signal that state changed
