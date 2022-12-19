@@ -27,6 +27,29 @@ class MeasurementController(QObject):
         # method should be able to be stopped, therefore it should check event loop for requests during execution
         pass
 
+    def moveReverse(self, steps):
+        if not self.running:
+            self._motor.moveReverse(steps)
+
+    def moveForward(self, steps):
+        if not self.running:
+            self._motor.moveForward(steps)
+
+    def moveToPos(self, stop):
+        if self.position is None or self.position == stop or not self._elem.canMove(stop) or self.running:
+            return
+
+        distance = stop - self.position
+        steps = self._elem.vlnaNaKroky(abs(distance))
+        print("number of steps", steps)
+        ack = input("write 'go' if agree:")
+        if ack == "go":
+            self.position = stop
+            if distance > 0:
+                self.moveForward(steps)
+            else:
+                self.moveReverse(steps)
+    
     @QtCore.Slot()
     def stop(self):
         # TODO: implement method to stop measurement. Checks if measurement is running and if so, stops it and emits signal that state changed
