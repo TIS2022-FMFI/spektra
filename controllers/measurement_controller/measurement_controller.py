@@ -8,9 +8,34 @@ from PySide6.QtCore import QEventLoop
 class MeasurementController(QObject):
     state_s = Signal(str)
     progress_s = Signal(float)
+    _motor = None
+    _lockin = None
+    _elem = None
 
     def __init__(self):
         super(MeasurementController, self).__init__()
+        
+        self.running = false
+
+        self.position = None
+        disperse_element_name = 'ms732'  # z gui
+
+        print('Dostupne COM porty:')
+        availableComPorts = serial.tools.list_ports.comports()
+        for acp in availableComPorts:
+            print(acp.name + '/' + acp.description)
+
+        if self._lockin is None:
+            self._lockin = lockin.SR510()
+
+        if self._motor is None:
+            self._motor = motor.Motor('COM4')
+
+        if self._elem is None:
+            Measurement._elem = Grating(disperse_element_name)
+            if self._elem.IsCalib() is False:
+                print('kal nexist. treba kalibrovat')
+        
         self._lockin = None
         self._motor = None
         self._data_processing = DataProcessing()
@@ -96,5 +121,11 @@ class MeasurementController(QObject):
         pass
 
     def exit(self):
+        if self._motor is not None:
+            self._motor.motor.close()
+
+        if self._lockin is not None:
+            self._lockin.ser.close()
+            
         self._measurement_thread.quit()
         self._measurement_thread.wait()
