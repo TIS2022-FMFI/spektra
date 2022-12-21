@@ -10,7 +10,7 @@ class Motor:
         self.motor = serial.Serial(portName, 9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.5)
         
     def moveForward(self, steps):
-        self.move(steps, "F")
+        return self.move(steps, "F")
 
     def moveReverse(self, steps):
         time.sleep(self.move(steps + self.MOVING_CONSTANT, "R"))
