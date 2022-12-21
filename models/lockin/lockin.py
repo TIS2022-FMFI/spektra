@@ -1,4 +1,3 @@
-import time
 import serial
 from lockin_data import lockin_data
  
@@ -6,6 +5,7 @@ class Lockin:
     def __init__(self, name):
         ld = lockin_data[name]
         sc = ld['serial_connection']
+        self.ser = None
         if sc:
             self.ser = serial.Serial(*sc.getsettings(), timeout=sc.timeout)
  
@@ -47,6 +47,14 @@ class Lockin:
  
     def precitaj_hodnotu(self):
         return 100 #not sure how
+
+    def rcom(self, com, read = False):
+        '''raw command'''
+        if self.ser is not None:
+            com += '\r'
+            self.ser.write(com.encode())
+            if read:
+                return self.ser.readline()[:-1]
  
 class SR510(Lockin):
     def __init__(self):
@@ -54,40 +62,82 @@ class SR510(Lockin):
  
     def lower_gain(self):
         self.g += 1
-        self.ser.write((f'G {self.g}' + '\r').encode())
+        self.rcom(f'G {self.g}')
  
     def higher_gain(self):
         if self.g >= 12:
             self.g -= 1
-            self.ser.write((f'G {self.g}' + '\r').encode())
+            self.rcom(f'G {self.g}')
  
     def prepare(self):
-        self.ser.write(b'Q\r') #Prve citanie sa zahodi 
-        self.ser.readline()
- 
+        self.rcom('Q', True) #Prve citanie sa zahodi 
+
+        self.set_gain(20)
         self.g = self.get_gain()
- 
+        
     #T m {,n} The T command sets and reads the status of the time constants.
     #If m is "1", the pre time constant is selected
     #if m is "2", the post time constant is selected.
     def get_pre_time_const(self):
-        self.ser.write(b'T 1\r') #uvodna casova konstanta T1
-        return int(self.ser.readline()[:-1])
+        return int(self.rcom('T 1', True)) #uvodna casova konstanta T1
  
     def get_post_time_const(self):
-        self.ser.write(b'T 2\r') #uvodna casova konstanta T2
-        return int(self.ser.readline()[:-1])
+        return int(self.rcom('T 2', True)) #uvodna casova konstanta T2
  
     def get_gain(self):
         #G {n} If n is absent, the gain setting is returned.
-        self.ser.write(b'G\r') #uvodne nastavenie citlivosti
-        return int(self.ser.readline()[:-1])
+        return int(self.rcom('G', True)) #uvodne nastavenie citlivosti
+
+    def set_gain(self, n):
+        if 11 <= n <= 24:
+            self.rcom(f'G {n}')
+            self.g = n
  
     def precitaj_hodnotu(self):
-        self.ser.write(b'Q\r') #prikaz, aby sa poslal udaj
-        return self.ser.readline()[:-1] #nacitana hodnota bez CR na konci
- 
- 
-##if __name__ == '__main__':
-##    lockin = SR510()
-##    lockin.prepare()
+        return float(self.rcom('Q', True))
+        
+    def get_auto_offset(self):
+        return int(self.rcom('A', True))
+
+    def set_auto_offset(self, n):
+        self.rcom(f'A {n}')
+
+    def get_bandpass_filter(self):
+        return int(self.rcom('B', True))
+
+    def set_bandpass_filter(self, n):
+        self.rcom(f'B {n}')
+
+    def get_refLCD_display(self):
+        return int(self.rcom('C', True))
+
+    #C 1 = show phase settings
+    #C 0 = show reference frequency
+    def set_refLCD_display(self, n):
+        self.rcom(f'C {n}')
+
+    def get_dynamic_reserve(self):
+        return int(self.rcom('D', True))
+
+    def set_dynamic_reserve(self, n):
+        self.rcom(f'D {n}')
+
+    def get_ref_frequency(self):
+        return float(self.rcom('F', True))
+
+    def get_preamp_status(self):
+        return int(self.rcom('H', True))
+
+    def get_phase(self):
+        return float(self.rcom('P', True))
+
+    def set_phase(self, v):
+        self.rcom(f'P {v}')
+
+    
+if __name__ == '__main__':
+    lockin = SR510()
+    lockin.prepare()
+    lockin.rcom('A 0')
+    print(lockin.rcom('A'))
+    
