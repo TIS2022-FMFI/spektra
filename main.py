@@ -70,6 +70,23 @@ class MainWindow(QMainWindow):
     def _connect_measurement_controller(self):
         self.controller._measurement.state_s.connect(lambda x: self.controller.logger.log(40, x, True))
         self.view.widgets.comparative_file_unload_btn.clicked.connect(self.test)
+        
+        # moveToPosition
+        gotoValue = self.view.widgets.devices_controls_goto_sbox.text.value()
+        self.view.widgets.devices_controls_goto_btn.clicked.connect(self.controller.measurement.moveToPos(gotoValue))
+
+        numberOfSteps = self.view.widgets.devices_controls_engine_positioning_step_sbox.text.value()
+
+        # moveForward
+        self.view.widgets.devices_controls_engine_positioning_left_btn.clicked.connect(self.controller.measurement.moveForvard(numberOfSteps))
+
+        # moverReverse
+        self.view.widgets.devices_controls_engine_positioning_right_btn.clicked.connect(self.controller.measurement.moveReverse(numberOfSteps))
+
+        # initialization
+        init_position = self.view.widgets.doubleSpinBox.text.value() #TODO check if correct doubleSpinBox selected
+        self.view.widgets.devices_controls_calibration_btn.clicked.connect(self.controller.initialization(init_position)) #TODO potentially rename as initialization in main
+
 
     def test(self):
         print("test() thread id: ")
