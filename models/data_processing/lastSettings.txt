@@ -26,6 +26,6 @@
   "phaseShift": "1",
   "timeConstante": "1",
   "nameSample": "utorkajsia vzorka",
-  "date": "17-12-2022",
-  "time": "23:25:44"
+  "date": "26-12-2022",
+  "time": "11:11:52"
 }

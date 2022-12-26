@@ -1,9 +1,9 @@
 import unittest
 
-from models.data_processing.measurement_settings import measurement_settings
-from models.data_processing.data_processing import data_processing
-from errors.data_processing_error import data_processing_error
-from models.data_processing.Constants import *
+from models.data_processing.measurementSettings import MeasurementSettings
+from models.data_processing.dataProcessing import DataProcessing
+from errors.data_processing_error import DataProcessingError
+from models.data_processing.constants import *
 
 
 class DataProcessingTests(unittest.TestCase):
@@ -25,7 +25,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = data_processing()
+        dp = DataProcessing()
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -36,7 +36,7 @@ class DataProcessingTests(unittest.TestCase):
             dp.create_new_file()
             # Assert
             self.assertTrue(True)
-        except data_processing_error:
+        except DataProcessingError:
             self.assertTrue(False)
 
     def test_unsuccessful_create_file1(self):
@@ -55,7 +55,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = data_processing()
+        dp = DataProcessing()
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -64,7 +64,7 @@ class DataProcessingTests(unittest.TestCase):
             dp.create_new_file()
             # Assert
             self.assertTrue(False)
-        except data_processing_error as e:
+        except DataProcessingError as e:
             self.assertEqual("Legenda nie je kompletne vyplnená. Nie je možne vytvoriť nový súbor pre meranie.",
                              e.message)
 
@@ -86,12 +86,12 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = data_processing()
+        dp = DataProcessing()
         dp.set_file_name("mojPokusOHlavicku")
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
-        dp.set_unit_type_position("°")
+        dp.set_unit_type_position(Unit.Uhol)
 
         dp.create_new_file()
 
@@ -113,7 +113,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = data_processing()
+        dp = DataProcessing()
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -122,7 +122,7 @@ class DataProcessingTests(unittest.TestCase):
             dp.create_new_file()
             # Assert
             self.assertTrue(False)
-        except data_processing_error as e:
+        except DataProcessingError as e:
             self.assertEqual("Nie je vyplnené meno súboru. Nie je možné vytvoriť nový súbor pre meranie.",
                              e.message)
         
@@ -144,7 +144,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = data_processing()
+        dp = DataProcessing()
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -154,7 +154,7 @@ class DataProcessingTests(unittest.TestCase):
         try:
             # Act
             dp.add_measurement(2.34, 5.002, 12.223)
-        except data_processing_error as e:
+        except DataProcessingError as e:
             self.assertTrue(False)
             return
 
@@ -186,7 +186,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = data_processing()
+        dp = DataProcessing()
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -197,7 +197,7 @@ class DataProcessingTests(unittest.TestCase):
             dp.add_measurement(2.38928190194, 5.00216871718, 12.22921291829103)
             dp.add_measurement(0.24, 19.63727, 1.11)
             dp.add_measurement(3, 1, 18)#
-        except data_processing_error:
+        except DataProcessingError:
             self.assertTrue(False)
             return
 
@@ -213,7 +213,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_set_file_name(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
         # Act
         dp.set_file_name("pokus1.txt")
         # Assert
@@ -221,7 +221,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_set_file_path1(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
         # Act
         dp.set_file_name("pokus1")
         dp.set_file_path("C:\\Desktop\\priecinok")
@@ -230,7 +230,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_set_file_path2(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
         # Act
         dp.set_file_name("pokus1")
         dp.set_file_path("C:\\Desktop\\priecinok\\")
@@ -240,43 +240,43 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_load_measurement_from_file_no_measurements(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
 
         fileName = "test_file_no_measurements.txt"
         # Act
         try:
             dp.load_old_file(fileName)
             self.assertTrue(False)
-        except data_processing_error as e:
+        except DataProcessingError as e:
             self.assertEqual(e.message, "Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
 
     def test_load_measurement_from_file_not_enough_collums(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
 
         fileName = "test_file_not_enough_collums.txt"
         # Act
         try:
             dp.load_old_file(fileName)
             self.assertTrue(False)
-        except data_processing_error as e:
+        except DataProcessingError as e:
             self.assertEqual(e.message, "Načítaný súbor nie je v správnom formáte. Namerané údaje sú v zlom formáte.")
 
     def test_load_measurement_from_file_not_float(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
 
         fileName = "test_file_not_float.txt"
         # Act
         try:
             dp.load_old_file(fileName)
             self.assertTrue(False)
-        except data_processing_error as e:
+        except DataProcessingError as e:
             self.assertEqual(e.message, "Načítaný súbor nie je v správnom formáte. Namerané údaje sú v zlom formáte.")
 
     def test_load_measurement_from_file_right_data(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
 
         fileName = "test_file_right_data.txt"
         # Act
@@ -286,38 +286,38 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_load_measurement_from_file_without_start_of_measurments(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
 
         fileName = "test_file_without_start_of_measurments.txt"
         # Act
         try:
             dp.load_old_file(fileName)
             self.assertTrue(False)
-        except data_processing_error as e:
+        except DataProcessingError as e:
             self.assertEqual(e.message, "Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
 
     def test_load_measurement_from_file_wrong_legend(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
 
         fileName = "test_file_wrong_legend.txt"
         # Act
         try:
             dp.load_old_file(fileName)
             self.assertTrue(False)
-        except data_processing_error as e:
+        except DataProcessingError as e:
             self.assertEqual(e.message, "Legenda v načítanom súbore je v nespravnom formáte.")
 
     def test_load_measurement_from_file_no_legend(self):
         # Arrange
-        dp = data_processing()
+        dp = DataProcessing()
 
         fileName = "test_file_no_legend.txt"
         # Act
         try:
             dp.load_old_file(fileName)
             self.assertTrue(False)
-        except data_processing_error as e:
+        except DataProcessingError as e:
             self.assertEqual(e.message, "Legenda v načítanom súbore je v nespravnom formáte.")
 
 if __name__ == "__main__":

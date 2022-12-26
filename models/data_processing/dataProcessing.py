@@ -1,18 +1,18 @@
 
 from PySide6.QtCore import QObject
-from models.data_processing.Constants import *
-from models.data_processing.measurement_settings import measurement_settings
-from errors.data_processing_error import data_processing_error
+from models.data_processing.constants import *
+from models.data_processing.measurementSettings import MeasurementSettings
+from errors.data_processing_error import DataProcessingError
 import os
 
-class data_processing(QObject):
+class DataProcessing(QObject):
 
     def __init__(self):
-        super(data_processing, self).__init__()
+        super(DataProcessing, self).__init__()
         self.file_name = ""
         self.path = self.get_default_path()
         self.begining_of_data = '{: <20s}\t{: <20s}\t{}\n'.format(ALFA_COLLUMN, WAVE_LENGTH_COLLUMN, INTENSITY_COLLUMN)
-        self.settings = measurement_settings()
+        self.settings = MeasurementSettings()
         self.settings.load_last_json_legend()
 
     def get_default_path(self):
@@ -59,7 +59,7 @@ class data_processing(QObject):
                                         possible to create new file
         """
         if not self.settings.check_completness_of_legend():
-            raise data_processing_error("Legenda nie je kompletne vyplnená. Nie je možne vytvoriť nový súbor pre meranie.")
+            raise DataProcessingError("Legenda nie je kompletne vyplnená. Nie je možne vytvoriť nový súbor pre meranie.")
 
         self.write_legend()
         self.settings.store_last_json_legend()
@@ -75,7 +75,7 @@ class data_processing(QObject):
                                     measurement file provided
         """
         if self.file_name == "":
-            raise data_processing_error("Nie je vyplnené meno súboru. Nie je možné pridať najnovšie meranie do súboru.")
+            raise DataProcessingError("Nie je vyplnené meno súboru. Nie je možné pridať najnovšie meranie do súboru.")
         with open(self.path + self.file_name, 'a', encoding="utf-8") as current_file:
             line = '\n{: <20s}\t{: <20s}\t{}'.format(str(angle), str(wave_length), str(intensity))
             current_file.write(line)
@@ -87,7 +87,7 @@ class data_processing(QObject):
                                     measurement file provided
         """
         if self.file_name == "":
-            raise data_processing_error("Nie je vyplnené meno súboru. Nie je možné vytvoriť nový súbor pre meranie.")
+            raise DataProcessingError("Nie je vyplnené meno súboru. Nie je možné vytvoriť nový súbor pre meranie.")
 
         with open(self.path + self.file_name, 'w', encoding="utf-8") as current_file:
             current_file.write(str(self.settings) + "\n\n")
@@ -125,7 +125,7 @@ class data_processing(QObject):
             measurements = self.read_measurements_from_file(f)
 
         if measurements == []:
-            raise data_processing_error("Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
+            raise DataProcessingError("Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
 
         return loaded_settings, measurements
 
@@ -152,7 +152,7 @@ class data_processing(QObject):
                                      float(intensity)])
                 measurement_line = file.readline()
             except:
-                raise data_processing_error("Načítaný súbor nie je v správnom formáte. Namerané údaje sú v zlom formáte.")
+                raise DataProcessingError("Načítaný súbor nie je v správnom formáte. Namerané údaje sú v zlom formáte.")
 
         return measurements
 
@@ -170,7 +170,7 @@ class data_processing(QObject):
             line = file.readline()
 
         if line == '':
-            raise data_processing_error("Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
+            raise DataProcessingError("Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
 
         return string_legend
 

@@ -1,13 +1,13 @@
 import unittest
 
-from models.data_processing.grid import grid_456039
-from models.data_processing.grid import grid_465645
+from models.data_processing.grid import Grid456039
+from models.data_processing.grid import Grid465645
 
 class SettingsTests(unittest.TestCase):
 
     def test_check_correct_waveLength1_456039(self):
         # Arrange
-        grid = grid_456039()
+        grid = Grid456039()
         # Act
         result = grid.get_wave_length(13.746)
         # Assert
@@ -15,7 +15,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_check_correct_waveLength2_456039(self):
         # Arrange
-        grid = grid_456039()
+        grid = Grid456039()
         # Act
         result = grid.get_wave_length(29.439)
         # Assert
@@ -23,7 +23,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_check_correct_waveLength1_465645(self):
         # Arrange
-        grid = grid_465645()
+        grid = Grid465645()
         # Act
         result = grid.get_wave_length(13.746)
         # Assert
@@ -31,7 +31,7 @@ class SettingsTests(unittest.TestCase):
 
     def test_check_correct_waveLength2_465645(self):
         # Arrange
-        grid = grid_465645()
+        grid = Grid465645()
         # Act
         result = grid.get_wave_length(29.439)
         # Assert
