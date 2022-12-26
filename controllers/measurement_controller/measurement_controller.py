@@ -50,7 +50,33 @@ class MeasurementController(QObject):
         # TODO: implement method to handle measurement from start to finish
         # method should report progress
         # method should be able to be stopped, therefore it should check event loop for requests during execution
-        pass
+        while self.running:
+            # self.progress_s.emit(0.5)
+            # loop =QEventLoop()
+            # loop.exec()
+
+            self._lockin.prepare()
+            STEP_DELAY = 0.16
+            SLEEP_TIME = 0.5
+            DISTANCE = self.getDistance(end)
+            NO_ATOMIC_STEPS = self.getSteps(DISTANCE)
+            NO_STEPS = NO_ATOMIC_STEPS // step_size
+
+            print(f"dist: {DISTANCE} \natomic steps: {NO_ATOMIC_STEPS} \nsteps: {NO_STEPS}")
+
+            for iteration in range(NO_STEPS):
+                self._motor.moveForward(step_size)
+
+                print(f"iter: {iteration}")
+
+                time.sleep(STEP_DELAY * step_size)
+                measured_value = m._lockin.precitaj_hodnotu().decode('UTF-8')
+                actual_position = (self.position + self._elem.krokyNaVlna((iteration + 1) * step_size))
+                print(f"pos: {actual_position:.3f} measurement: {measured_value}")
+                time.sleep(SLEEP_TIME)
+
+            time.sleep(SLEEP_TIME)
+            self.position = actual_position 
     
 
     def moveReverse(self, steps):
@@ -118,7 +144,7 @@ class MeasurementController(QObject):
     @QtCore.Slot()
     def stop(self):
         # TODO: implement method to stop measurement. Checks if measurement is running and if so, stops it and emits signal that state changed
-        pass
+        self.running = false
 
     def exit(self):
         if self._motor is not None:
