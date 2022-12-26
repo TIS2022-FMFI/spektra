@@ -27,5 +27,5 @@
   "timeConstante": "1",
   "nameSample": "utorkajsia vzorka",
   "date": "26-12-2022",
-  "time": "11:11:52"
+  "time": "11:20:10"
 }

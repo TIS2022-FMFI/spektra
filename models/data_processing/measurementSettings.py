@@ -111,7 +111,7 @@ class MeasurementSettings:
         set current time in self.legend if measurement setting doesnt already have time field
         """
 
-        if TIME_KEY not in self.legend.keys():
+        if TIME_KEY not in self.legend:
             today = datetime.now()
             self.legend[TIME_KEY] = today.strftime("%H:%M:%S")
 
@@ -119,7 +119,7 @@ class MeasurementSettings:
         """
         set current date in self.legend if measurement setting doesnt already have date field
         """
-        if DATE_KEY not in self.legend.keys():
+        if DATE_KEY not in self.legend:
             now = datetime.now()
             self.legend[DATE_KEY] = now.strftime('%d-%m-%Y')
 
