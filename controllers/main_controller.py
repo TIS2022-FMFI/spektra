@@ -24,6 +24,27 @@ class MainController(QObject):
 
     def stop_measurement(self):
         QMetaObject.invokeMethod(self._measurement, "stop", Qt.QueuedConnection)
+        
+    def move_forward(self, steps):
+        QMetaObject.invokeMethod(self._measurement, "moveForward", steps, Qt.QueuedConnection)
+        
+    def move_reverse(self, steps):
+        QMetaObject.invokeMethod(self._measurement, "moveReverse", steps, Qt.QueuedConnection)
+        
+    def move_to_pos(self, position):
+        QMetaObject.invokeMethod(self._measurement, "moveToPos", position, Qt.QueuedConnection)
+
+    def calibration(self):
+        QMetaObject.invokeMethod(self._measurement, "calibration", Qt.QueuedConnection)
+        
+    def initialization(self, position):
+        QMetaObject.invokeMethod(self._measurement, "initialization", position, Qt.QueuedConnection)
+        
+    def save_calibration(self):
+        QMetaObject.invokeMethod(self._measurement, "save_calibration", Qt.QueuedConnection)
+
+
+
 
     def exit_measurement(self, key):
         if key == self._key:
