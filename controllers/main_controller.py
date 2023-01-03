@@ -28,3 +28,5 @@ class MainController(QObject):
     def exit_measurement(self, key):
         if key == self._key:
             self._measurement.exit()
+    def update_measurement_settings(self, key, value):
+        self.data_processing.set_legend_field(key, value)

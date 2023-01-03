@@ -56,7 +56,7 @@ class Graph(pg.PlotWidget):
         self.styles = {'color': 'r', 'font-size': '20px'}
         self.setLabel('left', 'Intenzita [mV]', **self.styles)
         self.setLabel('bottom', 'Vlnová dĺžka [A°]', **self.styles)
-        self.getPlotItem().setAxisItems({"bottom": CustomAxis(orientation="bottom", text="Vlnová dĺžka [A°]")})
+        #self.getPlotItem().setAxisItems({"bottom": CustomAxis(orientation="bottom", text="Vlnová dĺžka [A°]")})
         self.addLegend()
         self.showGrid(x=True, y=True)
         self.plotGraph()

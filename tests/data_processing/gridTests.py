@@ -1,7 +1,7 @@
 import unittest
 
-from models.data_processing.Grid import Grid456039
-from models.data_processing.Grid import Grid465645
+from models.data_processing.grid import Grid456039
+from models.data_processing.grid import Grid465645
 
 class SettingsTests(unittest.TestCase):
 
@@ -9,7 +9,7 @@ class SettingsTests(unittest.TestCase):
         # Arrange
         grid = Grid456039()
         # Act
-        result = grid.getWaveLength(13.746)
+        result = grid.get_wave_length(13.746)
         # Assert
         self.assertEqual(0.7360474199630995, result)
 
@@ -17,7 +17,7 @@ class SettingsTests(unittest.TestCase):
         # Arrange
         grid = Grid456039()
         # Act
-        result = grid.getWaveLength(29.439)
+        result = grid.get_wave_length(29.439)
         # Assert
         self.assertEqual(1.517723389608954, result)
 
@@ -25,7 +25,7 @@ class SettingsTests(unittest.TestCase):
         # Arrange
         grid = Grid465645()
         # Act
-        result = grid.getWaveLength(13.746)
+        result = grid.get_wave_length(13.746)
         # Assert
         self.assertEqual(1.472094839926199, result)
 
@@ -33,7 +33,7 @@ class SettingsTests(unittest.TestCase):
         # Arrange
         grid = Grid465645()
         # Act
-        result = grid.getWaveLength(29.439)
+        result = grid.get_wave_length(29.439)
         # Assert
         self.assertEqual(3.035446779217908, result)
 

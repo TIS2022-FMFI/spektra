@@ -1,9 +1,17 @@
 class Grid:
+
     def __init__(self):
         self.a = 0
         self.b = 0
 
-    def getWaveLength(self, angle):
+    def get_wave_length(self, angle):
+        """
+        calculate current waveLength of grid based on type of
+        used grid and current angle
+
+        @param angle: current angle of rotation of grid
+        @return: current waveLength of used grid based on current angle
+        """
         return self.a * angle + self.b
 
 
