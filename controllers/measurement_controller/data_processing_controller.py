@@ -1,12 +1,12 @@
 from PySide6.QtCore import QObject, Signal
 
-from models.data_processing.data_processing import DataProcessing
+from models.data_processing.dataProcessing import DataProcessing
 
 
 class DataProcessingController(QObject):
     settings_changed_s = Signal(dict)
 
-    def __init__(self, key):
+    def __init__(self, key, ):
         super(DataProcessingController, self).__init__()
         self._key = key
         self._data_processing = DataProcessing()

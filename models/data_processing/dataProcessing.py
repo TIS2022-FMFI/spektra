@@ -37,6 +37,7 @@ class DataProcessing(QObject):
                                         allowed key
         """
         self.settings.set_setting_field(key, value)
+        print(key, value)
 
     def set_unit_type_position(self, unit_type):
         """
@@ -101,6 +102,7 @@ class DataProcessing(QObject):
         if file_name[-4:] != ".txt":
             file_name += ".txt"
         self.file_name = file_name
+        print(self.file_name)
 
     def set_file_path(self, path):
         """

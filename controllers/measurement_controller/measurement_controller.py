@@ -1,7 +1,7 @@
 from PySide6 import QtCore
 from PySide6.QtCore import QObject, Signal, QThread
 
-from models.data_processing.data_processing import DataProcessing
+from models.data_processing.dataProcessing import DataProcessing
 from PySide6.QtCore import QEventLoop
 
 
