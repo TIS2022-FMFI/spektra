@@ -50,6 +50,7 @@ class DataProcessing(QObject):
                                         two allowed values
         """
         self.settings.set_unit_type_position(unit_type)
+        print(self.settings.unit_type_grid_position)
 
     def create_new_file(self):
         """

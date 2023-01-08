@@ -4,6 +4,7 @@ import os
 from errors.data_processing_error import DataProcessingError
 from models.data_processing.constants import *
 
+
 class MeasurementSettings:
     KEY_BEFORE_ALTERNATIVES = NAME_LIGHT_KEY
 
@@ -12,8 +13,8 @@ class MeasurementSettings:
     def __init__(self):
         self.legend = dict()
         self.all_setting_key = set(mandatory + non_mandatory)
-        self.set_setting_field(TYPE_OF_DISPERS_ELEM_KEY, "mriežka")
-        self.set_setting_field(TYPE_SENSITIVITY_KEY, "AUTO")
+        self.set_setting_field(TYPE_OF_DISPERS_ELEM_KEY, GRID)
+        self.set_setting_field(TYPE_SENSITIVITY_KEY, AUTO)
 
         script_dir = os.path.dirname(__file__)
         rel_path = "lastSettings.txt"
