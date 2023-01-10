@@ -15,7 +15,7 @@ class MeasurementController(QObject):
     def __init__(self):
         super(MeasurementController, self).__init__()
         
-        self.running = false
+        self.running = False
 
         self.position = None
         disperse_element_name = 'ms732'  # z gui
@@ -47,6 +47,9 @@ class MeasurementController(QObject):
 
     @QtCore.Slot()
     def start(self):
+
+        
+        
         # TODO: implement method to handle measurement from start to finish
         # method should report progress
         # method should be able to be stopped, therefore it should check event loop for requests during execution
@@ -56,29 +59,32 @@ class MeasurementController(QObject):
             # loop.exec()
 
             self._lockin.prepare()
-            STEP_DELAY = 0.16
-            SLEEP_TIME = 0.5
-            DISTANCE = self.getDistance(end)
-            NO_ATOMIC_STEPS = self.getSteps(DISTANCE)
-            NO_STEPS = NO_ATOMIC_STEPS // step_size
 
-            print(f"dist: {DISTANCE} \natomic steps: {NO_ATOMIC_STEPS} \nsteps: {NO_STEPS}")
+            #TODO read from gui
+            stepsPerDataPoint = 32 
+            end = None 
+            
+            distance = end - self.position
+            assert distance > 0 #assert for now
+                
+            steps = self._elem.vlnaNaKroky(distance)
+            last_step = steps % stepsPerDataPoint
+            data_points = steps // stepsPerDataPoint + (1 if last_step != 0 else 0)
 
-            for iteration in range(NO_STEPS):
-                self._motor.moveForward(step_size)
+            print(f"dist: {distance} \nsteps: {steps} \nvalues: {data_points}")
 
-                print(f"iter: {iteration}")
+            for i in range(data_points):
+                print(f"iter: {i}")
+                
+                duration = self._motor.moveForward(stepsPerDataPoint)
+                time.sleep(duration)
+                
+                measured_value = self._lockin.precitaj_hodnotu()
+                cur_pos = self.position + self._elem.krokyNaVlna((i+1)*stepsPerDataPoint)
+                print(f"pos: {cur_pos:.3f} measurement: {measured_value}")
 
-                time.sleep(STEP_DELAY * step_size)
-                measured_value = m._lockin.precitaj_hodnotu().decode('UTF-8')
-                actual_position = (self.position + self._elem.krokyNaVlna((iteration + 1) * step_size))
-                print(f"pos: {actual_position:.3f} measurement: {measured_value}")
-                time.sleep(SLEEP_TIME)
-
-            time.sleep(SLEEP_TIME)
-            self.position = actual_position 
+            self.position = cur_pos 
     
-
     def moveReverse(self, steps):
         if not self.running:
             self._motor.moveReverse(steps)
@@ -121,7 +127,7 @@ class MeasurementController(QObject):
 
             self.position = end = float(input('zadaj koncovu polohu: '))
 
-            res = (end-start)/steps
+            res = (end - start) / steps
             self._elem.krok = res
             
                 
@@ -132,19 +138,10 @@ class MeasurementController(QObject):
     def save_calibration(self):
         self._elem.save()
         
-    
-    def getDistance(self, stop):
-        return round(stop - self.position, 2)
-
-    
-    def getSteps(self, distance):
-        return self._elem.vlnaNaKroky(abs(distance))
-        
-    
     @QtCore.Slot()
     def stop(self):
         # TODO: implement method to stop measurement. Checks if measurement is running and if so, stops it and emits signal that state changed
-        self.running = false
+        self.running = False
 
     def exit(self):
         if self._motor is not None:
