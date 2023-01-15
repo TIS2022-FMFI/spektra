@@ -72,21 +72,25 @@ class MainWindow(QMainWindow):
         self.view.widgets.comparative_file_unload_btn.clicked.connect(self.test)
         
         # moveToPosition
-        gotoValue = self.view.widgets.devices_controls_goto_sbox.text.value()
-        self.view.widgets.devices_controls_goto_btn.clicked.connect(self.controller.measurement.moveToPos(gotoValue))
+        gotoValue = lambda: self.view.widgets.devices_controls_goto_sbox.value()
+        self.view.widgets.devices_controls_goto_btn.clicked.connect(lambda: self.controller.moveToPos(gotoValue))
 
-        numberOfSteps = self.view.widgets.devices_controls_engine_positioning_step_sbox.text.value()
+
+        numberOfSteps = lambda:  self.view.widgets.devices_controls_engine_positioning_step_sbox.value()
 
         # moveForward
-        self.view.widgets.devices_controls_engine_positioning_left_btn.clicked.connect(self.controller.measurement.moveForvard(numberOfSteps))
-
+        self.view.widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
+            self.controller.moveForvard(numberOfSteps))
+        
         # moverReverse
-        self.view.widgets.devices_controls_engine_positioning_right_btn.clicked.connect(self.controller.measurement.moveReverse(numberOfSteps))
+        self.view.widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
+            self.controller.moveReverse(numberOfSteps))
 
         # initialization
-        init_position = self.view.widgets.doubleSpinBox.text.value() #TODO check if correct doubleSpinBox selected
-        self.view.widgets.devices_controls_calibration_btn.clicked.connect(self.controller.initialization(init_position)) #TODO potentially rename as initialization in main
-
+        init_position = self.view.widgets.doubleSpinBox.value()
+        self.view.widgets.devices_controls_calibration_btn.clicked.connect(
+            self.controller.initialization(init_position))
+        
 
     def test(self):
         print("test() thread id: ")
