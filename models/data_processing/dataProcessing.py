@@ -37,7 +37,6 @@ class DataProcessing(QObject):
                                         allowed key
         """
         self.settings.set_setting_field(key, value)
-        print(key, value)
 
     def set_unit_type_position(self, unit_type):
         """
@@ -50,7 +49,6 @@ class DataProcessing(QObject):
                                         two allowed values
         """
         self.settings.set_unit_type_position(unit_type)
-        print(self.settings.unit_type_grid_position)
 
     def create_new_file(self):
         """
@@ -78,6 +76,7 @@ class DataProcessing(QObject):
         """
         if self.file_name == "":
             raise DataProcessingError("Nie je vyplnené meno súboru. Nie je možné pridať najnovšie meranie do súboru.")
+
         with open(self.path + self.file_name, 'a', encoding="utf-8") as current_file:
             line = '\n{: <20s}\t{: <20s}\t{}'.format(str(angle), str(wave_length), str(intensity))
             current_file.write(line)
@@ -103,7 +102,7 @@ class DataProcessing(QObject):
         if file_name[-4:] != ".txt":
             file_name += ".txt"
         self.file_name = file_name
-        print(self.file_name)
+        print("nazov suboru: ", self.path + self.file_name)
 
     def set_file_path(self, path):
         """

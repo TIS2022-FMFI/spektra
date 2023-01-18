@@ -8,13 +8,12 @@ from models.data_processing.constants import *
 class MeasurementSettings:
     KEY_BEFORE_ALTERNATIVES = NAME_LIGHT_KEY
 
-    unit_type_grid_position = Unit.Angstrom
-
     def __init__(self):
         self.legend = dict()
         self.all_setting_key = set(mandatory + non_mandatory)
         self.set_setting_field(TYPE_OF_DISPERS_ELEM_KEY, GRID)
         self.set_setting_field(TYPE_SENSITIVITY_KEY, AUTO)
+        self.set_unit_type_position(Unit.Angstrom)
 
         script_dir = os.path.dirname(__file__)
         rel_path = "lastSettings.txt"
@@ -34,7 +33,7 @@ class MeasurementSettings:
         """
         if not isinstance(unit_type_position, Unit):
             raise DataProcessingError("Do legendy je vkladaná nesprávna jednotka počiatočnej/koncovej pozície merania.")
-        self.unit_type_grid_position = unit_type_position
+        self.legend[UNIT] = unit_type_position
 
     def set_setting_field(self, key, value):
         """
@@ -94,8 +93,8 @@ class MeasurementSettings:
                f"{self.legend[TYPE_LIGHT_KEY]}, {self.legend[NAME_LIGHT_KEY]}\n" \
                f"{MEASUREMENT}:\n" \
                f"{self.legend[DATE_KEY]}, {self.legend[TIME_KEY]}\n" \
-               f"{BEGIN_POSITION}{self.unit_type_grid_position.value}{END_OF_POSITION_LABEL}: {self.legend[START_POSITION_KEY]}\n" \
-               f"{END_POSITION}{self.unit_type_grid_position.value}{END_OF_POSITION_LABEL}: {self.legend[END_POSITION_KEY]}\n" \
+               f"{BEGIN_POSITION}{self.legend[UNIT].value}{END_OF_POSITION_LABEL}: {self.legend[START_POSITION_KEY]}\n" \
+               f"{END_POSITION}{self.legend[UNIT].value}{END_OF_POSITION_LABEL}: {self.legend[END_POSITION_KEY]}\n" \
                f"{STEP_OF_MOTOR}: {self.legend[STEP_OF_MOTOR_KEY]}\n" \
                f"{NUMBER_OF_INTEGRATIONS}: {self.legend[NUM_OF_INTEGRATIONS_KEY]}\n" \
                f"{CORRECTION}: {self.legend[CORRECTION_KEY]}\n" \
@@ -197,21 +196,46 @@ class MeasurementSettings:
         loads measurement setting from the last time this system was used
         from json file stored in the app.
         """
-        with open(self.json_name, 'r') as f:
-            self.legend = json.load(f)
-            if NAME_SAMPLE_KEY in self.legend:
-                del self.legend[NAME_SAMPLE_KEY]
-            if TIME_KEY in self.legend:
-                del self.legend[TIME_KEY]
-            if DATE_KEY in self.legend:
-                del self.legend[DATE_KEY]
+        try:
+            with open(self.json_name, 'r') as f:
+                self.legend = json.load(f)
+                if NAME_SAMPLE_KEY in self.legend:
+                    del self.legend[NAME_SAMPLE_KEY]
+                if TIME_KEY in self.legend:
+                    del self.legend[TIME_KEY]
+                if DATE_KEY in self.legend:
+                    del self.legend[DATE_KEY]
+                if UNIT not in self.legend:
+                    self.set_unit_type_position(Unit.Angstrom)
+                else:
+                    if self.legend[UNIT] == Unit.Angstrom.value:
+                        self.set_unit_type_position(Unit.Angstrom)
+                    elif self.legend[UNIT] == Unit.Uhol.value:
+                        self.set_unit_type_position(Unit.Uhol)
+        except FileNotFoundError:
+            pass
+
 
     def store_last_json_legend(self):
         """
         stores measurement setting this system is currently using in json file in the app
         """
-        with open(self.json_name, 'w') as f:
-            json.dump(self.legend, f, indent=2)
+
+        if self.legend[UNIT] == Unit.Angstrom:
+            self.set_setting_field(UNIT, Unit.Angstrom.value)
+        elif self.legend[UNIT] == Unit.Uhol:
+            self.set_setting_field(UNIT, Unit.Uhol.value)
+
+        try:
+            with open(self.json_name, 'w') as f:
+                json.dump(self.legend, f, indent=2)
+        except FileNotFoundError:
+            pass
+
+        if self.legend[UNIT] == Unit.Angstrom.value:
+            self.set_unit_type_position(Unit.Angstrom)
+        elif self.legend[UNIT] == Unit.Uhol.value:
+            self.set_unit_type_position(Unit.Uhol)
 
 
 

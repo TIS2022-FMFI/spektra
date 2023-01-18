@@ -1,6 +1,8 @@
 {
   "typeOfDispersingElement": "mrie\u017eka",
   "typeSensitivity": "AUTO",
+  "unit": "A\u00b0",
+  "nameSample": "utorkajsia vzorka",
   "noteToTech": "blabla",
   "thickness": "11.3",
   "measurementOfSample": "ref",
@@ -24,8 +26,5 @@
   "lockInReference": "1.4",
   "range": "2.44",
   "phaseShift": "1",
-  "timeConstante": "1",
-  "nameSample": "utorkajsia vzorka",
-  "date": "26-12-2022",
-  "time": "11:20:10"
+  "timeConstante": "1"
 }

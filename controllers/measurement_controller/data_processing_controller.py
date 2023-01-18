@@ -136,7 +136,7 @@ class DataProcessingController(QObject):
                                                           self.view.widgets.devices_controls_devices_selection_volt_cbox.currentText()))
         # devices_controls_devices_selection_disperse_cbox = QComboBox
         self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentIndexChanged.connect(
-            lambda: self.data_processing.set_legend_field(DISPERSE_ELEMENT,
+            lambda: self.data_processing.set_legend_field(NAME_OF_DISPERS_ELEM_KEY,
                                                           self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentText()))
 
         # radioButton = QRadioButton
@@ -149,61 +149,95 @@ class DataProcessingController(QObject):
         self.initialize_formular()
 
     def initialize_formular(self):
-        for key, value in self.data_processing.settings.items():
-            if key == NAME_SAMPLE_KEY:
-                pass
-            elif key == NOTE_TO_TECH_KEY:
-                pass
+        for key, value in self.data_processing.settings.legend.items():
+            if key == NOTE_TO_TECH_KEY:
+                self.view.widgets.sample_note_ledit.setText(self.data_processing.settings.legend[NOTE_TO_TECH_KEY])
             elif key == THICKNESS_KEY:
-                pass
+                self.view.widgets.sample_width_dsbox.setValue(
+                    float(self.data_processing.settings.legend[THICKNESS_KEY]))
             elif key == MEASURE_OF_SAMPLE_KEY:
-                pass
+                self.view.widgets.sample_measurement_ledit.setText(
+                    self.data_processing.settings.legend[MEASURE_OF_SAMPLE_KEY])
             elif key == TEMPERATURE_KEY:
-                pass
-            elif key == TYPE_OF_DISPERS_ELEM_KEY:
-                pass
+                self.view.widgets.sample_temperature_ledit.setText(
+                    self.data_processing.settings.legend[TEMPERATURE_KEY])
             elif key == NAME_OF_DISPERS_ELEM_KEY:
-                pass
+                index = self.view.widgets.devices_controls_devices_selection_disperse_cbox.findData(
+                        self.data_processing.settings.legend[NAME_OF_DISPERS_ELEM_KEY])
+                if index != -1:
+                    self.view.widgets.devices_controls_devices_selection_disperse_cbox.setCurrentIndex(index)
             elif key == INPUT_CREVICE_BEGIN_KEY:
-                pass
+                self.view.widgets.monochromator_in_in_start.setValue(
+                    float(self.data_processing.settings.legend[INPUT_CREVICE_BEGIN_KEY]))
             elif key == INPUT_CREVICE_END_KEY:
-                pass
+                self.view.widgets.monochromator_in_in_start_2.setValue(
+                    float(self.data_processing.settings.legend[INPUT_CREVICE_END_KEY]))
             elif key == OUTPUT_CREVICE_BEGIN_KEY:
-                pass
+                self.view.widgets.monochromator_out_out_start.setValue(
+                    float(self.data_processing.settings.legend[OUTPUT_CREVICE_BEGIN_KEY]))
             elif key == OUTPUT_CREVICE_END_KEY:
-                pass
+                self.view.widgets.monochromator_out_in_start.setValue(
+                    float(self.data_processing.settings.legend[OUTPUT_CREVICE_END_KEY]))
             elif key == OPTICAL_FILTER_KEY:
-                pass
+                self.view.widgets.monochromator_optical_filter_ledit.setText(
+                    self.data_processing.settings.legend[OPTICAL_FILTER_KEY])
             elif key == TYPE_OF_DETECTOR_KEY:
-                pass
+                self.view.widgets.detector_pmt_ledit.setText(
+                    self.data_processing.settings.legend[TYPE_OF_DETECTOR_KEY])
             elif key == ADDITIONAL_INFO_DETECTOR_KEY:
-                pass
+                self.view.widgets.detector_voltage_ledit.setText(
+                    self.data_processing.settings.legend[ADDITIONAL_INFO_DETECTOR_KEY])
             elif key == TYPE_LIGHT_KEY:
-                pass
+                index = self.view.widgets.measurement_config_menu_halogen_cbox.findData(
+                    self.data_processing.settings.legend[TYPE_LIGHT_KEY])
+                if index != -1:
+                    self.view.widgets.measurement_config_menu_halogen_cbox.setCurrentIndex(index)
             elif key == NAME_LIGHT_KEY:
-                pass
+                self.view.widgets.measurement_config_menu_laser_ledit.setText(
+                    self.data_processing.settings.legend[NAME_LIGHT_KEY])
             elif key == STEP_OF_MOTOR_KEY:
-                pass
+                self.view.widgets.measurement_motor_step.setValue(
+                    float(self.data_processing.settings.legend[STEP_OF_MOTOR_KEY]))
             elif key == NUM_OF_INTEGRATIONS_KEY:
-                pass
+                self.view.widgets.measurement_integrations_sbox.setValue(
+                    float(self.data_processing.settings.legend[NUM_OF_INTEGRATIONS_KEY]))
             elif key == CORRECTION_KEY:
-                pass
+                self.view.widgets.measurement_correction_sbox.setValue(
+                    float(self.data_processing.settings.legend[CORRECTION_KEY]))
             elif key == LOCK_IN_KEY:
-                pass
+                index = self.view.widgets.devices_controls_devices_selection_volt_cbox.findData(
+                    self.data_processing.settings.legend[LOCK_IN_KEY])
+                if index != -1:
+                    self.view.widgets.devices_controls_devices_selection_volt_cbox.setCurrentIndex(index)
             elif key == TYPE_SENSITIVITY_KEY:
-                pass
+                if self.data_processing.settings.legend[TYPE_SENSITIVITY_KEY] == AUTO:
+                    self.view.widgets.measurement_config_menu_span_auto_check.setChecked(True)
+                else:
+                    self.view.widgets.measurement_config_menu_span_auto_check.setChecked(False)
             elif key == LOCK_IN_REFERENCE_KEY:
-                pass
+                self.view.widgets.measurement_config_menu_ref_sbox.setValue(
+                    float(self.data_processing.settings.legend[LOCK_IN_REFERENCE_KEY]))
             elif key == RANGE_KEY:
-                pass
+                self.view.widgets.measurement_config_menu_span_dsbox.setValue(
+                    float(self.data_processing.settings.legend[RANGE_KEY]))
             elif key == PHASE_SHIFT_KEY:
-                pass
+                self.view.widgets.measurement_config_menu_angle_sbox.setValue(
+                    float(self.data_processing.settings.legend[PHASE_SHIFT_KEY]))
             elif key == TIME_CONSTANT_KEY:
-                pass
+                self.view.widgets.measurement_config_menu_time_const_dsbox.setValue(
+                    float(self.data_processing.settings.legend[TIME_CONSTANT_KEY]))
             elif key == START_POSITION_KEY:
-                pass
+                self.view.widgets.measurement_config_menu_end_sbox.setValue(
+                    float(self.data_processing.settings.legend[START_POSITION_KEY]))
             elif key == END_POSITION_KEY:
-                pass
+                self.view.widgets.measurement_config_menu_start_sbox.setValue(
+                    float(self.data_processing.settings.legend[END_POSITION_KEY]))
+
+        if self.data_processing.settings.legend[UNIT] == Unit.Uhol:
+            self.view.widgets.radioButton.click()
+        elif self.data_processing.settings.legend[UNIT]  == Unit.Angstrom:
+            self.view.widgets.radioButton_2.click()
+
 
     def set_auto_check_value(self):
         if self.view.widgets.measurement_config_menu_span_auto_check.isChecked():
@@ -218,6 +252,7 @@ class DataProcessingController(QObject):
     def set_unit_type_angstrom(self):
         if self.view.widgets.radioButton_2.isChecked():
             self.data_processing.set_unit_type_position(Unit.Angstrom)
+
 
     def get_model(self, key):
         if key == self._key:

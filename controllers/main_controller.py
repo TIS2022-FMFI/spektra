@@ -4,9 +4,6 @@ from PySide6.QtCore import QObject, QRunnable, QThreadPool, QEventLoop, QMetaObj
 from controllers.file_manager_controller import FileManagerController
 from controllers.logger_controller import LoggerController
 from controllers.measurement_controller.measurement_controller import MeasurementController
-from models.data_processing.dataProcessing import DataProcessing
-from view.view import View
-from models.data_processing.constants import *
 
 class MainController(QObject):
     def __init__(self, key):

@@ -21,10 +21,11 @@ class MainWindow(QMainWindow):
         self._secret = random.random()
         self.view = View(self)
         self.controller = MainController(self._secret)
-        self.data_processing_controller = DataProcessingController(self.view)
         self._connect_view_controller()
         self.setWindowTitle(Settings.TITLE)
+        self.data_processing_controller = DataProcessingController(self.view)
         self.show()
+
 
 
     def set_legend_item(self, q_line_edit, key):
