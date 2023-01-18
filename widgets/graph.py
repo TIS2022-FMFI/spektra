@@ -48,8 +48,8 @@ class CustomAxis(pg.AxisItem):
 class Graph(pg.PlotWidget):
     def __init__(self, parent):
         super(Graph, self).__init__(parent)
-        self.currentX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        self.currentY = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
+        self.currentX = []
+        self.currentY = []
         self.oldX = []
         self.oldY = []
         self.setBackground('w')
