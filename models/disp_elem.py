@@ -1,47 +1,57 @@
 class DisperseElement:
-    def __init__(self, nazov):
-        self.nazov = nazov
+    defaultMinAngle = 16
+    defaultMaxAngle = 28
+    
+    def __init__(self, name):
+        self.minAngle = self.defaultMinAngle
+        self.maxAngle = self.defaultMaxAngle
+        self.name = name
+        self.angleDelta = None
+        
         self.kalib = self.load()
-
+        
     def IsCalib(self):
         return self.kalib
-    
-class Grating(DisperseElement):
-    def __init__(self, nazov):
-        self.krok = None
-        super().__init__(nazov)
-    def canMove(self, pos):
-        return self.maxValue > pos > self.minValue
-    
+
     def load(self):
         try:
-            with open(f'elements/{self.nazov}.txt') as subor:
-                self.krok = float(subor.readline().strip())
-                self.minValue = 16
-                self.maxValue = 28
+            with open(f'models/elements/{self.name}.txt') as subor:
+                self.angleDelta = int(subor.readline().strip())
+                self.steps = int(subor.readline().strip())
+                self.minAngle = int(subor.readline().strip())
+                self.maxAngle = int(subor.readline().strip())
+                
         except FileNotFoundError:
+            print('info o mriezke nenajdene')
             return False
         return True
 
     def save(self):
-        if self.krok is not None:
-            with open(f'elements/{self.nazov}.txt', 'w') as subor:
-                subor.write(str(self.krok))
-                
-    def res(self, start, end, kroky):
-        self.krok = (end-start)/kroky
-        return self.krok
-        
-    def posun(self, kroky):
-        return self.krok * kroky
+        if self.angleDelta is not None:
+            with open(f'models/elements/{self.name}.txt', 'w') as subor:
+                subor.write(str(self.angleDelta) + '\n')
+                subor.write(str(self.steps) + '\n')
+                subor.write(str(self.minAngle) + '\n')
+                subor.write(str(self.maxAngle) + '\n')
 
+    def angleToSteps(self, ang):
+        return int(ang * self.steps / self.angleDelta)
 
-    def vlnaNaKroky(self, d):
-        return int(d / self.krok)
+    def stepsToAngle(self, steps):
+        return steps * self.angleDelta / self.steps
 
-    def krokyNaVlna(self, pocet_krokov, round_val=3):
-        return round(pocet_krokov * self.krok, round_val)
+    def calibrateAngStep(self, start, end, steps):
+        self.angleDelta = end - start
+        self.steps = steps
 
-class Hranol(DisperseElement):
-    def f(self):
+    def canMove(self, cur_ang):
+        return self.maxAngle >= cur_ang >= self.minAngle
+    
+class Grating(DisperseElement):
+    def angleToWavelength(self, ang):
         pass
+        
+class Hranol(DisperseElement):
+    def angleToWavelength(self, ang):
+        pass
+    
