@@ -1,8 +1,11 @@
 import os
 
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QFileSystemModel
 
 from settings import Settings
+
+
 
 
 class FileManager(QFileSystemModel):
@@ -19,3 +22,10 @@ class FileManager(QFileSystemModel):
             self.root_file_path = os.path.join(os.getcwd(), Settings.SAVED_MEASUREMENTS_FOLDER)
             if not os.path.exists(self.root_file_path):
                 os.makedirs(self.root_file_path)
+
+    def flags(self, index) -> Qt.ItemFlag:
+        return super(FileManager, self).flags(index) | Qt.ItemFlag.ItemIsDragEnabled
+
+    def change_current_directory(self, directory):
+        self._set_root_path(directory)
+        return self.index(self.root_file_path)

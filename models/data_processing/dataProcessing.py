@@ -14,6 +14,7 @@ class DataProcessing(QObject):
         self.begining_of_data = '{: <20s}\t{: <20s}\t{}\n'.format(ALFA_COLLUMN, WAVE_LENGTH_COLLUMN, INTENSITY_COLLUMN)
         self.settings = MeasurementSettings()
         self.settings.load_last_json_legend()
+        self.written = False
 
     def get_default_path(self):
         """
@@ -37,6 +38,7 @@ class DataProcessing(QObject):
                                         allowed key
         """
         self.settings.set_setting_field(key, value)
+        ##print(key, value)
 
     def set_unit_type_position(self, unit_type):
         """
@@ -102,7 +104,6 @@ class DataProcessing(QObject):
         if file_name[-4:] != ".txt":
             file_name += ".txt"
         self.file_name = file_name
-        print("nazov suboru: ", self.path + self.file_name)
 
     def set_file_path(self, path):
         """

@@ -1,0 +1,36 @@
+VZORKA:
+názov vzorky: utorkajsia vzorka
+poznámka k technológií: blabla
+hrúbka: 11.3
+meranie vzorky: ref
+teplota: 15.4
+DISPERZNÝ ELEMENT:
+mriežka, mriežka M465645
+MONOCHROMÁTOR:
+vstupná štrbina (začiatok, koniec): 3, 4
+výstupná štrbina (začiatok, koniec): 3.4, 5.3
+optický filter: filter
+DETEKTOR:
+PMT: Si-fotodioda, nazov
+BÚDIACE SVETLO:
+laser, nadupany
+MERANIE:
+11-12-2022, 22:39:50
+počiatočná [A°]: 340
+koncová [A°]: 200
+krok motora [v impulzoch]: 1.3
+počet integrácií: 1
+korekcia [A°]: 2
+MILIVOLTMENTER:
+milivoltmeter SR510
+citlivosť: AUTO
+referencia [Hz]: 1.4
+range: 2.44
+fázový posun: 1
+časová konštanta: 1
+
+ALFA[A°]            	VLNOVÁ DĹŽKA[A]     	INTENZITA[mV]
+11.3	                2   	                1
+12.4	                4   	                2
+10.3	                10   	                3
+8.4 	                19   	                4

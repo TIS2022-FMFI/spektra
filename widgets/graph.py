@@ -1,6 +1,7 @@
 import pyqtgraph as pg
+from PySide6.QtCore import QFileInfo
 from pyqtgraph.Qt import QtCore
-
+from models.data_processing.dataProcessing import DataProcessing
 class CustomAxis(pg.AxisItem):
 
     # src: https://stackoverflow.com/questions/56890481/how-to-set-pyqtgraph-axis-label-offset
@@ -61,12 +62,17 @@ class Graph(pg.PlotWidget):
         self.showGrid(x=True, y=True)
         self.plotGraph()
 
+    def add_views(self, views):
+        self.view = views
+
     def addMeasurement(self, measurements, current):
         if current:
             for measurement in measurements:
                 self.currentX.append(measurement[0])
                 self.currentY.append(measurement[1])
         else:
+            self.oldX = []
+            self.oldY = []
             for measurement in measurements:
                 self.oldX.append(measurement[0])
                 self.oldY.append(measurement[1])
@@ -87,27 +93,42 @@ class Graph(pg.PlotWidget):
                               pen='r', symbol='o', symbolSize=15,
                               symbolBrush=('r'))
 
+    def dragEnterEvent(self, event):
+        def is_utf8_encoded(mime_data):
+            if mime_data.hasUrls():
+                file_url = mime_data.urls()[0]
+                file_path = QFileInfo(file_url.toLocalFile()).absoluteFilePath()
+                with open(file_path, "r", encoding="utf-8") as file:
+                    try:
+                        file.read()
+                        return True
+                    except UnicodeDecodeError:
+                        return False
+            return False
 
-    '''
-    
-    ###TESTOVANIE
+        mime_data = event.mimeData()
+        if is_utf8_encoded(mime_data):
+            event.accept()
+        else:
+            event.ignore()
 
-    currentX = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    currentY = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
-    old = [[1, 50], [2, 35] , [3, 44],
-            [4, 22], [5, 38], [6, 32], [7, 27],
-            [8, 38], [9, 32], [10, 44]]
-    g = Graph(window.graphWidget)
-    g.plot()
-    
-    for i in range(10):
-        g.plot()
-        g.addMeasurement([[currentX[i], currentY[i]]], True)
+    def dropEvent(self, event):
+        mime_data = event.mimeData()
+        file_url = mime_data.urls()[0]
+        file_path = QFileInfo(file_url.toLocalFile()).absoluteFilePath()
+        loaded_settings, measurements = DataProcessing().load_old_file(file_path)
+        self.addMeasurement(measurements, False)
+        self.plotGraph()
+        self.view.widgets.textBrowser.setText(str(loaded_settings))
+        event.accept()
 
-    g.addMeasurement(old, False)
-    g.plot()
+    def dragLeaveEvent(self, event):
+        event.accept()
 
-    '''
+    def dragMoveEvent(self, event):
+        event.accept()
+
+
 
 
 

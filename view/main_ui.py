@@ -1065,9 +1065,10 @@ class Ui_MainWindow(object):
         self.page_2.setGeometry(QRect(0, 0, 304, 531))
         self.verticalLayout_9 = QVBoxLayout(self.page_2)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.textBrowser = QTextBrowser(self.page_2)
+        self.textBrowser = QLabel(self.page_2)
         self.textBrowser.setObjectName(u"textBrowser")
         self.textBrowser.setFont(font2)
+        self.textBrowser.setStyleSheet("border: 1px solid black;")
 
         self.verticalLayout_9.addWidget(self.textBrowser)
 
@@ -1123,8 +1124,23 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.measurement_config_menu_tabs.setCurrentIndex(2)
+        self.measurement_config_menu_tabs.setCurrentIndex(0)
         self.comparative_file_toolbox.setCurrentIndex(0)
+
+        self.devices_controls_devices_selection_volt_cbox.clear()
+        self.devices_controls_devices_selection_volt_cbox.addItems(
+            ["milivoltmeter SR510"]
+        )
+
+        self.devices_controls_devices_selection_disperse_cbox.clear()
+        self.devices_controls_devices_selection_disperse_cbox.addItems(
+            ["mriežka M456039", "mriežka M465645"]
+        )
+
+        self.measurement_config_menu_halogen_cbox.clear()
+        self.measurement_config_menu_halogen_cbox.addItems(
+            ["laser", "lampa"]
+        )
 
 
         QMetaObject.connectSlotsByName(MainWindow)

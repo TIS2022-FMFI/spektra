@@ -3,8 +3,11 @@ import sys
 import os
 from datetime import datetime
 
+
 from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QHeaderView
+from qtpy import QtGui, QtCore, QtWidgets
+
 from controllers.main_controller import MainController
 from view.view import View
 from settings import Settings
@@ -23,13 +26,23 @@ class MainWindow(QMainWindow):
         self.controller = MainController(self._secret)
         self._connect_view_controller()
         self.setWindowTitle(Settings.TITLE)
+        self.view.widgets.graph_view.add_views(self.view)
+
+        self.view.widgets.comparative_file_unload_btn.clicked.connect(self.clear_comparing_measurement)
+        self.view.widgets.actionPorovnanie.triggered.connect(self.change_current_directory)
+        self.view.widgets.action_save_as.triggered.connect(self.file_save)
         self.data_processing_controller = DataProcessingController(self.view)
         self.show()
 
 
+    def clear_comparing_measurement(self):
+        self.view.widgets.graph_view.addMeasurement([], False)
+        self.view.widgets.graph_view.plotGraph()
+        self.view.widgets.textBrowser.clear()
 
-    def set_legend_item(self, q_line_edit, key):
-        print("sprava ", q_line_edit.text())
+    def file_save(self):
+        name = QtWidgets.QFileDialog.getSaveFileName(self, self.data_processing_controller._data_processing.file_name)[0]
+        self.data_processing_controller.save_as(name)
 
     def _connect_view_controller(self):
         # connect the view with controllers
