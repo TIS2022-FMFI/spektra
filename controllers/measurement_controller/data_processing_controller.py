@@ -1,15 +1,36 @@
+from PySide6 import QtWidgets
 from PySide6.QtCore import QObject, Signal
 
+from errors.data_processing_error import DataProcessingError
 from models.data_processing.dataProcessing import DataProcessing
 from models.data_processing.constants import *
+from models.logger.constants import *
+
 
 class DataProcessingController(QObject):
     settings_changed_s = Signal(dict)
 
-    def __init__(self, view):
-        super(DataProcessingController, self).__init__()
+    def __init__(self, view, key):
+        '''
+        initializes DataProcessingController
+        @param view: reference to all widgets in the user interface
+        @param key: secret key
+        '''
+        super(DataProcessingController, self).__init__()#
+        self._key = key
         self._data_processing = DataProcessing()
         self.view = view
+        self.view.widgets.comparative_file_unload_btn.clicked.connect(self.clear_comparing_measurement)
+
+        self.connect_formular()
+        self.initialize_formular()
+
+    def connect_formular(self):
+        '''
+        connects itself to each element in legend formular in the user interface, so it can
+        automatically update stored legend of the measurement
+        @return:
+        '''
 
         self.view.widgets.saple_name_ledit.editingFinished.connect(
             lambda: self._data_processing.set_legend_field(NAME_SAMPLE_KEY, self.view.widgets.saple_name_ledit.text()))
@@ -18,135 +39,112 @@ class DataProcessingController(QObject):
             lambda: self._data_processing.set_legend_field(TEMPERATURE_KEY,
                                                            self.view.widgets.sample_temperature_ledit.text()))
 
-        # sample_width_dsbox - QDoubleSpinBox
         self.view.widgets.sample_width_dsbox.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(THICKNESS_KEY, self.view.widgets.sample_width_dsbox.value())
         )
-        # sample_note_ledit = QLineEdit
         self.view.widgets.sample_note_ledit.editingFinished.connect(
-            lambda: self._data_processing.set_legend_field(NOTE_TO_TECH_KEY, self.view.widgets.sample_note_ledit.text()))
+            lambda: self._data_processing.set_legend_field(NOTE_TO_TECH_KEY,
+                                                           self.view.widgets.sample_note_ledit.text()))
 
-        # sample_measurement_ledit = QLineEdit
         self.view.widgets.sample_measurement_ledit.editingFinished.connect(
             lambda: self._data_processing.set_legend_field(MEASURE_OF_SAMPLE_KEY,
                                                            self.view.widgets.sample_measurement_ledit.text()))
 
-        # measurement_config_menu_filename_ledit = QLineEdit
         self.view.widgets.measurement_config_menu_filename_ledit.editingFinished.connect(
-            lambda: self._data_processing.set_file_name(self.view.widgets.measurement_config_menu_filename_ledit.text()))
-
-        # measurement_config_menu_end_sbox = QDoubleSpinBox
+            lambda: self._data_processing.set_file_name(
+                self.view.widgets.measurement_config_menu_filename_ledit.text()))
         self.view.widgets.measurement_config_menu_end_sbox.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(START_POSITION_KEY,
                                                            self.view.widgets.measurement_config_menu_end_sbox.value())
         )
-        # .measurement_config_menu_start_sbox = QDoubleSpinBox
         self.view.widgets.measurement_config_menu_start_sbox.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(END_POSITION_KEY,
                                                            self.view.widgets.measurement_config_menu_start_sbox.value())
         )
-        # measurement_integrations_sbox = QSpinBox
         self.view.widgets.measurement_integrations_sbox.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(NUM_OF_INTEGRATIONS_KEY,
                                                            self.view.widgets.measurement_integrations_sbox.value())
         )
-        # measurement_correction_sbox = QDoubleSpinBox
         self.view.widgets.measurement_correction_sbox.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(CORRECTION_KEY,
                                                            self.view.widgets.measurement_correction_sbox.value())
         )
-        # measurement_motor_step = QSpinBox
         self.view.widgets.measurement_motor_step.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(STEP_OF_MOTOR_KEY,
                                                            self.view.widgets.measurement_motor_step.value())
         )
-        # measurement_config_menu_ref_sbox = QSpinBox
         self.view.widgets.measurement_config_menu_ref_sbox.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(LOCK_IN_REFERENCE_KEY,
                                                            self.view.widgets.measurement_config_menu_ref_sbox.value())
         )
-        # measurement_config_menu_span_dsbox = QDoubleSpinBox
         self.view.widgets.measurement_config_menu_span_dsbox.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(RANGE_KEY,
                                                            self.view.widgets.measurement_config_menu_span_dsbox.value())
         )
-        # measurement_config_menu_span_auto_check = QCheckBox
         self.view.widgets.measurement_config_menu_span_auto_check.stateChanged.connect(
             self.set_auto_check_value)
 
-        # measurement_config_menu_time_const_dsbox = QDoubleSpinBox
         self.view.widgets.measurement_config_menu_time_const_dsbox.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(TIME_CONSTANT_KEY,
                                                            self.view.widgets.measurement_config_menu_time_const_dsbox.value())
         )
-        # measurement_config_menu_angle_sbox = QSpinBox
         self.view.widgets.measurement_config_menu_angle_sbox.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(PHASE_SHIFT_KEY,
                                                            self.view.widgets.measurement_config_menu_angle_sbox.value())
         )
-        # measurement_config_menu_laser_ledit = QLineEdit
         self.view.widgets.measurement_config_menu_laser_ledit.editingFinished.connect(
             lambda: self._data_processing.set_legend_field(NAME_LIGHT_KEY,
                                                            self.view.widgets.measurement_config_menu_laser_ledit.text()))
 
-        # measurement_config_menu_halogen_cbox = QComboBox
         self.view.widgets.measurement_config_menu_halogen_cbox.currentIndexChanged.connect(
             lambda: self._data_processing.set_legend_field(TYPE_LIGHT_KEY,
                                                            self.view.widgets.measurement_config_menu_halogen_cbox.currentText()))
-        # detector_pmt_ledit = QLineEdit
         self.view.widgets.detector_pmt_ledit.editingFinished.connect(
             lambda: self._data_processing.set_legend_field(TYPE_OF_DETECTOR_KEY,
                                                            self.view.widgets.detector_pmt_ledit.text()))
 
-        # detector_voltage_ledit = QLineEdit
         self.view.widgets.detector_voltage_ledit.editingFinished.connect(
             lambda: self._data_processing.set_legend_field(ADDITIONAL_INFO_DETECTOR_KEY,
                                                            self.view.widgets.detector_voltage_ledit.text()))
 
-        # monochromator_in_in_start = QDoubleSpinBox
         self.view.widgets.monochromator_in_in_start.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(INPUT_CREVICE_BEGIN_KEY,
                                                            self.view.widgets.monochromator_in_in_start.value())
         )
-        # monochromator_in_in_start_2 = QDoubleSpinBox
         self.view.widgets.monochromator_in_in_start_2.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(INPUT_CREVICE_END_KEY,
                                                            self.view.widgets.monochromator_in_in_start_2.value())
         )
-        # monochromator_out_out_start = QDoubleSpinBox
         self.view.widgets.monochromator_out_out_start.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(OUTPUT_CREVICE_BEGIN_KEY,
                                                            self.view.widgets.monochromator_out_out_start.value())
         )
-        # monochromator_out_in_start = QDoubleSpinBox
         self.view.widgets.monochromator_out_in_start.valueChanged.connect(
             lambda: self._data_processing.set_legend_field(OUTPUT_CREVICE_END_KEY,
                                                            self.view.widgets.monochromator_out_in_start.value())
         )
-        # monochromator_optical_filter_ledit = QLineEdit
         self.view.widgets.monochromator_optical_filter_ledit.editingFinished.connect(
             lambda: self._data_processing.set_legend_field(OPTICAL_FILTER_KEY,
                                                            self.view.widgets.monochromator_optical_filter_ledit.text()))
 
-        # devices_controls_devices_selection_volt_cbox = QComboBox
         self.view.widgets.devices_controls_devices_selection_volt_cbox.currentIndexChanged.connect(
             lambda: self._data_processing.set_legend_field(LOCK_IN_KEY,
                                                            self.view.widgets.devices_controls_devices_selection_volt_cbox.currentText()))
-        # devices_controls_devices_selection_disperse_cbox = QComboBox
         self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentIndexChanged.connect(
             lambda: self._data_processing.set_legend_field(NAME_OF_DISPERS_ELEM_KEY,
                                                            self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentText()))
 
-        # radioButton = QRadioButton
         self.view.widgets.radioButton.toggled.connect(
             self.set_unit_type_angle)
-        # radioButton_2 = QRadioButton
         self.view.widgets.radioButton_2.toggled.connect(
             self.set_unit_type_angstrom)
 
-        self.initialize_formular()
-
     def initialize_formular(self):
+        '''
+        fills the legend formular in user interface with measurement settings used the last time
+        the app was used
+        @return:
+        '''
         for key, value in self._data_processing.settings.legend.items():
             if key == NOTE_TO_TECH_KEY:
                 self.view.widgets.sample_note_ledit.setText(self._data_processing.settings.legend[NOTE_TO_TECH_KEY])
@@ -161,7 +159,7 @@ class DataProcessingController(QObject):
                     self._data_processing.settings.legend[TEMPERATURE_KEY])
             elif key == NAME_OF_DISPERS_ELEM_KEY:
                 index = self.view.widgets.devices_controls_devices_selection_disperse_cbox.findData(
-                        self._data_processing.settings.legend[NAME_OF_DISPERS_ELEM_KEY])
+                    self._data_processing.settings.legend[NAME_OF_DISPERS_ELEM_KEY])
                 if index != -1:
                     self.view.widgets.devices_controls_devices_selection_disperse_cbox.setCurrentIndex(index)
             elif key == INPUT_CREVICE_BEGIN_KEY:
@@ -233,41 +231,114 @@ class DataProcessingController(QObject):
 
         if self._data_processing.settings.legend[UNIT] == Unit.Uhol:
             self.view.widgets.radioButton.click()
-        elif self._data_processing.settings.legend[UNIT]  == Unit.Angstrom:
+        elif self._data_processing.settings.legend[UNIT] == Unit.Angstrom:
             self.view.widgets.radioButton_2.click()
 
+    def add_logger(self, logger):
+        '''
+        stores reference to logger
+        @param logger: reference to logger
+        @return:
+        '''
+        self.logger = logger
+
+    def get_file_name(self):
+        '''
+        getter of filename of the current measurement file
+        @return: filename of the current measurement file
+        '''
+        return self._data_processing.file_name
+
+    def clear_comparing_measurement(self):
+        '''
+        deletes data of compared old measurement from the graph and
+        its measurement legend from the textBrowser
+        @return:
+        '''
+        self.view.widgets.graph_view.addMeasurement([], False)
+        self.view.widgets.graph_view.plotGraph()
+        self.view.widgets.textBrowser.clear()
 
     def set_auto_check_value(self):
-        if self.view.widgets.measurement_config_menu_span_auto_check.isChecked():
-            self._data_processing.set_legend_field(TYPE_SENSITIVITY_KEY, AUTO)
-        else:
-            self._data_processing.set_legend_field(TYPE_SENSITIVITY_KEY, MANUAL)
+        '''
+        stores the type of the sensitivity based on whether the elements displaying
+        type of sensitivity is checked or not
+        @return:
+        '''
+        try:
+            if self.view.widgets.measurement_config_menu_span_auto_check.isChecked():
+                self._data_processing.set_legend_field(TYPE_SENSITIVITY_KEY, AUTO)
+            else:
+                self._data_processing.set_legend_field(TYPE_SENSITIVITY_KEY, MANUAL)
+        except DataProcessingError as e:
+            self.logger.log(WARNING, e.message, True)
 
     def set_unit_type_angle(self):
+        '''
+        stores that the angle unit is used in measurement based on whether its
+        radio button is checked
+        @return:
+        '''
         if self.view.widgets.radioButton.isChecked():
-            self._data_processing.set_unit_type_position(Unit.Uhol)
+            try:
+                self._data_processing.set_unit_type_position(Unit.Uhol)
+            except DataProcessingError as e:
+                self.logger.log(WARNING, e.message, True)
 
     def set_unit_type_angstrom(self):
+        '''
+        stores that the angstrom unit is used in measurement based on whether its
+        radio button is checked
+        @return:
+        '''
         if self.view.widgets.radioButton_2.isChecked():
-            self._data_processing.set_unit_type_position(Unit.Angstrom)
+            try:
+                self._data_processing.set_unit_type_position(Unit.Angstrom)
+            except DataProcessingError as e:
+                self.logger.log(WARNING, e.message, True)
 
     def save_as(self, name):
-        path = "\\".join(name.split("/")[:-1])
-        file_name = name.split("/")[-1:][0].replace(".txt", "")
-        self._data_processing.set_file_name(file_name)
-        self._data_processing.set_file_path(path)
-        self._data_processing.create_new_file()
-        self.view.widgets.measurement_config_menu_filename_ledit.setText(
-            self._data_processing.file_name.replace(".txt", ""))
+        '''
+        saves currently stored contents of a measurement file as a copy in a new location
+        chosen by the user
+        @param name: name of the new copy of the measurement file
+        @return:
+        '''
+        try:
+            if not self._data_processing.settings.check_completness_of_legend():
+                raise DataProcessingError("Legenda nie je kompletne vyplnená. Nie je možne vytvoriť nový súbor pre meranie.")
+        except DataProcessingError as e:
+            self.logger.log(WARNING, e.message, True)
+            return
+
+        try:
+            with open(self._data_processing.path + self._data_processing.file_name, 'r', encoding="utf-8") as current_file:
+                text = current_file.read()
+                with open(name, 'w', encoding="utf-8") as copy_file:
+                    copy_file.write(text)
+        except FileNotFoundError:
+            path = "\\".join(name.split("/")[:-1])
+            file_name = name.split("/")[-1:][0].replace(".txt", "")
+            old_filename = self._data_processing.file_name
+            old_path = self._data_processing.path
+            self._data_processing.set_file_name(file_name)
+            self._data_processing.set_file_path(path)
+            try:
+                self._data_processing.create_new_file()
+            except DataProcessingError as e:
+                self.logger.log(WARNING, e.message, True)
+            self._data_processing.set_file_name(old_filename)
+            self._data_processing.set_file_path(old_path)
 
     def get_model(self, key):
+        '''
+        returns model
+        @param key: secret key
+        @return: model
+        @raise ValueError: when the key is invalid
+        '''
         if key == self._key:
             return self._data_processing
         else:
             raise ValueError("Invalid key")
-
-    def set_settings(self, settings):
-        self._data_processing.set_settings(settings)
-        self.settings_changed_s.emit(settings)
-
 

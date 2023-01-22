@@ -27,22 +27,14 @@ class MainWindow(QMainWindow):
         self._connect_view_controller()
         self.setWindowTitle(Settings.TITLE)
         self.view.widgets.graph_view.add_views(self.view)
-
-        self.view.widgets.comparative_file_unload_btn.clicked.connect(self.clear_comparing_measurement)
+        self.view.widgets.graph_view.add_logger(self.controller.logger)
         self.view.widgets.actionPorovnanie.triggered.connect(self.change_current_directory)
         self.view.widgets.action_save_as.triggered.connect(self.file_save)
-        self.data_processing_controller = DataProcessingController(self.view)
+        self.view.widgets.action_exit.triggered.connect(lambda : self.controller.exit_measurement(self._secret))
+        self.data_processing_controller = DataProcessingController(self.view, self._secret)
+        self.data_processing_controller.add_logger(self.controller.logger)
         self.show()
 
-
-    def clear_comparing_measurement(self):
-        self.view.widgets.graph_view.addMeasurement([], False)
-        self.view.widgets.graph_view.plotGraph()
-        self.view.widgets.textBrowser.clear()
-
-    def file_save(self):
-        name = QtWidgets.QFileDialog.getSaveFileName(self, self.data_processing_controller._data_processing.file_name)[0]
-        self.data_processing_controller.save_as(name)
 
     def _connect_view_controller(self):
         # connect the view with controllers
@@ -69,8 +61,19 @@ class MainWindow(QMainWindow):
             lambda level, msg, show: self.controller.logger.log(level, msg, show))
         self.view.widgets.change_comparative_dir_btn.clicked.connect(self.change_current_directory)
 
+    def file_save(self):
+        '''
+        saves measurement file to a location and with name specified by user
+        '''
+        name = QtWidgets.QFileDialog.getSaveFileName(self, self.data_processing_controller.get_file_name())[0]
+        self.data_processing_controller.save_as(name)
+
     def change_current_directory(self):
-        idx = self.controller.file_manager.change_current_directory(QFileDialog.getExistingDirectory())
+        '''
+        changes current directory from which can user choose older measurement file for comparision
+        this directory is chosen by user
+        '''
+        idx, dir = self.controller.file_manager.change_current_directory(QFileDialog.getExistingDirectory())
         if idx is not None:
             self.view.widgets.comparative_file_dir_tree_view.setRootIndex(idx)
 

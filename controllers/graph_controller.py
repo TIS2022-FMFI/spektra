@@ -1,6 +1,6 @@
 from PySide6.QtCore import QObject
 
-from models.data_processing.data_processing import DataProcessing
+from models.data_processing.dataProcessing import DataProcessing
 
 
 class GraphController(QObject):

@@ -68,6 +68,7 @@ ALFA_COLLUMN = "ALFA[A°]"
 AUTO = "AUTO"
 MANUAL = "manuálne"
 GRID = "mriežka"
+DEFAULT_LEGEND_FILENAME = "lastSettings.txt"
 
 
 mandatory = [NAME_SAMPLE_KEY, NOTE_TO_TECH_KEY, THICKNESS_KEY,

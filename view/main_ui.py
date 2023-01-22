@@ -28,10 +28,16 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDockWidget,
                                QWidget, QListWidget)
 import pyqtgraph as pg
 from widgets.graph import Graph
+from view.constants import *
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+        '''
+        setups user interface of the application
+        @param MainWindow: mainWindow of the application
+        @return:
+        '''
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
         MainWindow.setWindowModality(Qt.ApplicationModal)
@@ -62,8 +68,6 @@ class Ui_MainWindow(object):
         self.action_save.setObjectName(u"action_save")
         self.action_save_as = QAction(MainWindow)
         self.action_save_as.setObjectName(u"action_save_as")
-        self.action_save_as_template = QAction(MainWindow)
-        self.action_save_as_template.setObjectName(u"action_save_as_template")
         self.action_exit = QAction(MainWindow)
         self.action_exit.setObjectName(u"action_exit")
         self.actionKalibr_cia = QAction(MainWindow)
@@ -76,12 +80,8 @@ class Ui_MainWindow(object):
         self.actionDenn.setObjectName(u"actionDenn")
         self.actionNo_n = QAction(MainWindow)
         self.actionNo_n.setObjectName(u"actionNo_n")
-        self.actionMeranie = QAction(MainWindow)
-        self.actionMeranie.setObjectName(u"actionMeranie")
         self.actionPorovnanie = QAction(MainWindow)
         self.actionPorovnanie.setObjectName(u"actionPorovnanie")
-        self.action_abl_nu = QAction(MainWindow)
-        self.action_abl_nu.setObjectName(u"action_abl_nu")
         self.central_widget = QWidget(MainWindow)
         self.central_widget.setObjectName(u"central_widget")
         self.central_widget.setFont(font)
@@ -1105,13 +1105,9 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_about.menuAction())
         self.menu_file.addAction(self.menuOtvor.menuAction())
         self.menu_file.addAction(self.action_save_as)
-        self.menu_file.addAction(self.action_save_as_template)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_exit)
-        self.menuOtvor.addAction(self.actionMeranie)
         self.menuOtvor.addAction(self.actionPorovnanie)
-        self.menuOtvor.addSeparator()
-        self.menuOtvor.addAction(self.action_abl_nu)
         self.menu_settings.addAction(self.menuRe_im_zobrazenia.menuAction())
         self.menuRe_im_zobrazenia.addAction(self.actionDenn)
         self.menuRe_im_zobrazenia.addAction(self.actionNo_n)
@@ -1129,17 +1125,17 @@ class Ui_MainWindow(object):
 
         self.devices_controls_devices_selection_volt_cbox.clear()
         self.devices_controls_devices_selection_volt_cbox.addItems(
-            ["milivoltmeter SR510"]
+            VOLTMETERS
         )
 
         self.devices_controls_devices_selection_disperse_cbox.clear()
         self.devices_controls_devices_selection_disperse_cbox.addItems(
-            ["mriežka M456039", "mriežka M465645"]
+            DISPERSE_ELEMENTS
         )
 
         self.measurement_config_menu_halogen_cbox.clear()
         self.measurement_config_menu_halogen_cbox.addItems(
-            ["laser", "lampa"]
+            LIGHTS
         )
 
 
@@ -1147,22 +1143,24 @@ class Ui_MainWindow(object):
     # setupUi
 
     def retranslateUi(self, MainWindow):
+        '''
+        translates displayed text to slovak
+        @param MainWindow: mainWindow of the application
+        @return:
+        '''
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"ARTKEPS", None))
         self.action_play.setText(QCoreApplication.translate("MainWindow", u"play", None))
         self.action_stop.setText(QCoreApplication.translate("MainWindow", u"stop", None))
         self.action_new.setText(QCoreApplication.translate("MainWindow", u"Nov\u00fd", None))
         self.action_save.setText(QCoreApplication.translate("MainWindow", u"Ulo\u017ei\u0165", None))
         self.action_save_as.setText(QCoreApplication.translate("MainWindow", u"Ulo\u017ei\u0165 ako", None))
-        self.action_save_as_template.setText(QCoreApplication.translate("MainWindow", u"Ulo\u017ei\u0165 ako \u0161abl\u00f3nu", None))
         self.action_exit.setText(QCoreApplication.translate("MainWindow", u"Ukon\u010di\u0165", None))
         self.actionKalibr_cia.setText(QCoreApplication.translate("MainWindow", u"Kalibr\u00e1cia", None))
         self.actionDokument_cia.setText(QCoreApplication.translate("MainWindow", u"Dokument\u00e1cia", None))
         self.actionO_programe.setText(QCoreApplication.translate("MainWindow", u"O programe", None))
         self.actionDenn.setText(QCoreApplication.translate("MainWindow", u"Denn\u00fd", None))
         self.actionNo_n.setText(QCoreApplication.translate("MainWindow", u"No\u010dn\u00fd", None))
-        self.actionMeranie.setText(QCoreApplication.translate("MainWindow", u"Meranie", None))
         self.actionPorovnanie.setText(QCoreApplication.translate("MainWindow", u"Provn\u00e1vacie meranie", None))
-        self.action_abl_nu.setText(QCoreApplication.translate("MainWindow", u"\u0160abl\u00f3nu", None))
         self.measurement_config_menu_sample_label.setText(QCoreApplication.translate("MainWindow", u"N\u00e1zov vzorky", None))
         self.measurement_config_menu_width_label_4.setText(QCoreApplication.translate("MainWindow", u"Teplota", None))
         self.measurement_config_menu_width_label.setText(QCoreApplication.translate("MainWindow", u"Hr\u00fabka", None))

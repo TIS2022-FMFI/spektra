@@ -9,6 +9,9 @@ class MeasurementSettings:
     KEY_BEFORE_ALTERNATIVES = NAME_LIGHT_KEY
 
     def __init__(self):
+        '''
+        initializes measurementSettings
+        '''
         self.legend = dict()
         self.all_setting_key = set(mandatory + non_mandatory)
         self.set_setting_field(TYPE_OF_DISPERS_ELEM_KEY, GRID)
@@ -16,7 +19,7 @@ class MeasurementSettings:
         self.set_unit_type_position(Unit.Angstrom)
 
         script_dir = os.path.dirname(__file__)
-        rel_path = "lastSettings.txt"
+        rel_path = DEFAULT_LEGEND_FILENAME
         self.json_name = os.path.join(script_dir, rel_path)
 
 
