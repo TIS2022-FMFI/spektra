@@ -3,8 +3,11 @@ import sys
 import os
 from datetime import datetime
 
+
 from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QHeaderView
+from qtpy import QtGui, QtCore, QtWidgets
+
 from controllers.main_controller import MainController
 from view.view import View
 from settings import Settings
@@ -23,7 +26,14 @@ class MainWindow(QMainWindow):
         self.data_processing_controller = DataProcessingController(self.view)
         self._connect_view_controller()
         self.setWindowTitle(Settings.TITLE)
-        
+
+        self.view.widgets.graph_view.add_views(self.view)
+        self.view.widgets.graph_view.add_logger(self.controller.logger)
+        self.view.widgets.actionPorovnanie.triggered.connect(self.change_current_directory)
+        self.view.widgets.action_save_as.triggered.connect(self.file_save)
+        self.view.widgets.action_exit.triggered.connect(lambda : self.controller.exit_measurement(self._secret))
+        self.data_processing_controller = DataProcessingController(self.view, self._secret)
+        self.data_processing_controller.add_logger(self.controller.logger)
         self.show()
 
     def set_legend_item(self, q_line_edit, key):
@@ -54,8 +64,19 @@ class MainWindow(QMainWindow):
             lambda level, msg, show: self.controller.logger.log(level, msg, show))
         self.view.widgets.change_comparative_dir_btn.clicked.connect(self.change_current_directory)
 
+    def file_save(self):
+        '''
+        saves measurement file to a location and with name specified by user
+        '''
+        name = QtWidgets.QFileDialog.getSaveFileName(self, self.data_processing_controller.get_file_name())[0]
+        self.data_processing_controller.save_as(name)
+
     def change_current_directory(self):
-        idx = self.controller.file_manager.change_current_directory(QFileDialog.getExistingDirectory())
+        '''
+        changes current directory from which can user choose older measurement file for comparision
+        this directory is chosen by user
+        '''
+        idx, dir = self.controller.file_manager.change_current_directory(QFileDialog.getExistingDirectory())
         if idx is not None:
             self.view.widgets.comparative_file_dir_tree_view.setRootIndex(idx)
 

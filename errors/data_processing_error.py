@@ -6,6 +6,10 @@ class DataProcessingError(Error):
     error_code = DATA_PROCESSING_ERROR_CODE
 
     def __init__(self, message=None):
+        '''
+        initializes DataProcessingError
+        @param message: error message
+        '''
         self.message = message
         if self.message is None:
             self.message = ERROR_MESSAGES[DataProcessingError.error_code]

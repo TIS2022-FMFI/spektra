@@ -16,6 +16,7 @@ class MainController(QObject):
         self.logger = LoggerController(key)
         self._measurement = MeasurementController()
 
+
     def _interconnect_file_manager_controller(self):
         # connects the file manager controller to other controllers
         self.file_manager.log_s.connect(lambda level, message, show_user: self.logger.log(level, message, show_user))
@@ -65,3 +66,4 @@ class MainController(QObject):
             
     def update_measurement_settings(self, key, value):
         self.data_processing.set_legend_field(key, value)
+

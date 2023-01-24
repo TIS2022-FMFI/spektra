@@ -1,13 +1,13 @@
 from PySide6 import QtCore
 from PySide6.QtCore import QObject, Signal, QThread
 
-#from models.data_processing.data_processing import DataProcessing
 from models.motor.Motor import Motor
 from models.lockin.lockin import SR510
 from models.disp_elem import Grating
 from models.data_processing.grid import Grid465645
-
+from models.data_processing.dataProcessing import DataProcessing
 from PySide6.QtCore import QEventLoop
+
 import time
 import serial
 
