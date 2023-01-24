@@ -56,8 +56,9 @@ class Graph(pg.PlotWidget):
         @param parent: parent widget of graph widget
         '''
         super(Graph, self).__init__(parent)
-        self.currentX = []
-        self.currentY = []
+        self.view = None
+        self.currentX = [12.499]
+        self.currentY = [10.209]
         self.oldX = []
         self.oldY = []
         self.setBackground('w')
@@ -129,9 +130,11 @@ class Graph(pg.PlotWidget):
                               pen='b', symbol='o', symbolSize=15,
                               symbolBrush=('b'))
 
-        if len(self.currentX) != 0 and len(self.currentY) != 0:
-            self.setLabel('top',
-                    str([self.currentX[-1], self.currentY[-1]]), **self.styles)
+        if len(self.currentX) != 0 and len(self.currentY) != 0 and self.view is not None:
+            self.view.widgets.devices_controls_current_wavelength_widget.setText(
+                "Posledné namerané hodnoty: x=" + str(self.currentX[-1]) + ", y="
+                + str(self.currentY[-1])
+            )
 
 
         if len(self.oldX) != 0 and len(self.oldY) != 0:

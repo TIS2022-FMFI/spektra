@@ -23,17 +23,19 @@ class MainWindow(QMainWindow):
         self._secret = random.random()
         self.view = View(self)
         self.controller = MainController(self._secret)
-        self.data_processing_controller = DataProcessingController(self.view)
-        self._connect_view_controller()
-        self.setWindowTitle(Settings.TITLE)
 
         self.view.widgets.graph_view.add_views(self.view)
         self.view.widgets.graph_view.add_logger(self.controller.logger)
+        self.view.widgets.graph_view.plotGraph()
         self.view.widgets.actionPorovnanie.triggered.connect(self.change_current_directory)
         self.view.widgets.action_save_as.triggered.connect(self.file_save)
-        self.view.widgets.action_exit.triggered.connect(lambda : self.controller.exit_measurement(self._secret))
+        self.view.widgets.action_exit.triggered.connect(lambda: self.controller.exit_measurement(self._secret))
         self.data_processing_controller = DataProcessingController(self.view, self._secret)
         self.data_processing_controller.add_logger(self.controller.logger)
+
+        self._connect_view_controller()
+        self.setWindowTitle(Settings.TITLE)
+
         self.show()
 
     def set_legend_item(self, q_line_edit, key):

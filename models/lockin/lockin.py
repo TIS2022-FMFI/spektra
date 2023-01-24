@@ -1,13 +1,15 @@
 import time
 import serial
-from lockin_data import lockin_data
+from .lockin_data import lockin_data
  
 class Lockin:
     def __init__(self, name):
         ld = lockin_data[name]
         sc = ld['serial_connection']
         if sc:
-            self.ser = serial.Serial(*sc.getsettings(), timeout=sc.timeout)
+            pass
+            #####ODKOMENTOVAT A ODSTRANIT PASS
+            #self.ser = serial.Serial(*sc.getsettings(), timeout=sc.timeout)
  
         self.name = name
         self.gain = ld['gain']

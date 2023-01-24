@@ -22,7 +22,7 @@ lockin_data = {
     }
 }
 
-with open('lockin_data.txt') as file:
+with open('models/lockin/lockin_data.txt') as file:
     try:
         for line in file:
             name = line.strip()

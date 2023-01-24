@@ -967,7 +967,7 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_5.addWidget(self.line_4)
 
-        self.devices_controls_current_wavelength_widget = QWidget(self.dockWidgetContents_3)
+        self.devices_controls_current_wavelength_widget = QLabel("Posledné namerané hodnoty: ")
         self.devices_controls_current_wavelength_widget.setObjectName(u"devices_controls_current_wavelength_widget")
         self.devices_controls_current_wavelength_widget.setFont(font2)
         self.horizontalLayout_7 = QHBoxLayout(self.devices_controls_current_wavelength_widget)
