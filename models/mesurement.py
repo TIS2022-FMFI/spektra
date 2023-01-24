@@ -74,34 +74,34 @@ class Measurement:
     def save_kalib(self):
         self._elem.save()
 
-    def getDistance(self, stop):
-        return round(stop - self.poloha, 2)
-
     def getSteps(self, distance):
         return self._elem.vlnaNaKroky(abs(distance))
 
-    def meraj(self, end=24.7, step_size=4):
+    def meraj(self, start=20, end=24, step_size=32):
+        if self.poloha is None:
+            print('initialize first before starting measurement')
+            return
+        
+        if self.poloha != start:
+            self.posunNaPoz(start)
+        
         self._lockin.prepare()
 
-        STEP_DELAY = 0.16
-        SLEEP_TIME = 0.5
-        DISTANCE = self.getDistance(end)
-        NO_ATOMIC_STEPS = self.getSteps(DISTANCE)
-        NO_STEPS = NO_ATOMIC_STEPS//step_size
+        distance = end - self.poloha
+        steps = self.getSteps(distance)
+        last_step = steps % step_size
+        data_points = steps // step_size + (1 if last_step != 0 else 0)
+        
+        print(f"vzd: {distance} \nkroky: {steps} \nnam.hodnot: {data_points}")
 
-        print(f"vzd: {DISTANCE} \nkroky atomicke: {NO_ATOMIC_STEPS} \nkroky: {NO_STEPS}")
+        for i in range(data_points):
+            time.sleep(self._motor.moveForward(step_size))
+            print(f"iter: {i} steps: {data_points}")
 
-        for iteration in range(NO_STEPS):
-            self._motor.moveForward(step_size)
-            print(f"iter: {iteration} steps: {NO_STEPS}")
-
-            time.sleep(STEP_DELAY * step_size)
-            measured_value = m._lockin.precitaj_hodnotu().decode('UTF-8')
-            print(f"pos: {(self.poloha+ self._elem.krokyNaVlna((iteration+1)*step_size)):.3f} measurement: {measured_value}")
-            time.sleep(SLEEP_TIME)
+            measured_value = m._lockin.precitaj_hodnotu()
+            print(f"pos: {(self.poloha+ self._elem.krokyNaVlna((i+1)*step_size)):.3f} measurement: {measured_value}")
             
-        time.sleep(SLEEP_TIME)
-        self.poloha = None
+        self.poloha = end
 
     def posunNaPoz(self, stop):
         if self.poloha is None or self.poloha == stop or not self._elem.canMove(stop):
@@ -140,23 +140,24 @@ class Measurement:
         self._motor.motor.close()
         self._lockin.ser.close()
 
-
-
+    def temp(self):
+        while True:
+            print(self._lockin.precitaj_hodnotu())
 
 if __name__ == '__main__':
     with Measurement() as m:
-        pass
+        m.temp()
 ##        m._motor.move(2, 'F')
 ##        m._motor.moveForward(1500)
 ##        m._motor.moveReverse(1500)
 
 ##        m.kalib_manual()
-##        m.inicializuj(24.6)
-##        m.meraj()
+        m.inicializuj(24)
+##        m.meraj(24, 24.2, 2)
 ##        m.posunForward(1000)
 ##        m.posunReverse(1000)
 
         
-##        while True:
-##            m.posunNaPoz(float(input('zadaj polohu')))
+        while True:
+            m.posunNaPoz(float(input('zadaj polohu')))
 
