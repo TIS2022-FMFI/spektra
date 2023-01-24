@@ -15,7 +15,7 @@ class FileManagerController(QObject):
         if directory == "":
             return
         idx = self._file_manager.change_current_directory(directory)
-        return idx
+        return idx, directory
 
     def get_model(self, key):
         if key == self._key:

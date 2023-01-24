@@ -6,12 +6,14 @@ from errors.data_processing_error import DataProcessingError
 import os
 
 class DataProcessing(QObject):
-
     def __init__(self):
+        '''
+        initializes data processing object
+        '''
         super(DataProcessing, self).__init__()
         self.file_name = ""
         self.path = self.get_default_path()
-        self.begining_of_data = '{: <20s}\t{: <20s}\t{}\n'.format(ALFA_COLLUMN, WAVE_LENGTH_COLLUMN, INTENSITY_COLLUMN)
+        self.beginning_of_data = '{: <20s}\t{: <20s}\t{}\n'.format(ALFA_COLLUMN, WAVE_LENGTH_COLLUMN, INTENSITY_COLLUMN)
         self.settings = MeasurementSettings()
         self.settings.load_last_json_legend()
 
@@ -36,6 +38,7 @@ class DataProcessing(QObject):
         @raise data_processing_error: raises an exception when trying to insert value under not
                                         allowed key
         """
+
         self.settings.set_setting_field(key, value)
 
     def set_unit_type_position(self, unit_type):
@@ -76,6 +79,7 @@ class DataProcessing(QObject):
         """
         if self.file_name == "":
             raise DataProcessingError("Nie je vyplnené meno súboru. Nie je možné pridať najnovšie meranie do súboru.")
+
         with open(self.path + self.file_name, 'a', encoding="utf-8") as current_file:
             line = '\n{: <20s}\t{: <20s}\t{}'.format(str(angle), str(wave_length), str(intensity))
             current_file.write(line)
@@ -91,7 +95,7 @@ class DataProcessing(QObject):
 
         with open(self.path + self.file_name, 'w', encoding="utf-8") as current_file:
             current_file.write(str(self.settings) + "\n\n")
-            current_file.write(self.begining_of_data)
+            current_file.write(self.beginning_of_data)
 
     def set_file_name(self, file_name):
         """
@@ -118,11 +122,15 @@ class DataProcessing(QObject):
         @return: measurement setting object loaded from file and a list of measurement data
         @raise data_processing_error: raises an exception if file is in wrong format (no data,
                                         wrong format of data, no legend or wromg format of the legend)
+                                        or it doesn't exists
         """
-        with open(file_name, 'r', encoding="utf-8") as f:
-            string_legend = self.read_legend_from_file(f)
-            loaded_settings = self.settings.load_string_legend(string_legend)
-            measurements = self.read_measurements_from_file(f)
+        try:
+            with open(file_name, 'r', encoding="utf-8") as f:
+                string_legend = self.read_legend_from_file(f)
+                loaded_settings = self.settings.load_string_legend(string_legend)
+                measurements = self.read_measurements_from_file(f)
+        except FileNotFoundError:
+            raise DataProcessingError("Neexistujúci súbor.")
 
         if measurements == []:
             raise DataProcessingError("Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
@@ -165,7 +173,7 @@ class DataProcessing(QObject):
         """
         line = file.readline()
         string_legend = ""
-        while line != '' and line != self.begining_of_data:
+        while line != '' and line != self.beginning_of_data:
             string_legend += line + "\n"
             line = file.readline()
 

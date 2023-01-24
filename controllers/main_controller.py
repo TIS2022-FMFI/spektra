@@ -5,7 +5,6 @@ from controllers.file_manager_controller import FileManagerController
 from controllers.logger_controller import LoggerController
 from controllers.measurement_controller.measurement_controller import MeasurementController
 
-
 class MainController(QObject):
     def __init__(self, key):
         super(MainController, self).__init__()
@@ -14,6 +13,7 @@ class MainController(QObject):
         self.file_manager = FileManagerController(key)
         self.logger = LoggerController(key)
         self._measurement = MeasurementController()
+
 
     def _interconnect_file_manager_controller(self):
         # connects the file manager controller to other controllers

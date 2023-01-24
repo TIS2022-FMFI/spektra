@@ -29,6 +29,7 @@ MEASURE_OF_SAMPLE_KEY = "measurementOfSample"
 THICKNESS_KEY = "thickness"
 NOTE_TO_TECH_KEY = "noteToTech"
 NAME_SAMPLE_KEY = "nameSample"
+UNIT = "unit"
 
 SAMPLE = "VZORKA"
 DISPERSE_ELEMENT = "DISPERZNÝ ELEMENT"
@@ -64,6 +65,10 @@ ROOT_DIR_NAME = "spektra"
 INTENSITY_COLLUMN = "INTENZITA[mV]"
 WAVE_LENGTH_COLLUMN = "VLNOVÁ DĹŽKA[A]"
 ALFA_COLLUMN = "ALFA[A°]"
+AUTO = "AUTO"
+MANUAL = "manuálne"
+GRID = "mriežka"
+DEFAULT_LEGEND_FILENAME = "lastSettings.txt"
 
 
 mandatory = [NAME_SAMPLE_KEY, NOTE_TO_TECH_KEY, THICKNESS_KEY,
@@ -80,7 +85,7 @@ mandatory = [NAME_SAMPLE_KEY, NOTE_TO_TECH_KEY, THICKNESS_KEY,
                  LOCK_IN_REFERENCE_KEY,
                  RANGE_KEY, PHASE_SHIFT_KEY, TIME_CONSTANT_KEY,
                  ]
-non_mandatory = [DATE_KEY, TIME_KEY]
+non_mandatory = [DATE_KEY, TIME_KEY, UNIT]
 
 class Unit(Enum):
      Uhol = "°"
