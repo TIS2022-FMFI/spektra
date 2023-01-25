@@ -7,9 +7,7 @@ class Lockin:
         ld = lockin_data[name]
         sc = ld['serial_connection']
         if sc:
-            pass
-            #####ODKOMENTOVAT A ODSTRANIT PASS
-            #self.ser = serial.Serial(*sc.getsettings(), timeout=sc.timeout)
+            self.ser = serial.Serial(*sc.getsettings(), timeout=sc.timeout)
  
         self.name = name
         self.gain = ld['gain']

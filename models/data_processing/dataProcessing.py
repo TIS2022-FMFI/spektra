@@ -129,6 +129,10 @@ class DataProcessing(QObject):
         self.set_postfix(postfix_str)
 
     def set_postfix(self, postfix_str):
+        '''
+        set value of postfix and adds postfix to filename
+        @param postfix_str: postfix of filename
+        '''
         self.file_name = self.file_name.replace(self.postfix + ".txt", postfix_str + ".txt")
         self.postfix = postfix_str
 

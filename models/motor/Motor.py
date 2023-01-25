@@ -8,8 +8,7 @@ class Motor:
     def __init__(self, portName, delay=0.05):
         self.delay = delay
 
-        #####ODKOMENTOVAT
-        #self.motor = serial.Serial(portName, 9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.5)
+        self.motor = serial.Serial(portName, 9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.5)
         
     def moveForward(self, steps):
         return self.move(steps, "F")
