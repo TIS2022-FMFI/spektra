@@ -2,3 +2,4 @@ pyside6~=6.4.0
 pyqtgraph~=0.13.1
 QtAwesome~=1.2.1
 qt-material~=2.12.0
+pyserial~=3.5
