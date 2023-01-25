@@ -1,10 +1,12 @@
 from PySide6 import QtCore
 from PySide6.QtCore import QObject, Signal, QThread
 
+from errors.data_processing_error import DataProcessingError
 from models.motor.Motor import Motor
 from models.lockin.lockin import SR510
 from models.disp_elem import Grating
 from models.data_processing.grid import Grid465645
+from models.logger.constants import *
 from models.data_processing.dataProcessing import DataProcessing
 from PySide6.QtCore import QEventLoop
 
@@ -33,17 +35,17 @@ class MeasurementController(QObject):
 
         if self._motor is None:
             self._motor = Motor('COM4')
-                
-        #self._data_processing = DataProcessing()
+
         self._measurement_thread = QThread()
         self._measurement_thread.setPriority(QThread.HighestPriority)
         self._measurement_thread.finished.connect(self._measurement_thread.deleteLater)
         self.moveToThread(self._measurement_thread)
         self._measurement_thread.start()
 
-    def set_dataproc_ref(self, dp, gr):
+    def set_dataproc_ref(self, dp, gr, log):
         self.dataproc = dp
         self.graph = gr
+        self.logger = log
 
     #@QtCore.Slot(str)
     def disp_elem_change(self, name):
@@ -54,8 +56,11 @@ class MeasurementController(QObject):
 
     def sendMeasurement(self, angle, value):
         wavelength = Grid465645().get_wave_length(angle)
-        
-        self.dataproc.data_processing.add_measurement(angle, wavelength, value)
+        try:
+            self.dataproc.data_processing.add_measurement(angle, wavelength, value)
+        except DataProcessingError as e:
+            self.logger.log(WARNING, e.message, True)
+            return
         self.graph.addMeasurement([[wavelength, value]], True)
         self.graph.plotGraph()
 
@@ -66,13 +71,20 @@ class MeasurementController(QObject):
     def start(self, start, end, stepsPerDataPoint):
         if self.angle is None:
             return
+
         
         distance = end - self.angle
         assert distance > 0 #assert for now
 
         self._lockin.prepare()
-        
-        self.dataproc.data_processing.create_new_file()
+
+        try:
+            self.dataproc.data_processing.create_new_file()
+        except DataProcessingError as e:
+            self.logger.log(WARNING, e.message, True)
+            return
+        self.graph.initialize()
+        self.graph.plotGraph()
         
         self.running = True
 

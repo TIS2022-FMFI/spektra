@@ -25,7 +25,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = DataProcessing()
+        dp = DataProcessing(None)
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -55,7 +55,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = DataProcessing()
+        dp = DataProcessing(None)
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -86,7 +86,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = DataProcessing()
+        dp = DataProcessing(None)
         dp.set_file_name("mojPokusOHlavicku")
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
@@ -113,7 +113,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = DataProcessing()
+        dp = DataProcessing(None)
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -144,7 +144,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = DataProcessing()
+        dp = DataProcessing(None)
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -186,7 +186,7 @@ class DataProcessingTests(unittest.TestCase):
             PHASE_SHIFT_KEY: '1', TIME_CONSTANT_KEY: '1'
         }
 
-        dp = DataProcessing()
+        dp = DataProcessing(None)
         for key, value in settingsDict.items():
             dp.set_legend_field(key, value)
 
@@ -213,7 +213,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_set_file_name(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
         # Act
         dp.set_file_name("pokus1.txt")
         # Assert
@@ -221,7 +221,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_set_file_path1(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
         # Act
         dp.set_file_name("pokus1")
         dp.set_file_path("C:\\Desktop\\priecinok")
@@ -230,7 +230,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_set_file_path2(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
         # Act
         dp.set_file_name("pokus1")
         dp.set_file_path("C:\\Desktop\\priecinok\\")
@@ -240,7 +240,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_load_measurement_from_file_no_measurements(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
 
         fileName = "test_file_no_measurements.txt"
         # Act
@@ -252,7 +252,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_load_measurement_from_file_not_enough_collums(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
 
         fileName = "test_file_not_enough_collums.txt"
         # Act
@@ -264,7 +264,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_load_measurement_from_file_not_float(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
 
         fileName = "test_file_not_float.txt"
         # Act
@@ -276,7 +276,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_load_measurement_from_file_right_data(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
 
         fileName = "test_file_right_data.txt"
         # Act
@@ -286,7 +286,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_load_measurement_from_file_without_start_of_measurments(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
 
         fileName = "test_file_without_start_of_measurments.txt"
         # Act
@@ -298,7 +298,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_load_measurement_from_file_wrong_legend(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
 
         fileName = "test_file_wrong_legend.txt"
         # Act
@@ -310,7 +310,7 @@ class DataProcessingTests(unittest.TestCase):
 
     def test_load_measurement_from_file_no_legend(self):
         # Arrange
-        dp = DataProcessing()
+        dp = DataProcessing(None)
 
         fileName = "test_file_no_legend.txt"
         # Act

@@ -38,9 +38,6 @@ class MainWindow(QMainWindow):
 
         self.show()
 
-    def set_legend_item(self, q_line_edit, key):
-        print("sprava ", q_line_edit.text())
-        
     def _connect_view_controller(self):
         # connect the view with controllers
         self._connect_file_manager_controller()
@@ -99,7 +96,7 @@ class MainWindow(QMainWindow):
         de_cbox = Widgets.devices_controls_devices_selection_disperse_cbox
         ms_cont = self.controller._measurement
 
-        ms_cont.set_dataproc_ref(self.data_processing_controller, self.view.widgets.graph_view)
+        ms_cont.set_dataproc_ref(self.data_processing_controller, self.view.widgets.graph_view, self.controller.logger)
 
         de_cbox.addItem('ms732')
         for i in range(5):

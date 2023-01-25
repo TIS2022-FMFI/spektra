@@ -57,7 +57,7 @@ class Graph(pg.PlotWidget):
         '''
         super(Graph, self).__init__(parent)
         self.view = None
-        self.currentX = [12.499]
+        self.currentX = [9]
         self.currentY = [10.209]
         self.oldX = []
         self.oldY = []
@@ -83,6 +83,10 @@ class Graph(pg.PlotWidget):
         @return:
         '''
         self.logger = logger
+
+    def initialize(self):
+        self.currentX = []
+        self.currentY = []
 
     def addMeasurement(self, measurements, current):
         '''
@@ -184,7 +188,7 @@ class Graph(pg.PlotWidget):
         file_path = QFileInfo(file_url.toLocalFile()).absoluteFilePath()
 
         try:
-            loaded_settings, measurements = DataProcessing().load_old_file(file_path)
+            loaded_settings, measurements = DataProcessing(self.view).load_old_file(file_path)
         except DataProcessingError as e:
             self.logger.log(WARNING, e.message, True)
             event.accept()
