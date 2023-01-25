@@ -57,8 +57,8 @@ class Graph(pg.PlotWidget):
         '''
         super(Graph, self).__init__(parent)
         self.view = None
-        self.currentX = [9]
-        self.currentY = [10.209]
+        self.currentX = []
+        self.currentY = []
         self.oldX = []
         self.oldY = []
         self.setBackground('w')
