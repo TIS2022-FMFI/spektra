@@ -7,8 +7,10 @@ class Motor:
     
     def __init__(self, portName, delay=0.05):
         self.delay = delay
-        self.motor = serial.Serial(portName, 9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.5)
-        
+        try:
+            self.motor = serial.Serial(portName, 9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.5)
+        except:
+            print('MOTOR NOT CONNECTED')
     def moveForward(self, steps):
         return self.move(steps, "F")
 
