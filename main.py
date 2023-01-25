@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
         self._secret = random.random()
         self.view = View(self)
         self.controller = MainController(self._secret)
-        self.data_processing_controller = DataProcessingController(self.view)
+        self.data_processing_controller = DataProcessingController(self.view, self._secret)
         self._connect_view_controller()
         self.setWindowTitle(Settings.TITLE)
 
