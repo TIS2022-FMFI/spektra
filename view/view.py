@@ -156,3 +156,6 @@ class View(QObject):
     def switch_play_button(self):
         self.widgets.action_play.setVisible(not self.widgets.action_play.isVisible())
         self.widgets.action_stop.setVisible(not self.widgets.action_stop.isVisible())
+
+    def show_calibration_dialog(self):
+        self.widgets.calibration_dialog.show()
