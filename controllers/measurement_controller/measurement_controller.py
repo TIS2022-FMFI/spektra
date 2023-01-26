@@ -54,6 +54,16 @@ class MeasurementController(QObject):
         if self._elem.IsCalib() is False:
             print('kal nexist. treba kalibrovat')
 
+    def adjust_sensitivity(self, measuredValue):
+        cur_gain = self._lockin.current_gain()
+        if measuredValue >= 0.85 * cur_gain:  # ak je hodnota vacsia nez 85% rozsahu
+            self._lockin.lower_gain()
+            print(f'Zosilnenie sa znizilo na {self._lockin.current_gain()}')
+
+        if measuredValue <= 0.1 * cur_gain:  # ak je hodnota mensia nez 10% rozsahu
+            self._lockin.higher_gain()
+            print(f'Zosilnenie sa zvysilo na {self._lockin.current_gain()}')
+
     def sendMeasurement(self, angle, value):
         wavelength = Grid465645().get_wave_length(angle)
         try:
@@ -72,7 +82,6 @@ class MeasurementController(QObject):
         if self.angle is None:
             return
 
-        
         distance = end - self.angle
         assert distance > 0 #assert for now
 
@@ -111,6 +120,7 @@ class MeasurementController(QObject):
             
             measured_value = self._lockin.precitaj_hodnotu()
             self.sendMeasurement(self.angle, measured_value)
+            self.adjust_sensitivity(measured_value)
             
             print(f"pos: {self.angle:.3f} measurement: {measured_value}")
 
