@@ -1,3 +1,22 @@
+
+# create a dataclass CalibrationData
+from dataclasses import dataclass
+
+
+
+@dataclass
+class CalibrationData:
+    name: str
+    spectral: float
+    G: float
+    correction: float
+    multiplier: float
+    min_angle: float
+    max_angle: float
+    start_pos: float
+    end_pos: float
+    steps: int
+
 class DisperseElement:
     defaultMinAngle = 16
     defaultMaxAngle = 28
@@ -34,6 +53,13 @@ class DisperseElement:
                 subor.write(str(self.minAngle) + '\n')
                 subor.write(str(self.maxAngle) + '\n')
 
+    def save_calibration(self, start, end, steps):
+        if self.angleDelta is not None:
+            with open(f'models/elements/{self.name}.txt', 'w') as subor:
+                subor.write(str(self.angleDelta) + '\n')
+                subor.write(str(self.steps) + '\n')
+                subor.write(str(self.minAngle) + '\n')
+                subor.write(str(self.maxAngle) + '\n')
     def angleToSteps(self, ang):
         pass
 

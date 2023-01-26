@@ -129,6 +129,9 @@ class MainWindow(QMainWindow):
         Widgets.action_play.triggered.connect(self.view.switch_play_button)
         Widgets.action_stop.triggered.connect(self.view.switch_play_button)
         Widgets.action_stop.triggered.connect(self.controller.stop_measurement)
+        Widgets.actionKalibr_cia.triggered.connect(self.view.show_calibration_dialog)
+        Widgets.calibration_dialog.calibration_data_s.connect(lambda data: self.controller.create_calibration(data))
+        Widgets.calibration_dialog.step_button.clicked.connect(lambda: self.controller.move_forward(Widgets.calibration_dialog.step_size.value()))
 
 
     def test(self):
