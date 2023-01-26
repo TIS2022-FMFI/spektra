@@ -696,7 +696,7 @@ class Ui_MainWindow(object):
         self.progressBar.setMaximumSize(QSize(16777215, 4))
         self.progressBar.setFont(font)
         self.progressBar.setStyleSheet(u"")
-        self.progressBar.setValue(24)
+        self.progressBar.setValue(0)
         self.progressBar.setAlignment(Qt.AlignCenter)
 
         self.gridLayout.addWidget(self.progressBar, 3, 0, 1, 1)

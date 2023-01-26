@@ -35,6 +35,16 @@ class DisperseElement:
                 subor.write(str(self.maxAngle) + '\n')
 
     def angleToSteps(self, ang):
+        pass
+
+    def stepsToAngle(self, steps):
+        pass
+
+    def canMove(self, cur_ang):
+        return self.maxAngle >= cur_ang >= self.minAngle
+    
+class Grating(DisperseElement):
+    def angleToSteps(self, ang):
         return int(ang * self.steps / self.angleDelta)
 
     def stepsToAngle(self, steps):
@@ -43,11 +53,6 @@ class DisperseElement:
     def calibrateAngStep(self, start, end, steps):
         self.angleDelta = end - start
         self.steps = steps
-
-    def canMove(self, cur_ang):
-        return self.maxAngle >= cur_ang >= self.minAngle
-    
-class Grating(DisperseElement):
     def angleToWavelength(self, ang):
         pass
         

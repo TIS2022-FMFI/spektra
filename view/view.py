@@ -14,7 +14,6 @@ from view.constants import DAY_MODE, NIGHT_MODE
 class View(QObject):
     widgets = None
     saved_measurements_path_s = Signal(str)
-    voltmeter_connection_s = Signal(bool)
 
     class _DisplayLog(QRunnable):
         def __init__(self, log: Log):
@@ -112,10 +111,9 @@ class View(QObject):
         enabled = self.widgets.devices_controls_engine_positioning_right_btn.isEnabled()
         self.widgets.devices_controls_engine_positioning_right_btn.setIcon(self._icons.get('right_arrow', self.mode,
                                                                                            enabled))
-        self.update_voltmeter_indicator()
+        self._update_voltmeter_indicator()
 
     def setup_connections(self):
-        self.voltmeter_connection_s.connect(lambda x: self._on_voltmeter_connection_change(x))
         action_ui_mode = self._get_action('action_ui_mode')
         action_ui_mode.triggered.connect(self._on_ui_mode_change)
 
@@ -126,11 +124,11 @@ class View(QObject):
             self.mode = DAY_MODE
         self.display_theme()
 
-    def _on_voltmeter_connection_change(self, connected):
+    def on_voltmeter_connection_change(self, connected):
         self._voltmeter_connected = connected
-        self.update_voltmeter_indicator()
+        self._update_voltmeter_indicator()
 
-    def update_voltmeter_indicator(self):
+    def _update_voltmeter_indicator(self):
         if self._voltmeter_connected:
             self._display_voltmeter_connected()
         else:

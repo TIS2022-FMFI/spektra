@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
         random.seed(datetime.now().microsecond)
         self._secret = random.random()
         self.view = View(self)
-        self.controller = MainController(self._secret)
+        self.controller = MainController(self.view, self._secret)
 
         self.view.widgets.graph_view.add_views(self.view)
         self.view.widgets.graph_view.add_logger(self.controller.logger)
@@ -94,24 +94,15 @@ class MainWindow(QMainWindow):
 
     def _connect_measurement_controller(self):
         Widgets = self.view.widgets
-        de_cbox = Widgets.devices_controls_devices_selection_disperse_cbox
+
         ms_cont = self.controller._measurement
-
         ms_cont.set_dataproc_ref(self.data_processing_controller, self.view.widgets.graph_view, self.controller.logger)
-
-        de_cbox.addItem('ms732')
-        for i in range(5):
-            de_cbox.addItem(f'mriezka{i}')
-        
-        de_cbox.activated.connect(
-            lambda: ms_cont.disp_elem_change(de_cbox.currentText()))
-        ms_cont.disp_elem_change(de_cbox.currentText())
 
         self.controller._measurement.state_s.connect(lambda x: self.controller.logger.log(40, x, True))
         Widgets.comparative_file_unload_btn.clicked.connect(self.test)
 
         # moveForward/moveReverse
-        noStepsValue = lambda : Widgets.devices_controls_engine_positioning_step_sbox.value()
+        noStepsValue = lambda: int(Widgets.devices_controls_engine_positioning_step_sbox.value())
         Widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
             lambda:self.controller.move_reverse(noStepsValue()))
         Widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
