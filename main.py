@@ -1,3 +1,4 @@
+
 import random
 import sys
 import os
@@ -23,22 +24,21 @@ class MainWindow(QMainWindow):
         self._secret = random.random()
         self.view = View(self)
         self.controller = MainController(self._secret)
-        self.data_processing_controller = DataProcessingController(self.view, self._secret)
-        self._connect_view_controller()
-        self.setWindowTitle(Settings.TITLE)
 
         self.view.widgets.graph_view.add_views(self.view)
         self.view.widgets.graph_view.add_logger(self.controller.logger)
+        self.view.widgets.graph_view.plotGraph()
         self.view.widgets.actionPorovnanie.triggered.connect(self.change_current_directory)
         self.view.widgets.action_save_as.triggered.connect(self.file_save)
-        self.view.widgets.action_exit.triggered.connect(lambda : self.controller.exit_measurement(self._secret))
+        self.view.widgets.action_exit.triggered.connect(lambda: self.controller.exit_measurement(self._secret))
         self.data_processing_controller = DataProcessingController(self.view, self._secret)
         self.data_processing_controller.add_logger(self.controller.logger)
+
+        self._connect_view_controller()
+        self.setWindowTitle(Settings.TITLE)
+
         self.show()
 
-    def set_legend_item(self, q_line_edit, key):
-        print("sprava ", q_line_edit.text())
-        
     def _connect_view_controller(self):
         # connect the view with controllers
         self._connect_file_manager_controller()
@@ -97,7 +97,7 @@ class MainWindow(QMainWindow):
         de_cbox = Widgets.devices_controls_devices_selection_disperse_cbox
         ms_cont = self.controller._measurement
 
-        ms_cont.set_dataproc_ref(self.data_processing_controller, self.view.widgets.graph_view)
+        ms_cont.set_dataproc_ref(self.data_processing_controller, self.view.widgets.graph_view, self.controller.logger)
 
         de_cbox.addItem('ms732')
         for i in range(5):
@@ -150,3 +150,4 @@ if __name__ == "__main__":
     window = MainWindow()
     window.show()
     sys.exit(app.exec())
+

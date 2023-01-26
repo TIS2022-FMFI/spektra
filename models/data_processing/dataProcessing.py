@@ -6,16 +6,18 @@ from errors.data_processing_error import DataProcessingError
 import os
 
 class DataProcessing(QObject):
-    def __init__(self):
+    def __init__(self, view):
         '''
         initializes data processing object
         '''
         super(DataProcessing, self).__init__()
         self.file_name = ""
+        self.view = view
         self.path = self.get_default_path()
         self.beginning_of_data = '{: <20s}\t{: <20s}\t{}\n'.format(ALFA_COLLUMN, WAVE_LENGTH_COLLUMN, INTENSITY_COLLUMN)
         self.settings = MeasurementSettings()
         self.settings.load_last_json_legend()
+        self.postfix = ""
 
     def get_default_path(self):
         """
@@ -63,8 +65,7 @@ class DataProcessing(QObject):
         """
         if not self.settings.check_completness_of_legend():
             raise DataProcessingError("Legenda nie je kompletne vyplnená. Nie je možne vytvoriť nový súbor pre meranie.")
-
-        self.write_legend()
+        self.write_legend(True)
         self.settings.store_last_json_legend()
 
     def add_measurement(self, angle, wave_length, intensity):
@@ -81,10 +82,11 @@ class DataProcessing(QObject):
             raise DataProcessingError("Nie je vyplnené meno súboru. Nie je možné pridať najnovšie meranie do súboru.")
 
         with open(self.path + self.file_name, 'a', encoding="utf-8") as current_file:
+            #line = '\n{: <20s}\t{: <20s}\t{}'.format(str(angle), str(wave_length * 10), str(intensity))
             line = '\n{: <20s}\t{: <20s}\t{}'.format(str(angle), str(wave_length), str(intensity))
             current_file.write(line)
 
-    def write_legend(self):
+    def write_legend(self, postfix = False):
         """
         creates new file and writes string representation of the measurement settings in it.
         @raise data_processing_error: raises an exception if there was no name of the
@@ -92,16 +94,56 @@ class DataProcessing(QObject):
         """
         if self.file_name == "":
             raise DataProcessingError("Nie je vyplnené meno súboru. Nie je možné vytvoriť nový súbor pre meranie.")
+        if postfix:
+            self.increase_postfix()
 
         with open(self.path + self.file_name, 'w', encoding="utf-8") as current_file:
             current_file.write(str(self.settings) + "\n\n")
             current_file.write(self.beginning_of_data)
+            if self.view is not None:
+                self.view.widgets.measurement_config_menu_filename_ledit.setText(
+                    self.file_name.replace(".txt", "")
+                )
+
+    def increase_postfix(self):
+        '''
+        finds out if there already exists file with the same name. If there is,
+        adds number postfix
+        '''
+        filename = self.path + self.file_name.replace(self.postfix + ".txt", "")
+        if self.postfix == "":
+            postfix = 0
+            postfix_str = ""
+        else:
+            postfix = int(self.postfix)
+            postfix_str = str(postfix)
+        while True:
+            try:
+                with open(filename + postfix_str + ".txt", 'r', encoding="utf-8") as f:
+                    if f.read() == "":
+                        break
+                    postfix += 1
+                    postfix_str = str(postfix)
+            except FileNotFoundError:
+                break
+        self.set_postfix(postfix_str)
+
+    def set_postfix(self, postfix_str):
+        '''
+        set value of postfix and adds postfix to filename
+        @param postfix_str: postfix of filename
+        '''
+        self.file_name = self.file_name.replace(self.postfix + ".txt", postfix_str + ".txt")
+        self.postfix = postfix_str
 
     def set_file_name(self, file_name):
         """
         sets name of file of a current measurement and adds .txt at the end if needed
         @param file_name: name of a file
         """
+        if file_name.replace(".txt", "") == self.file_name.replace(".txt", ""):
+            return
+        self.postfix = ""
         if file_name[-4:] != ".txt":
             file_name += ".txt"
         self.file_name = file_name

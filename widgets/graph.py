@@ -56,6 +56,7 @@ class Graph(pg.PlotWidget):
         @param parent: parent widget of graph widget
         '''
         super(Graph, self).__init__(parent)
+        self.view = None
         self.currentX = []
         self.currentY = []
         self.oldX = []
@@ -82,6 +83,10 @@ class Graph(pg.PlotWidget):
         @return:
         '''
         self.logger = logger
+
+    def initialize(self):
+        self.currentX = []
+        self.currentY = []
 
     def addMeasurement(self, measurements, current):
         '''
@@ -129,9 +134,11 @@ class Graph(pg.PlotWidget):
                               pen='b', symbol='o', symbolSize=15,
                               symbolBrush=('b'))
 
-        if len(self.currentX) != 0 and len(self.currentY) != 0:
-            self.setLabel('top',
-                    str([self.currentX[-1], self.currentY[-1]]), **self.styles)
+        if len(self.currentX) != 0 and len(self.currentY) != 0 and self.view is not None:
+            self.view.widgets.devices_controls_current_wavelength_widget.setText(
+                "Posledné namerané hodnoty: x=" + str(self.currentX[-1]) + ", y="
+                + str(self.currentY[-1])
+            )
 
 
         if len(self.oldX) != 0 and len(self.oldY) != 0:
@@ -181,7 +188,7 @@ class Graph(pg.PlotWidget):
         file_path = QFileInfo(file_url.toLocalFile()).absoluteFilePath()
 
         try:
-            loaded_settings, measurements = DataProcessing().load_old_file(file_path)
+            loaded_settings, measurements = DataProcessing(self.view).load_old_file(file_path)
         except DataProcessingError as e:
             self.logger.log(WARNING, e.message, True)
             event.accept()
