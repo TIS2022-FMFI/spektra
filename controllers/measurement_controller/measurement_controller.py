@@ -16,7 +16,8 @@ import serial
 class MeasurementController(QObject):
     state_s = Signal(str)
     progress_s = Signal(float)
-    
+    measurement_error_s = Signal()
+
     def __init__(self):
         super(MeasurementController, self).__init__()
         self.angle = None
@@ -70,11 +71,13 @@ class MeasurementController(QObject):
     @QtCore.Slot(float, float, int)
     def start(self, start, end, stepsPerDataPoint):
         if self.angle is None:
+            self.measurement_error_s.emit()
             return
 
         
         distance = end - self.angle
-        assert distance > 0 #assert for now
+        if distance > 0:
+            self.measurement_error_s.emit()
 
         self._lockin.prepare()
 

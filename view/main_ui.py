@@ -57,8 +57,6 @@ class Ui_MainWindow(object):
         self.action_stop = QAction(MainWindow)
         self.action_stop.setObjectName(u"action_stop")
         icon1 = QIcon()
-        icon1.addFile(u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/stop_circle_FILL0_wght400_GRAD0_opsz48.svg", QSize(), QIcon.Normal, QIcon.Off)
-        self.action_stop.setIcon(icon1)
         self.action_new = QAction(MainWindow)
         self.action_new.setObjectName(u"action_new")
         font1 = QFont()
@@ -266,12 +264,8 @@ class Ui_MainWindow(object):
         self.measurement_config_menu_filename_ledit.setSizePolicy(sizePolicy2)
         self.measurement_config_menu_filename_ledit.setFont(font2)
         self.measurement_config_menu_filename_ledit.setStyleSheet(u"")
-
         self.horizontalLayout_11.addWidget(self.measurement_config_menu_filename_ledit)
-
-
         self.verticalLayout_12.addWidget(self.widget_6)
-
         self.widget_5 = QWidget(self.widget_7)
         self.widget_5.setObjectName(u"widget_5")
         sizePolicy.setHeightForWidth(self.widget_5.sizePolicy().hasHeightForWidth())
@@ -301,27 +295,17 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.measurement_config_menu_end_label.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_end_label.setSizePolicy(sizePolicy)
         self.measurement_config_menu_end_label.setFont(font)
-
         self.horizontalLayout_10.addWidget(self.measurement_config_menu_end_label)
-
         self.measurement_config_menu_start_sbox = QDoubleSpinBox(self.widget_5)
         self.measurement_config_menu_start_sbox.setObjectName(u"measurement_config_menu_start_sbox")
         sizePolicy1.setHeightForWidth(self.measurement_config_menu_start_sbox.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_start_sbox.setSizePolicy(sizePolicy1)
         self.measurement_config_menu_start_sbox.setFont(font2)
-
         self.horizontalLayout_10.addWidget(self.measurement_config_menu_start_sbox)
-
-
         self.verticalLayout_12.addWidget(self.widget_5)
-
-
         self.horizontalLayout_9.addWidget(self.widget_7)
-
         self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
         self.horizontalLayout_9.addItem(self.horizontalSpacer_4)
-
         self.widget = QWidget(self.measurement_config_menu_meas_widget)
         self.widget.setObjectName(u"widget")
         sizePolicy3 = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
@@ -375,8 +359,6 @@ class Ui_MainWindow(object):
         self.horizontalSpacer_12 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_9.addItem(self.horizontalSpacer_12)
-
-
         self.horizontalLayout_2.addWidget(self.measurement_config_menu_meas_widget)
 
         self.measurement_config_menu_tabs.addTab(self.measurement_config_tab, "")
