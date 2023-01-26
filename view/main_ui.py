@@ -27,6 +27,8 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDockWidget,
                                QToolBar, QToolBox, QTreeView, QVBoxLayout,
                                QWidget, QListWidget)
 import pyqtgraph as pg
+
+from view.calibration_dialog import CalibrationDialog
 from widgets.graph import Graph
 from view.constants import *
 
@@ -89,16 +91,12 @@ class Ui_MainWindow(object):
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(9, 0, 9, 9)
-
-
         self.graph_view = Graph(self.central_widget)
         self.graph_view.setObjectName(u"graph_view")
         font2 = QFont()
         font2.setBold(True)
         self.graph_view.setFont(font2)
-
         self.gridLayout.addWidget(self.graph_view, 2, 0, 1, 1)
-
         self.measurement_config_menu = QWidget(self.central_widget)
         self.measurement_config_menu.setObjectName(u"measurement_config_menu")
         self.measurement_config_menu.setFont(font)
@@ -174,15 +172,11 @@ class Ui_MainWindow(object):
 
         self.sample_width_dsbox = QDoubleSpinBox(self.widget_4)
         self.sample_width_dsbox.setObjectName(u"sample_width_dsbox")
-
         self.horizontalLayout_8.addWidget(self.sample_width_dsbox)
-
-
         self.verticalLayout_8.addWidget(self.widget_4)
 
-
         self.gridLayout_11.addWidget(self.widget_3, 0, 0, 1, 1)
-
+        self.calibration_dialog = CalibrationDialog(MainWindow)
         self.sample_notes = QWidget(self.widget_8)
         self.sample_notes.setObjectName(u"sample_notes")
         self.formLayout_2 = QFormLayout(self.sample_notes)
