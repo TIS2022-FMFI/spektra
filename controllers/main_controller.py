@@ -8,14 +8,13 @@ from controllers.measurement_controller.measurement_controller import Measuremen
 from functools import partial
 
 class MainController(QObject):
-    def __init__(self, key):
+    def __init__(self, view, key):
         super(MainController, self).__init__()
         self.workers = QThreadPool().globalInstance()
         self._key = key
         self.file_manager = FileManagerController(key)
         self.logger = LoggerController(key)
-        self._measurement = MeasurementController()
-
+        self._measurement = MeasurementController(view)
 
     def _interconnect_file_manager_controller(self):
         # connects the file manager controller to other controllers

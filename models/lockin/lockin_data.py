@@ -1,9 +1,8 @@
 import serial
 
-
 class SerialConnectionData:
-    def __init__(self, prt, bdr, bsz, par, stb, tim):
-        self.port = prt
+    def __init__(self, bdr, bsz, par, stb, tim):
+        self.port = None
         self.baudrate = bdr
         self.bytesize = bsz
         self.parity = par
@@ -11,8 +10,7 @@ class SerialConnectionData:
         self.timeout = tim
 
     def getsettings(self):
-        return self.port, self.baudrate, self.bytesize, self.parity, self.stopbits
-
+        return self.baudrate, self.bytesize, self.parity, self.stopbits
 
 sc = SerialConnectionData
 
