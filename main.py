@@ -126,6 +126,11 @@ class MainWindow(QMainWindow):
         Widgets.action_play.triggered.connect(
             lambda:self.controller.start_measurement(startValue(), endValue(), motorStepValue()))
 
+        Widgets.action_play.triggered.connect(self.view.switch_play_button)
+        Widgets.action_stop.triggered.connect(self.view.switch_play_button)
+        Widgets.action_stop.triggered.connect(self.controller.stop_measurement)
+
+
     def test(self):
         print("test() thread id: ")
         print(QThread.currentThread())

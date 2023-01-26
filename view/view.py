@@ -88,8 +88,7 @@ class View(QObject):
             self._icons = Icons()
         enabled = self.widgets.action_play.isEnabled()
         self.widgets.action_play.setIcon(self._icons.get('start_measurement', self.mode, enabled))
-        enabled = self.widgets.action_stop.isEnabled()
-        self.widgets.action_stop.setIcon(self._icons.get('stop_measurement', self.mode, enabled))
+        self.widgets.action_stop.setIcon(self._icons.get('stop_measurement', self.mode, True))
         enabled = self.widgets.action_save.isEnabled()
         self.widgets.action_save.setIcon(self._icons.get('save_measurement', self.mode, enabled))
         # enabled = self.widgets.action_measurement_file.isEnabled()
@@ -144,12 +143,16 @@ class View(QObject):
         voltmeter_connect_action = self._get_action('voltmeter_connect_action')
         status_bar_message = "Voltmeter je odpojený"
         self.update_status_bar(status_bar_message)
-        voltmeter_connect_action.setIcon(self._icons.get('voltmeter_disconnected', DAY_MODE))
+        voltmeter_connect_action.setIcon(self._icons.get('voltmeter_disconnected', DAY_MODE, True))
         voltmeter_connect_action.setToolTip("Voltmeter odpojený")
 
     def _display_voltmeter_connected(self):
         voltmeter_connect_action = self._get_action('voltmeter_connect_action')
         status_bar_message = "Voltmeter je pripojený"
         self.update_status_bar(status_bar_message)
-        voltmeter_connect_action.setIcon(self._icons.get('voltmeter_connected', DAY_MODE))
+        voltmeter_connect_action.setIcon(self._icons.get('voltmeter_connected', DAY_MODE, True))
         voltmeter_connect_action.setToolTip("Voltmeter pripojený")
+
+    def switch_play_button(self):
+        self.widgets.action_play.setVisible(not self.widgets.action_play.isVisible())
+        self.widgets.action_stop.setVisible(not self.widgets.action_stop.isVisible())
