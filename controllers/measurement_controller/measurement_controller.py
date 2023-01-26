@@ -16,21 +16,14 @@ from serial.tools import list_ports
 class MeasurementController(QObject):
     state_s = Signal(str)
     progress_s = Signal(float)
+    voltmeter_status_s = Signal(bool)
     
-    def __init__(self, view):
+    def __init__(self):
         super(MeasurementController, self).__init__()
-        self.view = view
-        Widgets = self.view.widgets
-        self.fazovy_posun_btn = Widgets.measurement_config_menu_angle_sbox
-        self.casova_konstanta = Widgets.measurement_config_menu_time_const_dsbox
-        self.fazovy_posun_btn = Widgets.measurement_config_menu_angle_sbox
-        self.fazovy_posun_btn = Widgets.measurement_config_menu_angle_sbox
-
-        self.dispElemCBox = view.widgets.devices_controls_devices_selection_disperse_cbox
-        self.dispElemCBox.activated.connect(
-            lambda: self.disp_elem_change(self.dispElemCBox.currentText()))
-
-        self.disp_elem_change(self.dispElemCBox.currentText())
+        #self.fazovy_posun_btn = Widgets.measurement_config_menu_angle_sbox
+        #self.casova_konstanta = Widgets.measurement_config_menu_time_const_dsbox
+        #self.fazovy_posun_btn = Widgets.measurement_config_menu_angle_sbox
+        #self.fazovy_posun_btn = Widgets.measurement_config_menu_angle_sbox
 
         self.angle = None
         self.running = False
@@ -44,6 +37,8 @@ class MeasurementController(QObject):
         self.timer = QTimer()
         self.timer.timeout.connect(self.check_lockin_availability)
         self.timer.start(1000)
+
+        self.check_lockin_availability()
 
         if self._motor is None:
             #self.check_motor_availability()
@@ -63,13 +58,13 @@ class MeasurementController(QObject):
         availableComPorts = list_ports.comports()
         for acp in availableComPorts:
             if acp.serial_number == self.sr510_sn:
-                print(acp.name)
                 self.lockin_comport = acp.name
-                if self._lockin is not None:
+                if self._lockin is None:
                     self.connect_lockin()
-                self.view.on_voltmeter_connection_change(True)
+
+                self.voltmeter_status_s.emit(True)
                 return
-        self.view.on_voltmeter_connection_change(False)
+        self.voltmeter_status_s.emit(False)
 
     def connect_lockin(self):
         self._lockin = SR510(self.lockin_comport)
@@ -78,7 +73,7 @@ class MeasurementController(QObject):
         self.graph = gr
         self.logger = log
 
-    #@QtCore.Slot(str)
+    @QtCore.Slot(str)
     def disp_elem_change(self, name):
         print(name)
         self._elem = Grating(name)
@@ -150,7 +145,7 @@ class MeasurementController(QObject):
             if self.running == False:
                 break
 
-            self.view.progressBar.setValue(i // data_points)
+            self.progress_s.emit(i / data_points * 100)
             print(f"iter: {i}")
                 
             duration = self._motor.moveForward(stepsPerDataPoint)
@@ -172,7 +167,8 @@ class MeasurementController(QObject):
             self.sendMeasurement(self.angle, measured_value)
             
             print(f"pos: {self.angle:.3f} measurement: {measured_value}")
-            
+
+        self.progress_s.emit(100)
         self.running = False
 
 ##    @QtCore.Slot()

@@ -10,11 +10,21 @@ from functools import partial
 class MainController(QObject):
     def __init__(self, view, key):
         super(MainController, self).__init__()
+        self.view = view
         self.workers = QThreadPool().globalInstance()
         self._key = key
         self.file_manager = FileManagerController(key)
         self.logger = LoggerController(key)
-        self._measurement = MeasurementController(view)
+        self._measurement = MeasurementController()
+
+        self._measurement.progress_s.connect(lambda p: self.view.widgets.progressBar.setValue(p))
+        self.dispElemCBox = self.view.widgets.devices_controls_devices_selection_disperse_cbox
+        self.dispElemCBox.activated.connect(self.disp)
+
+        self._measurement.progress_s.connect(lambda p: self.view.switch_play_button() if p == 100 else None)
+
+        self._measurement.voltmeter_status_s.connect(lambda connected: self.view.on_voltmeter_connection_change(connected))
+
 
     def _interconnect_file_manager_controller(self):
         # connects the file manager controller to other controllers
@@ -29,7 +39,11 @@ class MainController(QObject):
             Q_ARG(float,stop),
             Q_ARG(int,stepSize),
             )
-            
+
+    def disp(self):
+        dispname = self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentText()
+        QMetaObject.invokeMethod(self._measurement, 'disp_elem_change', Qt.QueuedConnection, Q_ARG(str,dispname))
+
     def stop_measurement(self):
         QMetaObject.invokeMethod(self._measurement, 'stop', Qt.QueuedConnection)
         
