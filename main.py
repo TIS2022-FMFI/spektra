@@ -99,7 +99,6 @@ class MainWindow(QMainWindow):
         
         # moveForward/moveReverse
         steps_box = Widgets.devices_controls_engine_positioning_step_sbox
-        steps_box.setRange(0, 1000)
         steps_box.setSingleStep(1)
         noStepsValue = lambda : int(steps_box.value())
         Widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
