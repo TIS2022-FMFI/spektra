@@ -91,6 +91,8 @@ class MeasurementController(QObject):
         self._elem = Grating(name)
 
     def adjust_sensitivity(self, measuredValue):
+        #todo 3*pre_time_constant sleep after change
+
         if measuredValue < 0:
             return
 
@@ -187,7 +189,7 @@ class MeasurementController(QObject):
             time.sleep(duration)
             self.angle += anglePerDataPoint
 
-            measured_values = [self._lockin.read_value() for _ in integrations]
+            measured_values = [self._lockin.read_value() for _ in range(integrations)]
             measured_value = sum(measured_values) / len(measured_values)
 
             self.sendMeasurement(self.angle, elem, measured_value, correction)
@@ -200,7 +202,7 @@ class MeasurementController(QObject):
             time.sleep(duration)
             self.angle += elem.stepsToAngle(last_step)
 
-            measured_values = [self._lockin.read_value() for _ in integrations]
+            measured_values = [self._lockin.read_value() for _ in range(integrations)]
             measured_value = sum(measured_values) / len(measured_values)
 
             self.sendMeasurement(self.angle, elem, measured_value, correction)
