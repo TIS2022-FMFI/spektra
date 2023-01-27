@@ -10,13 +10,13 @@ import sys
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
+                            QMetaObject, QObject, QPoint, QRect,
+                            QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
-    QCursor, QFont, QFontDatabase, QGradient,
-    QIcon, QImage, QKeySequence, QLinearGradient,
-    QPainter, QPalette, QPixmap, QRadialGradient,
-    QTransform)
+                           QCursor, QFont, QFontDatabase, QGradient,
+                           QIcon, QImage, QKeySequence, QLinearGradient,
+                           QPainter, QPalette, QPixmap, QRadialGradient,
+                           QTransform)
 from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDockWidget,
                                QDoubleSpinBox, QFormLayout, QFrame, QGraphicsView,
                                QGridLayout, QHBoxLayout, QHeaderView, QLCDNumber,
@@ -50,16 +50,21 @@ class Ui_MainWindow(object):
         MainWindow.setFont(font)
         MainWindow.setStyleSheet(u"")
         MainWindow.setDockNestingEnabled(True)
-        MainWindow.setDockOptions(QMainWindow.AllowNestedDocks|QMainWindow.AllowTabbedDocks|QMainWindow.AnimatedDocks|QMainWindow.GroupedDragging|QMainWindow.VerticalTabs)
+        MainWindow.setDockOptions(
+            QMainWindow.AllowNestedDocks | QMainWindow.AllowTabbedDocks | QMainWindow.AnimatedDocks | QMainWindow.GroupedDragging | QMainWindow.VerticalTabs)
         self.action_play = QAction(MainWindow)
         self.action_play.setObjectName(u"action_play")
         icon = QIcon()
-        icon.addFile(u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/play_circle_FILL0_wght400_GRAD0_opsz48.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(
+            u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/play_circle_FILL0_wght400_GRAD0_opsz48.svg",
+            QSize(), QIcon.Normal, QIcon.Off)
         self.action_play.setIcon(icon)
         self.action_stop = QAction(MainWindow)
         self.action_stop.setObjectName(u"action_stop")
         icon1 = QIcon()
-        icon1.addFile(u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/stop_circle_FILL0_wght400_GRAD0_opsz48.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon1.addFile(
+            u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/stop_circle_FILL0_wght400_GRAD0_opsz48.svg",
+            QSize(), QIcon.Normal, QIcon.Off)
         self.action_stop.setIcon(icon1)
         self.action_new = QAction(MainWindow)
         self.action_new.setObjectName(u"action_new")
@@ -159,9 +164,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setVerticalStretch(0)
         sizePolicy1.setHeightForWidth(self.sample_temperature_ledit.sizePolicy().hasHeightForWidth())
         self.sample_temperature_ledit.setSizePolicy(sizePolicy1)
-
         self.horizontalLayout_8.addWidget(self.sample_temperature_ledit)
-
         self.measurement_config_menu_width_label = QLabel(self.widget_4)
         self.measurement_config_menu_width_label.setObjectName(u"measurement_config_menu_width_label")
         sizePolicy.setHeightForWidth(self.measurement_config_menu_width_label.sizePolicy().hasHeightForWidth())
@@ -207,9 +210,7 @@ class Ui_MainWindow(object):
 
         self.formLayout_2.setWidget(3, QFormLayout.FieldRole, self.sample_measurement_ledit)
 
-
         self.gridLayout_11.addWidget(self.sample_notes, 1, 0, 1, 1)
-
 
         self.horizontalLayout_12.addWidget(self.widget_8)
 
@@ -263,7 +264,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_11.addWidget(self.measurement_config_menu_filename_ledit)
 
-
         self.verticalLayout_12.addWidget(self.widget_6)
 
         self.widget_5 = QWidget(self.widget_7)
@@ -306,9 +306,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_10.addWidget(self.measurement_config_menu_start_sbox)
 
-
         self.verticalLayout_12.addWidget(self.widget_5)
-
 
         self.horizontalLayout_9.addWidget(self.widget_7)
 
@@ -363,13 +361,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout_9.addWidget(self.measurement_motor_step, 2, 1, 1, 1)
 
-
         self.horizontalLayout_9.addWidget(self.widget)
 
         self.horizontalSpacer_12 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_9.addItem(self.horizontalSpacer_12)
-
 
         self.horizontalLayout_2.addWidget(self.measurement_config_menu_meas_widget)
 
@@ -401,66 +397,61 @@ class Ui_MainWindow(object):
         self.measurement_config_menu_ref_sbox.setSizePolicy(sizePolicy2)
         self.measurement_config_menu_ref_sbox.setMinimumSize(QSize(0, 0))
         self.measurement_config_menu_ref_sbox.setRange(0, 1000)
-
         self.gridLayout_6.addWidget(self.measurement_config_menu_ref_sbox, 0, 1, 1, 1)
-
         self.measurement_config_menu_span_label = QLabel(self.widget_13)
         self.measurement_config_menu_span_label.setObjectName(u"measurement_config_menu_span_label")
-
-        self.gridLayout_6.addWidget(self.measurement_config_menu_span_label, 1, 0, 1, 1)
-
+        spacer = QLabel(self.widget_13)
+        spacer.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.gridLayout_6.addWidget(spacer, 1, 0, 1, 1)
+        self.gridLayout_6.addWidget(self.measurement_config_menu_span_label, 2, 0, 1, 1)
         self.measurement_config_menu_span_dsbox = QDoubleSpinBox(self.widget_13)
         self.measurement_config_menu_span_dsbox.setObjectName(u"measurement_config_menu_span_dsbox")
         sizePolicy2.setHeightForWidth(self.measurement_config_menu_span_dsbox.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_span_dsbox.setSizePolicy(sizePolicy2)
-
-        self.gridLayout_6.addWidget(self.measurement_config_menu_span_dsbox, 1, 1, 1, 1)
-
+        self.gridLayout_6.addWidget(self.measurement_config_menu_span_dsbox, 2, 1, 1, 1)
         self.measurement_config_menu_span_auto_check = QCheckBox(self.widget_13)
         self.measurement_config_menu_span_auto_check.setObjectName(u"measurement_config_menu_span_auto_check")
-
-        self.gridLayout_6.addWidget(self.measurement_config_menu_span_auto_check, 1, 2, 1, 1)
-
-
+        self.gridLayout_6.addWidget(self.measurement_config_menu_span_auto_check, 2, 2, 1, 1)
         self.horizontalLayout_16.addWidget(self.widget_13)
-
         self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
-
         self.horizontalLayout_16.addItem(self.horizontalSpacer_8)
-
         self.widget_16 = QWidget(self.measurement_config_menu_volt_widget)
         self.widget_16.setObjectName(u"widget_16")
         self.gridLayout_5 = QGridLayout(self.widget_16)
         self.gridLayout_5.setObjectName(u"gridLayout_5")
         self.measurement_config_menu_time_const_label = QLabel(self.widget_16)
         self.measurement_config_menu_time_const_label.setObjectName(u"measurement_config_menu_time_const_label")
-
         self.gridLayout_5.addWidget(self.measurement_config_menu_time_const_label, 0, 0, 1, 1)
+
 
         self.measurement_config_menu_time_const_dsbox = QDoubleSpinBox(self.widget_16)
         self.measurement_config_menu_time_const_dsbox.setObjectName(u"measurement_config_menu_time_const_dsbox")
         sizePolicy2.setHeightForWidth(self.measurement_config_menu_time_const_dsbox.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_time_const_dsbox.setSizePolicy(sizePolicy2)
-
         self.gridLayout_5.addWidget(self.measurement_config_menu_time_const_dsbox, 0, 1, 1, 1)
+
+
+        self.measurement_config_menu_time_const_label_post = QLabel(self.widget_16, text="Časová konštanta- post")
+        self.measurement_config_menu_time_const_label_post.setObjectName(u"measurement_config_menu_time_const_label_post")
+        self.gridLayout_5.addWidget(self.measurement_config_menu_time_const_label_post, 1, 0, 1, 1)
+        self.measurement_config_menu_time_const_dsbox_post = QDoubleSpinBox(self.widget_16)
+        self.measurement_config_menu_time_const_dsbox_post.setObjectName(u"measurement_config_menu_time_const_dsbox_post")
+        sizePolicy2.setHeightForWidth(self.measurement_config_menu_time_const_dsbox_post.sizePolicy().hasHeightForWidth())
+        self.measurement_config_menu_time_const_dsbox_post.setSizePolicy(sizePolicy2)
+        self.gridLayout_5.addWidget(self.measurement_config_menu_time_const_dsbox_post, 1, 1, 1, 1)
+
+
 
         self.measurement_config_menu_angle_label = QLabel(self.widget_16)
         self.measurement_config_menu_angle_label.setObjectName(u"measurement_config_menu_angle_label")
-
-        self.gridLayout_5.addWidget(self.measurement_config_menu_angle_label, 1, 0, 1, 1)
-
+        self.gridLayout_5.addWidget(self.measurement_config_menu_angle_label, 2, 0, 1, 1)
         self.measurement_config_menu_angle_sbox = QSpinBox(self.widget_16)
         self.measurement_config_menu_angle_sbox.setObjectName(u"measurement_config_menu_angle_sbox")
-
-        self.gridLayout_5.addWidget(self.measurement_config_menu_angle_sbox, 1, 1, 1, 1)
-
-
+        self.gridLayout_5.addWidget(self.measurement_config_menu_angle_sbox, 2, 1, 1, 1)
         self.horizontalLayout_16.addWidget(self.widget_16)
-
         self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
         self.horizontalLayout_16.addItem(self.horizontalSpacer_2)
-
 
         self.horizontalLayout_4.addWidget(self.measurement_config_menu_volt_widget)
 
@@ -510,7 +501,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_8.addWidget(self.measurement_config_menu_laser_ledit, 0, 4, 1, 1)
 
-
         self.horizontalLayout_5.addWidget(self.measurement_config_menu_light_widget)
 
         self.measurement_config_menu_tabs.addTab(self.light_source_tab, "")
@@ -545,7 +535,6 @@ class Ui_MainWindow(object):
         self.detector_voltage_ledit.setObjectName(u"detector_voltage_ledit")
 
         self.gridLayout_4.addWidget(self.detector_voltage_ledit, 1, 1, 1, 1)
-
 
         self.horizontalLayout_3.addWidget(self.widget_2)
 
@@ -603,9 +592,7 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(1, QFormLayout.FieldRole, self.monochromator_in_in_start_2)
 
-
         self.verticalLayout_14.addWidget(self.widget_12)
-
 
         self.horizontalLayout_13.addWidget(self.widget_9)
 
@@ -646,12 +633,9 @@ class Ui_MainWindow(object):
 
         self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.monochromator_out_in_start)
 
-
         self.verticalLayout_15.addWidget(self.widget_15)
 
-
         self.horizontalLayout_13.addWidget(self.output_widget)
-
 
         self.gridLayout_10.addWidget(self.widget_10, 1, 0, 1, 1)
 
@@ -669,9 +653,7 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_14.addWidget(self.monochromator_optical_filter_ledit)
 
-
         self.gridLayout_10.addWidget(self.widget_11, 0, 0, 1, 1)
-
 
         self.horizontalLayout_15.addWidget(self.widget_14)
 
@@ -682,7 +664,6 @@ class Ui_MainWindow(object):
         self.measurement_config_menu_tabs.addTab(self.monochromator_tab, "")
 
         self.gridLayout_7.addWidget(self.measurement_config_menu_tabs, 1, 0, 1, 1)
-
 
         self.gridLayout.addWidget(self.measurement_config_menu, 0, 0, 1, 1)
 
@@ -742,8 +723,8 @@ class Ui_MainWindow(object):
         sizePolicy4.setHeightForWidth(self.devices_controls_dock_widget.sizePolicy().hasHeightForWidth())
         self.devices_controls_dock_widget.setSizePolicy(sizePolicy4)
         self.devices_controls_dock_widget.setFont(font)
-        self.devices_controls_dock_widget.setFeatures(QDockWidget.DockWidgetFloatable|QDockWidget.DockWidgetMovable)
-        self.devices_controls_dock_widget.setAllowedAreas(Qt.LeftDockWidgetArea|Qt.RightDockWidgetArea)
+        self.devices_controls_dock_widget.setFeatures(QDockWidget.DockWidgetFloatable | QDockWidget.DockWidgetMovable)
+        self.devices_controls_dock_widget.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
         self.dockWidgetContents_3 = QWidget()
         self.dockWidgetContents_3.setObjectName(u"dockWidgetContents_3")
         self.verticalLayout_5 = QVBoxLayout(self.dockWidgetContents_3)
@@ -764,7 +745,8 @@ class Ui_MainWindow(object):
         self.formLayout_4 = QFormLayout(self.devices_controls_devices_selection_widget)
         self.formLayout_4.setObjectName(u"formLayout_4")
         self.devices_controls_devices_selection_volt_label = QLabel(self.devices_controls_devices_selection_widget)
-        self.devices_controls_devices_selection_volt_label.setObjectName(u"devices_controls_devices_selection_volt_label")
+        self.devices_controls_devices_selection_volt_label.setObjectName(
+            u"devices_controls_devices_selection_volt_label")
         self.devices_controls_devices_selection_volt_label.setFont(font)
 
         self.formLayout_4.setWidget(0, QFormLayout.LabelRole, self.devices_controls_devices_selection_volt_label)
@@ -776,17 +758,19 @@ class Ui_MainWindow(object):
         self.formLayout_4.setWidget(0, QFormLayout.FieldRole, self.devices_controls_devices_selection_volt_cbox)
 
         self.devices_controls_devices_selection_disperse_label = QLabel(self.devices_controls_devices_selection_widget)
-        self.devices_controls_devices_selection_disperse_label.setObjectName(u"devices_controls_devices_selection_disperse_label")
+        self.devices_controls_devices_selection_disperse_label.setObjectName(
+            u"devices_controls_devices_selection_disperse_label")
         self.devices_controls_devices_selection_disperse_label.setFont(font)
 
         self.formLayout_4.setWidget(1, QFormLayout.LabelRole, self.devices_controls_devices_selection_disperse_label)
 
-        self.devices_controls_devices_selection_disperse_cbox = QComboBox(self.devices_controls_devices_selection_widget)
-        self.devices_controls_devices_selection_disperse_cbox.setObjectName(u"devices_controls_devices_selection_disperse_cbox")
+        self.devices_controls_devices_selection_disperse_cbox = QComboBox(
+            self.devices_controls_devices_selection_widget)
+        self.devices_controls_devices_selection_disperse_cbox.setObjectName(
+            u"devices_controls_devices_selection_disperse_cbox")
         self.devices_controls_devices_selection_disperse_cbox.setFont(font2)
 
         self.formLayout_4.setWidget(1, QFormLayout.FieldRole, self.devices_controls_devices_selection_disperse_cbox)
-
 
         self.verticalLayout_5.addWidget(self.devices_controls_devices_selection_widget)
 
@@ -827,7 +811,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer_11)
 
-
         self.verticalLayout_5.addLayout(self.horizontalLayout)
 
         self.line = QFrame(self.dockWidgetContents_3)
@@ -850,21 +833,29 @@ class Ui_MainWindow(object):
         self.verticalLayout_6 = QVBoxLayout(self.devices_controls_engine_positioning_widget)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.devices_controls_devices_engine_controls_widget = QWidget(self.devices_controls_engine_positioning_widget)
-        self.devices_controls_devices_engine_controls_widget.setObjectName(u"devices_controls_devices_engine_controls_widget")
+        self.devices_controls_devices_engine_controls_widget.setObjectName(
+            u"devices_controls_devices_engine_controls_widget")
         self.devices_controls_devices_engine_controls_widget.setFont(font2)
         self.horizontalLayout_6 = QHBoxLayout(self.devices_controls_devices_engine_controls_widget)
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.horizontalLayout_6.setContentsMargins(0, -1, 0, -1)
-        self.devices_controls_engine_positioning_left_btn = QPushButton(self.devices_controls_devices_engine_controls_widget)
+        self.devices_controls_engine_positioning_left_btn = QPushButton(
+            self.devices_controls_devices_engine_controls_widget)
         self.devices_controls_engine_positioning_left_btn.setObjectName(u"devices_controls_engine_positioning_left_btn")
         self.devices_controls_engine_positioning_left_btn.setFont(font2)
         self.devices_controls_engine_positioning_left_btn.setStyleSheet(u"background-color: rgba(255, 255, 255, 0);")
         icon2 = QIcon()
-        icon2.addFile(u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/keyboard_arrow_left_FILL0_wght400_GRAD0_opsz48.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon2.addFile(
+            u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/keyboard_arrow_left_FILL0_wght400_GRAD0_opsz48.svg",
+            QSize(), QIcon.Normal, QIcon.Off)
         self.devices_controls_engine_positioning_left_btn.setIcon(icon2)
 
         self.horizontalLayout_6.addWidget(self.devices_controls_engine_positioning_left_btn)
 
+        self.devices_controls_engine_positioning_step_sbox = QDoubleSpinBox(
+            self.devices_controls_devices_engine_controls_widget)
+        self.devices_controls_engine_positioning_step_sbox.setObjectName(
+            u"devices_controls_engine_positioning_step_sbox")
         self.devices_controls_engine_positioning_step_sbox = QSpinBox(self.devices_controls_devices_engine_controls_widget)
         self.devices_controls_engine_positioning_step_sbox.setObjectName(u"devices_controls_engine_positioning_step_sbox")
         self.devices_controls_engine_positioning_step_sbox.setFont(font2)
@@ -872,16 +863,19 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.devices_controls_engine_positioning_step_sbox)
 
-        self.devices_controls_engine_positioning_right_btn = QPushButton(self.devices_controls_devices_engine_controls_widget)
-        self.devices_controls_engine_positioning_right_btn.setObjectName(u"devices_controls_engine_positioning_right_btn")
+        self.devices_controls_engine_positioning_right_btn = QPushButton(
+            self.devices_controls_devices_engine_controls_widget)
+        self.devices_controls_engine_positioning_right_btn.setObjectName(
+            u"devices_controls_engine_positioning_right_btn")
         self.devices_controls_engine_positioning_right_btn.setFont(font2)
         self.devices_controls_engine_positioning_right_btn.setStyleSheet(u"background-color: rgba(255, 255, 255, 0);")
         icon3 = QIcon()
-        icon3.addFile(u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/keyboard_arrow_right_FILL0_wght400_GRAD0_opsz48.svg", QSize(), QIcon.Normal, QIcon.Off)
+        icon3.addFile(
+            u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/keyboard_arrow_right_FILL0_wght400_GRAD0_opsz48.svg",
+            QSize(), QIcon.Normal, QIcon.Off)
         self.devices_controls_engine_positioning_right_btn.setIcon(icon3)
 
         self.horizontalLayout_6.addWidget(self.devices_controls_engine_positioning_right_btn)
-
 
         self.verticalLayout_6.addWidget(self.devices_controls_devices_engine_controls_widget)
 
@@ -909,9 +903,7 @@ class Ui_MainWindow(object):
 
         self.gridLayout_2.addWidget(self.devices_controls_goto_sbox, 1, 1, 1, 1)
 
-
         self.verticalLayout_6.addWidget(self.devices_controls_devices_goto_widget)
-
 
         self.verticalLayout_5.addWidget(self.devices_controls_engine_positioning_widget)
 
@@ -952,7 +944,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_3.addWidget(self.devices_controls_calibration_btn, 0, 2, 1, 1)
 
-
         self.verticalLayout_5.addWidget(self.devices_controls_engine_settings_widget)
 
         self.line_4 = QFrame(self.dockWidgetContents_3)
@@ -982,7 +973,6 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_7.addWidget(self.lcdNumber)
 
-
         self.verticalLayout_5.addWidget(self.devices_controls_current_wavelength_widget)
 
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -994,7 +984,7 @@ class Ui_MainWindow(object):
         self.log_dock_widget = QDockWidget(MainWindow)
         self.log_dock_widget.setObjectName(u"log_dock_widget")
         self.log_dock_widget.setFont(font)
-        self.log_dock_widget.setFeatures(QDockWidget.DockWidgetFloatable|QDockWidget.DockWidgetMovable)
+        self.log_dock_widget.setFeatures(QDockWidget.DockWidgetFloatable | QDockWidget.DockWidgetMovable)
         self.dockWidgetContents_5 = QWidget()
         self.dockWidgetContents_5.setObjectName(u"dockWidgetContents_5")
         self.verticalLayout_3 = QVBoxLayout(self.dockWidgetContents_5)
@@ -1024,7 +1014,7 @@ class Ui_MainWindow(object):
         self.comparative_file_dock_widget = QDockWidget(MainWindow)
         self.comparative_file_dock_widget.setObjectName(u"comparative_file_dock_widget")
         self.comparative_file_dock_widget.setFont(font)
-        self.comparative_file_dock_widget.setFeatures(QDockWidget.DockWidgetFloatable|QDockWidget.DockWidgetMovable)
+        self.comparative_file_dock_widget.setFeatures(QDockWidget.DockWidgetFloatable | QDockWidget.DockWidgetMovable)
         self.dockWidgetContents = QWidget()
         self.dockWidgetContents.setObjectName(u"dockWidgetContents")
         self.verticalLayout_2 = QVBoxLayout(self.dockWidgetContents)
@@ -1044,18 +1034,15 @@ class Ui_MainWindow(object):
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.comparative_file_dir_tree_view = QTreeView(self.comparative_file_filemanager_page)
         self.comparative_file_dir_tree_view.setObjectName(u"comparative_file_dir_tree_view")
-
         self.verticalLayout_7.addWidget(self.comparative_file_dir_tree_view)
-
         self.change_comparative_dir_btn = QPushButton(self.comparative_file_filemanager_page)
         self.change_comparative_dir_btn.setObjectName(u"change_comparative_dir_btn")
         font7 = QFont()
         font7.setPointSize(8)
         self.change_comparative_dir_btn.setFont(font7)
-
         self.verticalLayout_7.addWidget(self.change_comparative_dir_btn)
-
-        self.comparative_file_toolbox.addItem(self.comparative_file_filemanager_page, u"V\u00fdber porovn\u00e1vacieho merania")
+        self.comparative_file_toolbox.addItem(self.comparative_file_filemanager_page,
+                                              u"V\u00fdber porovn\u00e1vacieho merania")
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
         self.page_2.setGeometry(QRect(0, 0, 304, 531))
@@ -1134,8 +1121,8 @@ class Ui_MainWindow(object):
             LIGHTS
         )
 
-
         QMetaObject.connectSlotsByName(MainWindow)
+
     # setupUi
 
     def retranslateUi(self, MainWindow):
@@ -1157,31 +1144,49 @@ class Ui_MainWindow(object):
         self.actionDenn.setText(QCoreApplication.translate("MainWindow", u"Denn\u00fd", None))
         self.actionNo_n.setText(QCoreApplication.translate("MainWindow", u"No\u010dn\u00fd", None))
         self.actionPorovnanie.setText(QCoreApplication.translate("MainWindow", u"Provn\u00e1vacie meranie", None))
-        self.measurement_config_menu_sample_label.setText(QCoreApplication.translate("MainWindow", u"N\u00e1zov vzorky", None))
+        self.measurement_config_menu_sample_label.setText(
+            QCoreApplication.translate("MainWindow", u"N\u00e1zov vzorky", None))
         self.measurement_config_menu_width_label_4.setText(QCoreApplication.translate("MainWindow", u"Teplota", None))
         self.measurement_config_menu_width_label.setText(QCoreApplication.translate("MainWindow", u"Hr\u00fabka", None))
-        self.measurement_config_menu_width_label_2.setText(QCoreApplication.translate("MainWindow", u"Pozn\u00e1mka k technol\u00f3gii", None))
-        self.measurement_config_menu_width_label_3.setText(QCoreApplication.translate("MainWindow", u"Meranie vzorky", None))
-        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.sample_tab), QCoreApplication.translate("MainWindow", u"Vzorka", None))
-        self.measurement_config_menu_filename_label.setText(QCoreApplication.translate("MainWindow", u"N\u00e1zov s\u00faboru", None))
-        self.measurement_config_menu_start_label.setText(QCoreApplication.translate("MainWindow", u"Za\u010diatok", None))
+        self.measurement_config_menu_width_label_2.setText(
+            QCoreApplication.translate("MainWindow", u"Pozn\u00e1mka k technol\u00f3gii", None))
+        self.measurement_config_menu_width_label_3.setText(
+            QCoreApplication.translate("MainWindow", u"Meranie vzorky", None))
+        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.sample_tab),
+                                                     QCoreApplication.translate("MainWindow", u"Vzorka", None))
+        self.measurement_config_menu_filename_label.setText(
+            QCoreApplication.translate("MainWindow", u"N\u00e1zov s\u00faboru", None))
+        self.measurement_config_menu_start_label.setText(
+            QCoreApplication.translate("MainWindow", u"Za\u010diatok", None))
         self.measurement_config_menu_end_label.setText(QCoreApplication.translate("MainWindow", u"Koniec", None))
         self.label_7.setText(QCoreApplication.translate("MainWindow", u"Po\u010det integr\u00e1cii", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Korekcia", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"Krok motora", None))
-        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.measurement_config_tab), QCoreApplication.translate("MainWindow", u"Meranie", None))
+        self.measurement_config_menu_tabs.setTabText(
+            self.measurement_config_menu_tabs.indexOf(self.measurement_config_tab),
+            QCoreApplication.translate("MainWindow", u"Meranie", None))
         self.measurement_config_menu_ref_label.setText(QCoreApplication.translate("MainWindow", u"Ref", None))
         self.measurement_config_menu_span_label.setText(QCoreApplication.translate("MainWindow", u"Rozsah", None))
         self.measurement_config_menu_span_auto_check.setText(QCoreApplication.translate("MainWindow", u"Auto", None))
-        self.measurement_config_menu_time_const_label.setText(QCoreApplication.translate("MainWindow", u"\u010casov\u00e1 kon\u0161tanta", None))
-        self.measurement_config_menu_angle_label.setText(QCoreApplication.translate("MainWindow", u"F\u00e1zov\u00fd posun", None))
-        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.voltmeter_tab), QCoreApplication.translate("MainWindow", u"Milivoltmeter", None))
+        self.measurement_config_menu_time_const_label.setText(
+            QCoreApplication.translate("MainWindow", u"\u010casov\u00e1 kon\u0161tanta- pre", None))
+
+        self.measurement_config_menu_time_const_label_post.setText(
+            QCoreApplication.translate("MainWindow", u"\u010casov\u00e1 kon\u0161tanta- post", None))
+
+        self.measurement_config_menu_angle_label.setText(
+            QCoreApplication.translate("MainWindow", u"F\u00e1zov\u00fd posun", None))
+        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.voltmeter_tab),
+                                                     QCoreApplication.translate("MainWindow", u"Milivoltmeter", None))
         self.measurement_config_menu_halogen_label.setText(QCoreApplication.translate("MainWindow", u"Typ", None))
-        self.measurement_config_menu_laser_label.setText(QCoreApplication.translate("MainWindow", u"Pozn\u00e1mka", None))
-        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.light_source_tab), QCoreApplication.translate("MainWindow", u"Zdroj svetla", None))
+        self.measurement_config_menu_laser_label.setText(
+            QCoreApplication.translate("MainWindow", u"Pozn\u00e1mka", None))
+        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.light_source_tab),
+                                                     QCoreApplication.translate("MainWindow", u"Zdroj svetla", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"PMT", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"Nap\u00e4tie", None))
-        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.detector_tab), QCoreApplication.translate("MainWindow", u"Detektor", None))
+        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.detector_tab),
+                                                     QCoreApplication.translate("MainWindow", u"Detektor", None))
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"Vstupn\u00e1 \u0161trbina", None))
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"Za\u010diatok", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"Koniec", None))
@@ -1189,7 +1194,9 @@ class Ui_MainWindow(object):
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"Za\u010diatok", None))
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"Koniec", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Optick\u00fd filter", None))
-        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.monochromator_tab), QCoreApplication.translate("MainWindow", u"Monochrom\u00e1tor", None))
+        self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.monochromator_tab),
+                                                     QCoreApplication.translate("MainWindow", u"Monochrom\u00e1tor",
+                                                                                None))
         self.menu_file.setTitle(QCoreApplication.translate("MainWindow", u"S\u00fabor", None))
         self.menuOtvor.setTitle(QCoreApplication.translate("MainWindow", u"Otvori\u0165", None))
         self.menu_settings.setTitle(QCoreApplication.translate("MainWindow", u"Nastavenia", None))
@@ -1197,24 +1204,34 @@ class Ui_MainWindow(object):
         self.menu_about.setTitle(QCoreApplication.translate("MainWindow", u"Pomoc", None))
         self.menuN_stroje.setTitle(QCoreApplication.translate("MainWindow", u"N\u00e1stroje", None))
         self.measurment_controls_toolbar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
-        self.devices_controls_devices_selection_label.setText(QCoreApplication.translate("MainWindow", u"Zariadenia", None))
-        self.devices_controls_devices_selection_volt_label.setText(QCoreApplication.translate("MainWindow", u"Milivoltmeter", None))
-        self.devices_controls_devices_selection_disperse_label.setText(QCoreApplication.translate("MainWindow", u"Disperzn\u00fd prvok", None))
+        self.devices_controls_devices_selection_label.setText(
+            QCoreApplication.translate("MainWindow", u"Zariadenia", None))
+        self.devices_controls_devices_selection_volt_label.setText(
+            QCoreApplication.translate("MainWindow", u"Milivoltmeter", None))
+        self.devices_controls_devices_selection_disperse_label.setText(
+            QCoreApplication.translate("MainWindow", u"Disperzn\u00fd prvok", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"Jednotky", None))
         self.radioButton.setText(QCoreApplication.translate("MainWindow", u"Uhol", None))
         self.radioButton_2.setText(QCoreApplication.translate("MainWindow", u"Angstrom", None))
-        self.devices_controls_engine_positioning_label.setText(QCoreApplication.translate("MainWindow", u"Polohovanie motora", None))
+        self.devices_controls_engine_positioning_label.setText(
+            QCoreApplication.translate("MainWindow", u"Polohovanie motora", None))
         self.devices_controls_engine_positioning_left_btn.setText("")
         self.devices_controls_engine_positioning_right_btn.setText("")
         self.devices_controls_goto_label.setText(QCoreApplication.translate("MainWindow", u"Cho\u010f na", None))
         self.devices_controls_goto_btn.setText(QCoreApplication.translate("MainWindow", u"Nastav", None))
-        self.devices_controls_engine_settings_label.setText(QCoreApplication.translate("MainWindow", u"Inicializovanie polohy motora", None))
+        self.devices_controls_engine_settings_label.setText(
+            QCoreApplication.translate("MainWindow", u"Inicializovanie polohy motora", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Uhol", None))
         self.devices_controls_calibration_btn.setText(QCoreApplication.translate("MainWindow", u"Nastav", None))
-        self.devices_controls_angle_label.setText(QCoreApplication.translate("MainWindow", u"Vlnov\u00e1 d\u013a\u017eka", None))
-        self.change_comparative_dir_btn.setText(QCoreApplication.translate("MainWindow", u"Zmeni\u0165 adres\u00e1r", None))
-        self.comparative_file_toolbox.setItemText(self.comparative_file_toolbox.indexOf(self.comparative_file_filemanager_page), QCoreApplication.translate("MainWindow", u"V\u00fdber porovn\u00e1vacieho merania", None))
+        self.devices_controls_angle_label.setText(
+            QCoreApplication.translate("MainWindow", u"Vlnov\u00e1 d\u013a\u017eka", None))
+        self.change_comparative_dir_btn.setText(
+            QCoreApplication.translate("MainWindow", u"Zmeni\u0165 adres\u00e1r", None))
+        self.comparative_file_toolbox.setItemText(
+            self.comparative_file_toolbox.indexOf(self.comparative_file_filemanager_page),
+            QCoreApplication.translate("MainWindow", u"V\u00fdber porovn\u00e1vacieho merania", None))
         self.comparative_file_unload_btn.setText(QCoreApplication.translate("MainWindow", u"Zru\u0161", None))
-        self.comparative_file_toolbox.setItemText(self.comparative_file_toolbox.indexOf(self.page_2), QCoreApplication.translate("MainWindow", u"Porovn\u00e1van\u00e9 meranie", None))
+        self.comparative_file_toolbox.setItemText(self.comparative_file_toolbox.indexOf(self.page_2),
+                                                  QCoreApplication.translate("MainWindow",
+                                                                             u"Porovn\u00e1van\u00e9 meranie", None))
     # retranslateUi
-
