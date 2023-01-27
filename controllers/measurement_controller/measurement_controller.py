@@ -18,14 +18,11 @@ class MeasurementController(QObject):
     voltmeter_status_s = Signal(bool)
     measured_value_s = Signal(float, float, bool)
     new_measurement_started_s = Signal()
-    
+    lockin_settings_s = Signal(dict)
+    measurement_start_fail_s = Signal()
+
     def __init__(self):
         super(MeasurementController, self).__init__()
-        #self.fazovy_posun_btn = Widgets.measurement_config_menu_angle_sbox
-        #self.casova_konstanta = Widgets.measurement_config_menu_time_const_dsbox
-        #self.fazovy_posun_btn = Widgets.measurement_config_menu_angle_sbox
-        #self.fazovy_posun_btn = Widgets.measurement_config_menu_angle_sbox
-
         self.angle = None
         self.running = False
         self._lockin = None
@@ -38,8 +35,6 @@ class MeasurementController(QObject):
         self.timer = QTimer()
         self.timer.timeout.connect(self.check_lockin_availability)
         self.timer.start(1000)
-
-        self.check_lockin_availability()
 
         if self._motor is None:
             #self.check_motor_availability()
@@ -67,8 +62,20 @@ class MeasurementController(QObject):
                 return
         self.voltmeter_status_s.emit(False)
 
+    def get_important_lockin_values(self):
+        data = {
+            'pre_time_const': self._lockin.get_pre_time_const(),
+            'post_time_const': self._lockin.get_post_time_const(),
+            'phase_shift': self._lockin.get_phase(),
+            'ref_frequency': self._lockin.get_ref_frequency(),
+            'bandpass_filter': self._lockin.get_bandpass_filter()
+        }
+        print(data)
+        self.lockin_settings_s.emit(data)
     def connect_lockin(self):
         self._lockin = SR510(self.lockin_comport)
+        self.get_important_lockin_values()
+
     def link_data_processing_controller(self, dpc):
         self.data_processing_controller = dpc
 
@@ -105,23 +112,27 @@ class MeasurementController(QObject):
 
         self.measured_value_s.emit(wavelength, value, True)
 
-    # TODO: implement method to handle measurement from start to finish
-    # method should report progress
-    # method should be able to be stopped, therefore it should check event loop for requests during execution    
+    def failed_measurement(self, msg):
+        self.logger.log(WARNING, msg, True)
+        self.measurement_start_fail_s.emit()
     @QtCore.Slot(float, float, int)
     def start(self, start, end, stepsPerDataPoint):
         if self.angle is None:
+            self.failed_measurement("Motor nie je inicializovaný.")
             return
 
         distance = end - self.angle
-        assert distance > 0 #assert for now
+        if distance <= 0:
+            self.failed_measurement("Začiatok merania musí by menší ako koniec merania.")
+            return
 
         self._lockin.prepare()
+        self.get_important_lockin_values()
 
         try:
             self.data_processing_controller.data_processing.create_new_file()
         except DataProcessingError as e:
-            self.logger.log(WARNING, e.message, True)
+            self.failed_measurement(e.message)
             return
 
         self.new_measurement_started_s.emit()
@@ -180,7 +191,7 @@ class MeasurementController(QObject):
 
     @QtCore.Slot(float)
     def moveToPos(self, stop):
-        if self.angle is None or self.angle == stop or not self._elem.canMove(stop) or self.running:
+        if self.angle is None or self.angle == stop or not self._elem.canMoveTo(stop) or self.running:
             return
 
         distance = stop - self.angle

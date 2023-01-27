@@ -33,6 +33,7 @@ class CalibrationDialog(QDialog):
         layout.addWidget(self.end_pos, 1, 1)
         layout.addWidget(QLabel("Krok"), 2, 0)
         self.step_size = QSpinBox()
+        self.step_size.setRange(1, 2000)
         layout.addWidget(self.step_size, 2, 1)
         self.step_button = QPushButton("Posunúť")
         layout.addWidget(self.step_button, 2, 2)

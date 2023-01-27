@@ -9,7 +9,7 @@ from view.logs_view_setup import logs_view_setup
 from view.main_ui import Ui_MainWindow
 from widgets.log_widget import LogWidget
 from view.constants import DAY_MODE, NIGHT_MODE
-
+import os
 
 class View(QObject):
     widgets = None
@@ -79,8 +79,8 @@ class View(QObject):
         add_spacer()
         add_action("action_ui_mode")
         self.widgets.measurment_controls_toolbar.addSeparator()
-        action = add_action(u"voltmeter_connect_action")
-        action.setEnabled(False)
+        add_action(u"voltmeter_connect_action")
+
 
     def display_icons(self):
         if self._icons is None:
@@ -148,6 +148,7 @@ class View(QObject):
 
     def _display_voltmeter_connected(self):
         voltmeter_connect_action = self._get_action('voltmeter_connect_action')
+        voltmeter_connect_action.setEnabled(True)
         status_bar_message = "Voltmeter je pripojený"
         self.update_status_bar(status_bar_message)
         voltmeter_connect_action.setIcon(self._icons.get('voltmeter_connected', DAY_MODE, True))
@@ -159,3 +160,12 @@ class View(QObject):
 
     def show_calibration_dialog(self):
         self.widgets.calibration_dialog.show()
+
+    def update_disperse_elements_list(self):
+        disperseElemCbox = self.widgets.devices_controls_devices_selection_disperse_cbox
+        disperseElemCbox.clear()
+
+        elements = [e.rstrip('.txt') for e in os.listdir('models/elements')]
+        disperseElemCbox.addItems(elements)
+
+
