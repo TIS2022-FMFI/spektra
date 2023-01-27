@@ -4,8 +4,7 @@ from PySide6.QtCore import QObject, Signal, QThread, QTimer
 from errors.data_processing_error import DataProcessingError
 from models.motor.Motor import Motor
 from models.lockin.lockin import SR510
-from models.disp_elem import Grating
-from models.data_processing.grid import Grid465645
+from models.disperse_element import Grating
 from models.logger.constants import *
 from models.data_processing.dataProcessing import DataProcessing
 from PySide6.QtCore import QEventLoop
@@ -17,6 +16,8 @@ class MeasurementController(QObject):
     state_s = Signal(str)
     progress_s = Signal(float)
     voltmeter_status_s = Signal(bool)
+    measured_value_s = Signal(float, float, bool)
+    new_measurement_started_s = Signal()
     
     def __init__(self):
         super(MeasurementController, self).__init__()
@@ -68,43 +69,41 @@ class MeasurementController(QObject):
 
     def connect_lockin(self):
         self._lockin = SR510(self.lockin_comport)
-    def set_dataproc_ref(self, dp, gr, log):
-        self.dataproc = dp
-        self.graph = gr
+    def link_data_processing_controller(self, dpc):
+        self.data_processing_controller = dpc
+
+    def link_logger(self, log):
         self.logger = log
 
     @QtCore.Slot(str)
-    def disp_elem_change(self, name):
-        print(name)
+    def set_disperse_element(self, name):
         self._elem = Grating(name)
-        if self._elem.IsCalib() is False:
-            print('Kal nexist. treba kalibrovat')
 
     def adjust_sensitivity(self, measuredValue):
-        cur_gain = self._lockin.current_gain_value()
         if measuredValue < 0:
             return
 
+        cur_gain = self._lockin.current_gain_value()
         print(f'namerana hodnota: {measuredValue}, current sensitivity {cur_gain} ')
 
-        if measuredValue >= 0.85 * cur_gain:  # ak je hodnota vacsia nez 85% rozsahu
+        if measuredValue >= 0.7 * cur_gain:
             self._lockin.lower_gain()
             print(f'Zosilnenie sa znizilo na {self._lockin.current_gain_value()}')
 
-        if measuredValue <= 0.1 * cur_gain:  # ak je hodnota mensia nez 10% rozsahu
+        if measuredValue <= 0.2 * cur_gain:
             self._lockin.higher_gain()
             print(f'Zosilnenie sa zvysilo na {self._lockin.current_gain_value()}')
 
-    def sendMeasurement(self, angle, value):
-        wavelength = Grid465645().get_wave_length(angle)
+    def sendMeasurement(self, angle, elem, value):
+        wavelength = elem.angleToWavelength(angle)
 
         try:
-            self.dataproc.data_processing.add_measurement(angle, wavelength, value)
+            self.data_processing_controller.data_processing.add_measurement(angle, wavelength, value)
         except DataProcessingError as e:
             self.logger.log(WARNING, e.message, True)
             return
-        self.graph.addMeasurement([[wavelength, value]], True)
-        self.graph.plotGraph()
+
+        self.measured_value_s.emit(wavelength, value, True)
 
     # TODO: implement method to handle measurement from start to finish
     # method should report progress
@@ -120,40 +119,39 @@ class MeasurementController(QObject):
         self._lockin.prepare()
 
         try:
-            self.dataproc.data_processing.create_new_file()
+            self.data_processing_controller.data_processing.create_new_file()
         except DataProcessingError as e:
             self.logger.log(WARNING, e.message, True)
             return
-        self.graph.initialize()
-        self.graph.plotGraph()
-        
+
+        self.new_measurement_started_s.emit()
         self.running = True
 
-        elem = self._elem   
+        elem = self._elem
         steps = elem.angleToSteps(distance)
         last_step = steps % stepsPerDataPoint
         data_points = steps // stepsPerDataPoint
 
         print(f"dist: {distance} \nsteps: {steps} \nvalues: {data_points}")
 
-        d = elem.stepsToAngle(stepsPerDataPoint)
+        anglePerDataPoint = elem.stepsToAngle(stepsPerDataPoint)
 
         measured_value = self._lockin.read_value()
-        self.sendMeasurement(self.angle, measured_value)
+        self.sendMeasurement(self.angle, elem, measured_value)
 
         for i in range(data_points):
             if self.running == False:
-                break
+                return
 
             self.progress_s.emit(i / data_points * 100)
             print(f"iter: {i}")
                 
             duration = self._motor.moveForward(stepsPerDataPoint)
             time.sleep(duration)
-            self.angle += d
+            self.angle += anglePerDataPoint
             
             measured_value = self._lockin.read_value()
-            self.sendMeasurement(self.angle, measured_value)
+            self.sendMeasurement(self.angle, elem, measured_value)
             self.adjust_sensitivity(measured_value)
             
             print(f"pos: {self.angle:.3f} measurement: {measured_value}")
@@ -164,14 +162,14 @@ class MeasurementController(QObject):
             self.angle += elem.stepsToAngle(last_step)
             
             measured_value = self._lockin.read_value()
-            self.sendMeasurement(self.angle, measured_value)
+            self.sendMeasurement(self.angle, elem, measured_value)
             
             print(f"pos: {self.angle:.3f} measurement: {measured_value}")
 
         self.progress_s.emit(100)
         self.running = False
 
-##    @QtCore.Slot()
+    @QtCore.Slot()
     def stop(self):
         self.running = False
 

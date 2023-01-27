@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QDialog, QGridLayout, QHBoxLayout, QLabel, QPushBu
     QDoubleSpinBox, QSpinBox, QLCDNumber, QLineEdit
 from PySide6.QtCore import Qt, Signal
 
-from models.disp_elem import CalibrationData
+from models.disperse_element import CalibrationData
 
 
 class CalibrationDialog(QDialog):

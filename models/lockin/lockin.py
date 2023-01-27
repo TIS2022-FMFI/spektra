@@ -12,7 +12,7 @@ class Lockin:
             try:
                 self.ser = serial.Serial(port, *sc.getsettings(), timeout=sc.timeout)
             except:
-                print('no locking connected')
+                print('no lockin connected')
 
         self.name = name
         self.gain_values = ld['gain']
@@ -51,7 +51,7 @@ class Lockin:
         input(f'Nastav {self.gain_values[gain_index]} a potvrd')
 
     def read_value(self):
-        return 100  # not sure how
+        raise NotImplementedError
 
     def rcom(self, com, read=False):
         """raw command"""
@@ -119,4 +119,3 @@ class SR510(Lockin):
 
     def get_phase(self):
         return float(self.rcom('P', True))
-
