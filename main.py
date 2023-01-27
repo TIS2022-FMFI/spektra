@@ -93,27 +93,45 @@ class MainWindow(QMainWindow):
 
         widgets.comparative_file_unload_btn.clicked.connect(self.test)
 
+       
+        # switch units
+        unitAngstromActive = lambda : Widgets.radioButton_2.isChecked()
+        
         # moveForward/moveReverse
-        noStepsValue = widgets.devices_controls_engine_positioning_step_sbox.value
-        widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
-            lambda: self.controller.move_reverse(noStepsValue()))
-        widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
-            lambda: self.controller.move_forward(noStepsValue()))
+        steps_box = Widgets.devices_controls_engine_positioning_step_sbox
+        steps_box.setRange(0, 1000)
+        steps_box.setSingleStep(1)
+        noStepsValue = lambda : int(steps_box.value())
+        Widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
+            lambda:self.controller.move_reverse(noStepsValue()))
+        Widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
+            lambda:self.controller.move_forward(noStepsValue()))
 
+        gotoValueInRightUnits = lambda : self.mriezka.get_angle_from_wawe(gotoValue()) if unitAngstromActive() else gotoValue()
+        
         # moveToPosition
-        gotoValue = widgets.devices_controls_goto_sbox.value
-        widgets.devices_controls_goto_btn.clicked.connect(
-            lambda: self.controller.go_to_pos(gotoValue()))
-
+        gotoValue = lambda : Widgets.devices_controls_goto_sbox.value()
+        Widgets.devices_controls_goto_btn.clicked.connect(
+            lambda:self.controller.go_to_pos(
+                gotoValueInRightUnits()))
+        
         # init position
-        initValue = widgets.doubleSpinBox.value
-        widgets.devices_controls_calibration_btn.clicked.connect(
-            lambda: self.controller.initialization(initValue()))
+        initValue = lambda : Widgets.doubleSpinBox.value()
+        initValueInRightUnits = lambda : self.mriezka.get_angle_from_wawe(initValue()) if unitAngstromActive() else initValue()
+        Widgets.devices_controls_calibration_btn.clicked.connect(
+            lambda:self.controller.initialization(initValueInRightUnits()))
 
-        # meranie !!pozor start/end naopak v main_ui.py!!
-        endValue = widgets.measurement_config_menu_start_sbox.value
-        startValue = widgets.measurement_config_menu_end_sbox.value
-        motorStepValue = widgets.measurement_motor_step.value
+        # meranie
+        endValue = lambda : Widgets.measurement_config_menu_start_sbox.value()
+        endValueInRightUnits = lambda : self.mriezka.get_angle_from_wawe(endValue()) if unitAngstromActive() else endValue()
+
+        startValue = lambda : Widgets.measurement_config_menu_end_sbox.value()
+        startValueInRightUnits = lambda : self.mriezka.get_angle_from_wawe(startValue()) if unitAngstromActive() else startValue()
+
+        motorStepValue = lambda : Widgets.measurement_motor_step.value()
+
+        Widgets.action_play.triggered.connect(
+            lambda:self.controller.start_measurement(startValueInRightUnits(), endValueInRightUnits(), motorStepValue()))
 
         widgets.action_play.triggered.connect(
             lambda: self.controller.start_measurement(startValue(), endValue(), motorStepValue()))
