@@ -35,7 +35,7 @@ class DisperseElement:
 
     def _load(self):
         try:
-            with open(f'elements/{self.name}.txt') as subor:
+            with open(f'models/elements/{self.name}.txt') as subor:
                 self.angleDelta = float(subor.readline().strip())
                 self.steps = int(subor.readline().strip())
                 self.minAngle = float(subor.readline().strip())

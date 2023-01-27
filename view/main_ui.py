@@ -395,11 +395,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_6.addWidget(self.measurement_config_menu_ref_label, 0, 0, 1, 1)
 
-        self.measurement_config_menu_ref_sbox = QSpinBox(self.widget_13)
+        self.measurement_config_menu_ref_sbox = QDoubleSpinBox(self.widget_13)
         self.measurement_config_menu_ref_sbox.setObjectName(u"measurement_config_menu_ref_sbox")
         sizePolicy2.setHeightForWidth(self.measurement_config_menu_ref_sbox.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_ref_sbox.setSizePolicy(sizePolicy2)
         self.measurement_config_menu_ref_sbox.setMinimumSize(QSize(0, 0))
+        self.measurement_config_menu_ref_sbox.setRange(0, 1000)
 
         self.gridLayout_6.addWidget(self.measurement_config_menu_ref_sbox, 0, 1, 1, 1)
 
@@ -864,9 +865,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.devices_controls_engine_positioning_left_btn)
 
-        self.devices_controls_engine_positioning_step_sbox = QDoubleSpinBox(self.devices_controls_devices_engine_controls_widget)
+        self.devices_controls_engine_positioning_step_sbox = QSpinBox(self.devices_controls_devices_engine_controls_widget)
         self.devices_controls_engine_positioning_step_sbox.setObjectName(u"devices_controls_engine_positioning_step_sbox")
         self.devices_controls_engine_positioning_step_sbox.setFont(font2)
+        self.devices_controls_engine_positioning_step_sbox.setRange(1, 2000)
 
         self.horizontalLayout_6.addWidget(self.devices_controls_engine_positioning_step_sbox)
 

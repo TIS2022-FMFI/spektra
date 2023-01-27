@@ -41,7 +41,6 @@ class MainWindow(QMainWindow):
         # connect the view with controllers
         self._connect_file_manager_controller()
         self._connect_logger_controller()
-        self._connect_graph_controller()
         self._connect_measurement_controller()
 
     def _connect_file_manager_controller(self):
@@ -82,9 +81,6 @@ class MainWindow(QMainWindow):
         # example only to show functionality
         self.view.widgets.comparative_file_unload_btn.clicked.connect(
             lambda: self.controller.logger.log(40, 'User clicked on btn Zrus', True))
-
-    def _connect_graph_controller(self):
-        pass
 
     def _connect_measurement_controller(self):
         widgets = self.view.widgets
@@ -131,6 +127,8 @@ class MainWindow(QMainWindow):
             lambda data: self.controller.create_calibration(data))
         widgets.calibration_dialog.step_button.clicked.connect(
             lambda: self.controller.move_forward(widgets.calibration_dialog.step_size.value()))
+
+        self.view.update_disperse_elements_list()
 
     def test(self):
         print("test() thread id: ")
