@@ -5,6 +5,7 @@ from controllers.measurement_controller.measurement_controller import Measuremen
 
 from models.disperse_element import Grating
 
+
 class MainController(QObject):
     def __init__(self, view, key):
         super(MainController, self).__init__()
@@ -18,14 +19,14 @@ class MainController(QObject):
         self._connect_measurement()
 
     def _connect_measurement(self):
+        #self.view.widgets.action_play.setEnabled(False)
         self._measurement.progress_s.connect(lambda p: self.view.widgets.progressBar.setValue(p))
         self._measurement.progress_s.connect(lambda p: self.view.switch_play_button() if p == 100 else None)
 
         self.dispElemCBox = self.view.widgets.devices_controls_devices_selection_disperse_cbox
         self.dispElemCBox.activated.connect(self.update_disperse_element_choice)
 
-        self._measurement.voltmeter_status_s.connect(
-            lambda connected: self.view.on_voltmeter_connection_change(connected))
+        self._measurement.voltmeter_status_s.connect(self.voltmeter_status)
 
         self._measurement.measured_value_s.connect(self.updateGraph)
         self._measurement.new_measurement_started_s.connect(self.clearGraph)
@@ -36,6 +37,9 @@ class MainController(QObject):
 
         self._measurement.measurement_start_fail_s.connect(self.set_play_button)
 
+    def voltmeter_status(self, connected):
+        self.view.on_voltmeter_connection_change(connected)
+        self.view.widgets.action_play.setEnabled(connected)
     def set_play_button(self):
         self.view.switch_play_button()
 
@@ -58,13 +62,16 @@ class MainController(QObject):
         # connects the file manager controller to other controllers
         self.file_manager.log_s.connect(lambda level, message, show_user: self.logger.log(level, message, show_user))
 
-    def start_measurement(self, start, stop, stepSize):
+    def start_measurement(self, start, stop, stepSize, correction, integrations):
+        QMetaObject.invokeMethod(self._measurement, "set_arguments", Q_ARG(float, correction), Q_ARG(int, integrations))
+
         QMetaObject.invokeMethod(
-            self._measurement, "start",
+            self._measurement,
+            "start",
             Qt.QueuedConnection,
             Q_ARG(float, start),
             Q_ARG(float, stop),
-            Q_ARG(int, stepSize),
+            Q_ARG(int, stepSize)
         )
 
     def update_disperse_element_choice(self):

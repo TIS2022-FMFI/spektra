@@ -8,6 +8,7 @@ from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QHeaderVie
 from qtpy import QtGui, QtCore, QtWidgets
 
 from controllers.main_controller import MainController
+from models.disperse_element import Grating
 from view.view import View
 from settings import Settings
 from controllers.measurement_controller.data_processing_controller import DataProcessingController
@@ -92,48 +93,48 @@ class MainWindow(QMainWindow):
         ms_controller.state_s.connect(lambda x: self.controller.logger.log(40, x, True))
 
         widgets.comparative_file_unload_btn.clicked.connect(self.test)
-
-       
-        # switch units
-        unitAngstromActive = lambda : Widgets.radioButton_2.isChecked()
         
+        # switch units
+        unitAngstromActive = lambda : widgets.radioButton_2.isChecked()
+
         # moveForward/moveReverse
-        steps_box = Widgets.devices_controls_engine_positioning_step_sbox
+        steps_box = widgets.devices_controls_engine_positioning_step_sbox
         steps_box.setSingleStep(1)
         noStepsValue = lambda : int(steps_box.value())
-        Widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
+        widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
             lambda:self.controller.move_reverse(noStepsValue()))
-        Widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
+        widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
             lambda:self.controller.move_forward(noStepsValue()))
-
-        gotoValueInRightUnits = lambda : self.mriezka.get_angle_from_wawe(gotoValue()) if unitAngstromActive() else gotoValue()
         
+        self.curDispElem = lambda: Grating(widgets.devices_controls_devices_selection_disperse_cbox.currentText())
+
+        gotoValueInRightUnits = lambda : self.curDispElem().wavelengthToAngle(gotoValue()) if unitAngstromActive() else gotoValue()
+
         # moveToPosition
-        gotoValue = lambda : Widgets.devices_controls_goto_sbox.value()
-        Widgets.devices_controls_goto_btn.clicked.connect(
+        gotoValue = widgets.devices_controls_goto_sbox.value
+        widgets.devices_controls_goto_btn.clicked.connect(
             lambda:self.controller.go_to_pos(
                 gotoValueInRightUnits()))
-        
+
         # init position
-        initValue = lambda : Widgets.doubleSpinBox.value()
-        initValueInRightUnits = lambda : self.mriezka.get_angle_from_wawe(initValue()) if unitAngstromActive() else initValue()
-        Widgets.devices_controls_calibration_btn.clicked.connect(
+        initValue = widgets.doubleSpinBox.value
+        initValueInRightUnits = lambda : self.curDispElem().wavelengthToAngle(initValue()) if unitAngstromActive() else initValue()
+        widgets.devices_controls_calibration_btn.clicked.connect(
             lambda:self.controller.initialization(initValueInRightUnits()))
 
         # meranie
-        endValue = lambda : Widgets.measurement_config_menu_start_sbox.value()
-        endValueInRightUnits = lambda : self.mriezka.get_angle_from_wawe(endValue()) if unitAngstromActive() else endValue()
+        endValue = widgets.measurement_config_menu_start_sbox.value
+        endValueInRightUnits = lambda : self.curDispElem().wavelengthToAngle(endValue()) if unitAngstromActive() else endValue()
 
-        startValue = lambda : Widgets.measurement_config_menu_end_sbox.value()
-        startValueInRightUnits = lambda : self.mriezka.get_angle_from_wawe(startValue()) if unitAngstromActive() else startValue()
+        startValue = widgets.measurement_config_menu_end_sbox.value
+        startValueInRightUnits = lambda : self.curDispElem().wavelengthToAngle(startValue()) if unitAngstromActive() else startValue()
 
-        motorStepValue = lambda : Widgets.measurement_motor_step.value()
-
-        Widgets.action_play.triggered.connect(
-            lambda:self.controller.start_measurement(startValueInRightUnits(), endValueInRightUnits(), motorStepValue()))
+        motorStepValue = widgets.measurement_motor_step.value
+        correction = widgets.measurement_correction_sbox.value
+        integrations = widgets.measurement_integrations_sbox.value
 
         widgets.action_play.triggered.connect(
-            lambda: self.controller.start_measurement(startValue(), endValue(), motorStepValue()))
+            lambda: self.controller.start_measurement(startValueInRightUnits(), endValueInRightUnits(), motorStepValue(), correction(), integrations()))
 
         widgets.action_play.triggered.connect(self.view.switch_play_button)
         widgets.action_stop.triggered.connect(self.view.switch_play_button)

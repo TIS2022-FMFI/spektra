@@ -1,5 +1,5 @@
 from PySide6 import QtCore
-from PySide6.QtCore import QObject, Signal, QThread, QTimer
+from PySide6.QtCore import QObject, Signal, QThread, QTimer, QGenericArgument
 
 from errors.data_processing_error import DataProcessingError
 from models.motor.Motor import Motor
@@ -28,16 +28,18 @@ class MeasurementController(QObject):
         self._lockin = None
         self._motor = None
         self._elem = None
+        self.correction = 0
+        self.integrations = 1
 
         self.sr510_sn = 'A7CB1935A'
         self.lockin_comport = None
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.check_lockin_availability)
-        self.timer.start(1000)
+        self.timer.start(750)
 
         if self._motor is None:
-            #self.check_motor_availability()
+            # self.check_motor_availability()
             self._motor = Motor('COM4')
 
         self._measurement_thread = QThread()
@@ -60,6 +62,7 @@ class MeasurementController(QObject):
 
                 self.voltmeter_status_s.emit(True)
                 return
+        self._lockin = None
         self.voltmeter_status_s.emit(False)
 
     def get_important_lockin_values(self):
@@ -84,6 +87,7 @@ class MeasurementController(QObject):
 
     @QtCore.Slot(str)
     def set_disperse_element(self, name):
+        print('setting different disp elem')
         self._elem = Grating(name)
 
     def adjust_sensitivity(self, measuredValue):
@@ -101,8 +105,8 @@ class MeasurementController(QObject):
             self._lockin.higher_gain()
             print(f'Zosilnenie sa zvysilo na {self._lockin.current_gain_value()}')
 
-    def sendMeasurement(self, angle, elem, value):
-        wavelength = elem.angleToWavelength(angle)
+    def sendMeasurement(self, angle, elem, value, correction):
+        wavelength = elem.angleToWavelength(angle) + correction
 
         try:
             self.data_processing_controller.data_processing.add_measurement(angle, wavelength, value)
@@ -115,12 +119,29 @@ class MeasurementController(QObject):
     def failed_measurement(self, msg):
         self.logger.log(WARNING, msg, True)
         self.measurement_start_fail_s.emit()
+
+    @QtCore.Slot(float, int)
+    def set_arguments(self, correction, integrations):
+        self.correction = correction
+        self.integrations = integrations
+
     @QtCore.Slot(float, float, int)
     def start(self, start, end, stepsPerDataPoint):
+        print('lockin')
+        if self._lockin is None:
+            self.failed_measurement("Lockin nie je pripojený.")
+            return
+        print('elem')
+        if self._elem is None:
+            self.failed_measurement("Neexistuje žiadny disperzný prvok.")
+            return
+
+        print('angle')
         if self.angle is None:
             self.failed_measurement("Motor nie je inicializovaný.")
             return
 
+        print('distance')
         distance = end - self.angle
         if distance <= 0:
             self.failed_measurement("Začiatok merania musí by menší ako koniec merania.")
@@ -129,16 +150,21 @@ class MeasurementController(QObject):
         self._lockin.prepare()
         self.get_important_lockin_values()
 
+        print('try')
         try:
             self.data_processing_controller.data_processing.create_new_file()
         except DataProcessingError as e:
             self.failed_measurement(e.message)
             return
 
+        print('try2')
+
         self.new_measurement_started_s.emit()
         self.running = True
 
         elem = self._elem
+        correction = self.correction
+        integrations = self.integrations
         steps = elem.angleToSteps(distance)
         last_step = steps % stepsPerDataPoint
         data_points = steps // stepsPerDataPoint
@@ -148,7 +174,7 @@ class MeasurementController(QObject):
         anglePerDataPoint = elem.stepsToAngle(stepsPerDataPoint)
 
         measured_value = self._lockin.read_value()
-        self.sendMeasurement(self.angle, elem, measured_value)
+        self.sendMeasurement(self.angle, elem, measured_value, correction)
 
         for i in range(data_points):
             if self.running == False:
@@ -160,9 +186,11 @@ class MeasurementController(QObject):
             duration = self._motor.moveForward(stepsPerDataPoint)
             time.sleep(duration)
             self.angle += anglePerDataPoint
-            
-            measured_value = self._lockin.read_value()
-            self.sendMeasurement(self.angle, elem, measured_value)
+
+            measured_values = [self._lockin.read_value() for _ in integrations]
+            measured_value = sum(measured_values) / len(measured_values)
+
+            self.sendMeasurement(self.angle, elem, measured_value, correction)
             self.adjust_sensitivity(measured_value)
             
             print(f"pos: {self.angle:.3f} measurement: {measured_value}")
@@ -171,9 +199,11 @@ class MeasurementController(QObject):
             duration = self._motor.moveForward(last_step)
             time.sleep(duration)
             self.angle += elem.stepsToAngle(last_step)
-            
-            measured_value = self._lockin.read_value()
-            self.sendMeasurement(self.angle, elem, measured_value)
+
+            measured_values = [self._lockin.read_value() for _ in integrations]
+            measured_value = sum(measured_values) / len(measured_values)
+
+            self.sendMeasurement(self.angle, elem, measured_value, correction)
             
             print(f"pos: {self.angle:.3f} measurement: {measured_value}")
 

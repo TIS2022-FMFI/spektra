@@ -333,6 +333,7 @@ class Ui_MainWindow(object):
         self.measurement_integrations_sbox = QSpinBox(self.widget)
         self.measurement_integrations_sbox.setObjectName(u"measurement_integrations_sbox")
         self.measurement_integrations_sbox.setFont(font2)
+        self.measurement_integrations_sbox.setRange(1, 10)
 
         self.gridLayout_9.addWidget(self.measurement_integrations_sbox, 0, 1, 1, 1)
 
@@ -346,6 +347,7 @@ class Ui_MainWindow(object):
         self.measurement_correction_sbox.setObjectName(u"measurement_correction_sbox")
         self.measurement_correction_sbox.setFont(font2)
         self.measurement_correction_sbox.setDecimals(4)
+        self.measurement_correction_sbox.setRange(-99, 99)
 
         self.gridLayout_9.addWidget(self.measurement_correction_sbox, 1, 1, 1, 1)
 
@@ -358,6 +360,7 @@ class Ui_MainWindow(object):
         self.measurement_motor_step = QSpinBox(self.widget)
         self.measurement_motor_step.setObjectName(u"measurement_motor_step")
         self.measurement_motor_step.setFont(font2)
+        self.measurement_motor_step.setRange(1, 128)
 
         self.gridLayout_9.addWidget(self.measurement_motor_step, 2, 1, 1, 1)
 
