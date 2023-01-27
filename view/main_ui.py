@@ -287,6 +287,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.measurement_config_menu_end_sbox.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_end_sbox.setSizePolicy(sizePolicy1)
         self.measurement_config_menu_end_sbox.setFont(font2)
+        self.measurement_config_menu_end_sbox.setRange(0, 20000)
 
         self.horizontalLayout_10.addWidget(self.measurement_config_menu_end_sbox)
 
@@ -303,6 +304,7 @@ class Ui_MainWindow(object):
         sizePolicy1.setHeightForWidth(self.measurement_config_menu_start_sbox.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_start_sbox.setSizePolicy(sizePolicy1)
         self.measurement_config_menu_start_sbox.setFont(font2)
+        self.measurement_config_menu_start_sbox.setRange(0, 20000)
 
         self.horizontalLayout_10.addWidget(self.measurement_config_menu_start_sbox)
 
@@ -855,12 +857,10 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout_6.addWidget(self.devices_controls_engine_positioning_left_btn)
 
-        self.devices_controls_engine_positioning_step_sbox = QDoubleSpinBox(
+        self.devices_controls_engine_positioning_step_sbox = QSpinBox(
             self.devices_controls_devices_engine_controls_widget)
         self.devices_controls_engine_positioning_step_sbox.setObjectName(
             u"devices_controls_engine_positioning_step_sbox")
-        self.devices_controls_engine_positioning_step_sbox = QSpinBox(self.devices_controls_devices_engine_controls_widget)
-        self.devices_controls_engine_positioning_step_sbox.setObjectName(u"devices_controls_engine_positioning_step_sbox")
         self.devices_controls_engine_positioning_step_sbox.setFont(font2)
         self.devices_controls_engine_positioning_step_sbox.setRange(0, 6000)
 
@@ -903,7 +903,7 @@ class Ui_MainWindow(object):
         self.devices_controls_goto_sbox = QDoubleSpinBox(self.devices_controls_devices_goto_widget)
         self.devices_controls_goto_sbox.setObjectName(u"devices_controls_goto_sbox")
         self.devices_controls_goto_sbox.setFont(font2)
-        self.devices_controls_goto_sbox.setRange(0,1500)
+        self.devices_controls_goto_sbox.setRange(0,20000)
 
         self.gridLayout_2.addWidget(self.devices_controls_goto_sbox, 1, 1, 1, 1)
 
