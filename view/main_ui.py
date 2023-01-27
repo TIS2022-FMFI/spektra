@@ -859,7 +859,7 @@ class Ui_MainWindow(object):
         self.devices_controls_engine_positioning_step_sbox = QSpinBox(self.devices_controls_devices_engine_controls_widget)
         self.devices_controls_engine_positioning_step_sbox.setObjectName(u"devices_controls_engine_positioning_step_sbox")
         self.devices_controls_engine_positioning_step_sbox.setFont(font2)
-        self.devices_controls_engine_positioning_step_sbox.setRange(1, 2000)
+        self.devices_controls_engine_positioning_step_sbox.setRange(0, 6000)
 
         self.horizontalLayout_6.addWidget(self.devices_controls_engine_positioning_step_sbox)
 
@@ -900,6 +900,7 @@ class Ui_MainWindow(object):
         self.devices_controls_goto_sbox = QDoubleSpinBox(self.devices_controls_devices_goto_widget)
         self.devices_controls_goto_sbox.setObjectName(u"devices_controls_goto_sbox")
         self.devices_controls_goto_sbox.setFont(font2)
+        self.devices_controls_goto_sbox.setRange(0,1500)
 
         self.gridLayout_2.addWidget(self.devices_controls_goto_sbox, 1, 1, 1, 1)
 
@@ -935,6 +936,7 @@ class Ui_MainWindow(object):
         self.doubleSpinBox = QDoubleSpinBox(self.devices_controls_engine_settings_widget)
         self.doubleSpinBox.setObjectName(u"doubleSpinBox")
         self.doubleSpinBox.setFont(font2)
+        self.doubleSpinBox.setRange(0,2000)
 
         self.gridLayout_3.addWidget(self.doubleSpinBox, 0, 1, 1, 1)
 
@@ -1221,7 +1223,7 @@ class Ui_MainWindow(object):
         self.devices_controls_goto_btn.setText(QCoreApplication.translate("MainWindow", u"Nastav", None))
         self.devices_controls_engine_settings_label.setText(
             QCoreApplication.translate("MainWindow", u"Inicializovanie polohy motora", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"Uhol", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"Poloha", None))
         self.devices_controls_calibration_btn.setText(QCoreApplication.translate("MainWindow", u"Nastav", None))
         self.devices_controls_angle_label.setText(
             QCoreApplication.translate("MainWindow", u"Vlnov\u00e1 d\u013a\u017eka", None))
