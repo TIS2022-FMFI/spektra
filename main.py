@@ -147,7 +147,7 @@ class MainWindow(QMainWindow):
             lambda: self.controller.move_forward(widgets.calibration_dialog.step_size.value()))
 
         widgets.actionO_programe.triggered.connect(widgets.about_dialog.show)
-        wisgets.actionDokument_cia.triggered.connect(self.view.open_documentation)
+        widgets.actionDokument_cia.triggered.connect(self.view.open_documentation)
 
         self.view.update_disperse_elements_list()
 
