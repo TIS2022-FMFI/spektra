@@ -14,6 +14,10 @@ class LogBuffer:
         self._lock = QMutex()
 
     def add(self, log: Log):
+        """
+            Add a log to the buffer.
+            :param log: Log to add.
+        """
         self._lock.lock()
         if self._length == self.MAX_BUFFER_SIZE:
             raise BufferError("Buffer is full")
@@ -22,7 +26,7 @@ class LogBuffer:
             self.tail = log
         else:
             current = self.tail
-            # find the correct position based on time created head (oldest) -> tail (newest)
+            # find the correct position based on time created, head (oldest) -> tail (newest)
             while current is not None and current > log:
                 if log == current:
                     self._lock.unlock()
@@ -51,6 +55,9 @@ class LogBuffer:
         self._lock.unlock()
 
     def get(self):
+        """
+            Get the oldest log from the buffer.
+        """
         self._lock.lock()
         if self.head is None:
             self._lock.unlock()
@@ -68,6 +75,9 @@ class LogBuffer:
         return log
 
     def clear(self):
+        """
+            Clear the buffer.
+        """
         self._lock.lock()
         self.head = None
         self.tail = None
@@ -88,6 +98,9 @@ class LogBuffer:
         return string
 
     def dump_to_file(self, file_path):
+        """
+            Dump the buffer to a file.
+        """
         self._lock.lock()
         current = self.head
         log_text = ""
