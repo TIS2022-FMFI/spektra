@@ -25,7 +25,7 @@ class DataProcessing(QObject):
         @return: path to "saved_measurements" directory
         """
         path = os.path.dirname(os.path.abspath(__file__))
-        dirs = path.split("\\")
+        dirs = path.split("\\") if "\\" in path else path.split("/")
         root_name = ROOT_DIR_NAME
         target_dir = SAVED_MEASUREMENTS_DIR_NAME
         index_root = len(dirs) - dirs[::-1].index(root_name) - 1

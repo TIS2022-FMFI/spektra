@@ -29,6 +29,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDockWidget,
 import pyqtgraph as pg
 
 from view.calibration_dialog import CalibrationDialog
+from widgets.about_dialog import AboutDialog
 from widgets.graph import Graph
 from view.constants import *
 
@@ -55,19 +56,16 @@ class Ui_MainWindow(object):
         self.action_play = QAction(MainWindow)
         self.action_play.setObjectName(u"action_play")
         icon = QIcon()
-        icon.addFile(
-            u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/play_circle_FILL0_wght400_GRAD0_opsz48.svg",
-            QSize(), QIcon.Normal, QIcon.Off)
+
         self.action_play.setIcon(icon)
         self.action_stop = QAction(MainWindow)
         self.action_stop.setObjectName(u"action_stop")
         icon1 = QIcon()
-        icon1.addFile(
-            u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/stop_circle_FILL0_wght400_GRAD0_opsz48.svg",
-            QSize(), QIcon.Normal, QIcon.Off)
+
         self.action_stop.setIcon(icon1)
         self.action_new = QAction(MainWindow)
         self.action_new.setObjectName(u"action_new")
+        self.about_dialog = AboutDialog(MainWindow)
         font1 = QFont()
         font1.setFamilies([u"Nirmala UI Semilight"])
         self.action_new.setFont(font1)
@@ -755,7 +753,6 @@ class Ui_MainWindow(object):
         self.devices_controls_devices_selection_volt_label.setFont(font)
 
         self.formLayout_4.setWidget(0, QFormLayout.LabelRole, self.devices_controls_devices_selection_volt_label)
-
         self.devices_controls_devices_selection_volt_cbox = QComboBox(self.devices_controls_devices_selection_widget)
         self.devices_controls_devices_selection_volt_cbox.setObjectName(u"devices_controls_devices_selection_volt_cbox")
         self.devices_controls_devices_selection_volt_cbox.setFont(font2)
@@ -850,9 +847,8 @@ class Ui_MainWindow(object):
         self.devices_controls_engine_positioning_left_btn.setFont(font2)
         self.devices_controls_engine_positioning_left_btn.setStyleSheet(u"background-color: rgba(255, 255, 255, 0);")
         icon2 = QIcon()
-        icon2.addFile(
-            u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/keyboard_arrow_left_FILL0_wght400_GRAD0_opsz48.svg",
-            QSize(), QIcon.Normal, QIcon.Off)
+
+
         self.devices_controls_engine_positioning_left_btn.setIcon(icon2)
 
         self.horizontalLayout_6.addWidget(self.devices_controls_engine_positioning_left_btn)
@@ -873,9 +869,8 @@ class Ui_MainWindow(object):
         self.devices_controls_engine_positioning_right_btn.setFont(font2)
         self.devices_controls_engine_positioning_right_btn.setStyleSheet(u"background-color: rgba(255, 255, 255, 0);")
         icon3 = QIcon()
-        icon3.addFile(
-            u"C:/Users/Administrator/.designer/backup/theme-20221019T043916Z-001/theme/icons/keyboard_arrow_right_FILL0_wght400_GRAD0_opsz48.svg",
-            QSize(), QIcon.Normal, QIcon.Off)
+
+
         self.devices_controls_engine_positioning_right_btn.setIcon(icon3)
 
         self.horizontalLayout_6.addWidget(self.devices_controls_engine_positioning_right_btn)
