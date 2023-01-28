@@ -1,3 +1,5 @@
+import webbrowser
+
 from PySide6.QtCore import QObject, QRunnable, QThreadPool, Signal
 from PySide6.QtGui import QAction, QFont
 from PySide6.QtWidgets import QApplication, QWidget, QSizePolicy
@@ -170,3 +172,7 @@ class View(QObject):
 
         elements = [e.rstrip('.txt') for e in os.listdir('models/elements')]
         disperseElemCbox.addItems(elements)
+
+    def open_documentation(self):
+        """ Open documentation in default browser. """
+        webbrowser.open(Settings.DOCUMENTATION_URL)
