@@ -39,7 +39,8 @@ class CalibrationDialog(QDialog):
         layout.addWidget(self.step_button, 2, 2)
         layout.addWidget(QLabel("Počet krokov"), 3, 0)
         self.step_counter = QLCDNumber()
-        self.step_button.clicked.connect(lambda: self.step_counter.display(self.step_counter.value() + self.step_size.value()))
+        self.step_button.clicked.connect(
+            lambda: self.step_counter.display(self.step_counter.value() + self.step_size.value()))
         layout.addWidget(self.step_counter, 3, 1)
         return layout
 
@@ -94,6 +95,10 @@ class CalibrationDialog(QDialog):
         return layout
 
     def get_calibration_data(self):
+        """
+        Returns calibration data from dialog window.
+        :return: CalibrationData
+        """
         return CalibrationData(self.name.text(),
                                self.spec_rad.value(),
                                self.g.value(),

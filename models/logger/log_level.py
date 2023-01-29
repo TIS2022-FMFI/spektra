@@ -57,4 +57,5 @@ class LogLevel:
             raise TypeError('Invalid type')
 
     def color(self):
+        """Get the color of the log level."""
         return self._color

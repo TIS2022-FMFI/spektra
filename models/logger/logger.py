@@ -16,24 +16,39 @@ class Logger:
         remove_files_older_than(os.path.dirname(self._log_file), LOG_FILE_EXTENSION, Settings.LOGS_MAX_AGE)
 
     def critical(self, message):
+        """ Log a critical message.
+        :param message: Message to log."""
         return self.log(message, CRITICAL)
 
     def error(self, message):
+        """ Log an error message.
+        :param message: Message to log."""
         return self.log(message, ERROR)
 
     def warning(self, message):
+        """ Log a warning message.
+        :param message: Message to log."""
         return self.log(message, WARNING)
 
     def success(self, message):
+        """ Log a success message.
+        :param message: Message to log."""
         return self.log(message, SUCCESS)
 
     def info(self, message):
+        """ Log an info message.
+        :param message: Message to log."""
         return self.log(message, INFO)
 
     def debug(self, message):
+        """ Log a debug message.
+        :param message: Message to log."""
         return self.log(message, DEBUG)
 
     def log(self, message, level):
+        """ Log a message.
+        :param message: Message to log.
+        :param level: Level of the message."""
         log = Log(message, LogLevel(level))
         if Settings.DEBUG and level == DEBUG:
             print(log)
@@ -58,10 +73,13 @@ class Logger:
                 os.makedirs(os.path.dirname(self._log_file))
 
     def save(self):
+        """ Save the logs to the log file."""
         self._flush()
 
     def size(self):
+        """ Get the number of logs in the buffer."""
         return len(self._buffer)
 
     def get_log_filepath(self):
+        """ Get the log file path."""
         return self._log_file

@@ -1,12 +1,11 @@
 from PySide6.QtWidgets import QTreeView
 
-def show_context_menu(self, point):
-    index = self.indexAt(point)
-    if index.isValid():
-        self.context_menu.exec_(self.mapToGlobal(point))
-
 
 def setup_filemanager_view(tree_view: QTreeView):
+    """
+    Setup file manager view.
+    :param tree_view: QTreeView instance to setup.
+    """
     tree_view.setRootIsDecorated(False)
     tree_view.setAlternatingRowColors(False)
     tree_view.setSortingEnabled(True)

@@ -13,6 +13,12 @@ class LoggerController(QObject):
         self._logger = Logger()
 
     def log(self, level, message, show_user=True):
+        """
+        Log a message to the logger.
+        :param level: The level of the log.
+        :param message: The message to log.
+        :param show_user: Whether to show the log to the user.
+        """
         log = self._logger.log(message, level)
         if show_user:
             self.display_log_s.emit(log)
@@ -24,4 +30,5 @@ class LoggerController(QObject):
             raise ValueError("Invalid key")
 
     def save_logs_to_file(self):
+        """Save the logs to a file."""
         self._logger.save()
