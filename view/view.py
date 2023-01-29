@@ -171,6 +171,7 @@ class View(QObject):
         disperseElemCbox.clear()
 
         elements = [e.rstrip('.txt') for e in os.listdir('models/elements')]
+        disperseElemCbox.addItems([' - '])
         disperseElemCbox.addItems(elements)
 
     def open_documentation(self):
