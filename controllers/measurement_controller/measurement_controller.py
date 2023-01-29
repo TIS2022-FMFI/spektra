@@ -24,6 +24,9 @@ class MeasurementController(QObject):
     motor_move_to_pos_s = Signal(int, bool)
 
     def __init__(self):
+        '''
+        initializes measurement controller object
+        '''
         super(MeasurementController, self).__init__()
         self.data_processing_controller = None
         self.logger = None
@@ -52,6 +55,9 @@ class MeasurementController(QObject):
         self._measurement_thread.start()
 
     def check_periphery(self):
+        '''
+        check if motor and lockin is connected and connect them
+        '''
         maybe_motor_comport_listed = []
         found_lockin = False
         for comport in list_ports.comports():
@@ -81,10 +87,16 @@ class MeasurementController(QObject):
             self.logger.log(CRITICAL, e)
 
     def get_important_lockin_values(self):
+        '''
+        get/load lockin parameters
+        '''
         data = {setting: self.lockin_read_setting_safely(setting) for setting in ALL_SETTINGS}
         self.lockin_settings_s.emit(data)
 
     def connect_lockin(self):
+        '''
+        connect milivoltmeter device
+        '''
         try:
             self._lockin = SR510(self.lockin_comport)
         except Exception as e:
@@ -93,16 +105,32 @@ class MeasurementController(QObject):
         self.get_important_lockin_values()
 
     def link_data_processing_controller(self, dpc):
+        '''
+        connect data processing controller object
+        @param dpc: data processing controller
+        '''
         self.data_processing_controller = dpc
 
     def link_logger(self, log):
+        '''
+        connect data logger controller object
+        @param log: logger controller
+        '''
         self.logger = log
 
     @QtCore.Slot(str)
     def set_disperse_element(self, name):
+        '''
+        set disperse element
+        @param name: name of disperse element
+        '''
         self._elem = Grating(name)
 
     def adjust_sensitivity(self, measured_value):
+        '''
+        adjust lockin sensitivity, based on measured value
+        @param measuredValue: current measured value
+        '''
         if measured_value < 0:
             return
 
@@ -121,6 +149,14 @@ class MeasurementController(QObject):
             print(f'Zosilnenie sa zvysilo na {self._lockin.current_gain_value()}')
 
     def save_and_show_measurement(self, elem, value, correction):
+        '''
+        send measurement to data processing controller
+        @param angle: angle of grid (position of measurement)
+        @param elem: used grid
+        @param value: measured value at concrete angle
+        @param correction: used correction of measurement
+        @raise data_processing_error: raises an exception when trying to send measuremnt
+        '''
         angle = self.current_motor_angle
         wavelength = elem.angleToWavelength(angle) + correction
 
@@ -133,16 +169,32 @@ class MeasurementController(QObject):
         self.measured_value_s.emit(wavelength, value)
 
     def failed_measurement(self, msg):
+        '''
+        failed measurement
+        @param msg: message to show when failed measurement
+        '''
         self.logger.log(WARNING, msg)
         self.measurement_start_fail_s.emit()
 
     @QtCore.Slot(float, int)
     def set_arguments(self, correction, integrations):
+        '''
+        set additional measurement arguments
+        @param correction: correction value for given measurement
+        @param integrations: integration value for given measurement
+        '''
         self.correction = correction
         self.integrations = integrations
 
     @QtCore.Slot(float, float, int)
     def start(self, start, end, steps_per_data_point):
+        '''
+        start overall measurement
+        @param start: start position of measurement (angle)
+        @param end: end position of measurement (angle)
+        @param steps_per_data_point: number of step per one measured value
+        @raise data_processing_error: raises an exception when trying to start measurement
+        '''
         if self._lockin is None:
             self.failed_measurement("Lockin nie je pripojený.")
             return
@@ -232,10 +284,17 @@ class MeasurementController(QObject):
 
     @QtCore.Slot()
     def stop(self):
+        '''
+        stop running measurement
+        '''
         self.running = False
 
     @QtCore.Slot(float)
     def move_to_pos(self, end_angle, from_gui=True):
+        '''
+        move to specified position
+        @param stop: position, where to move (angle)
+        '''
         if self.current_motor_angle is None:
             self.logger.log(WARNING, "Poloha motora nie je inicializovaná.")
             return
@@ -271,6 +330,10 @@ class MeasurementController(QObject):
 
     @QtCore.Slot(int)
     def moveForward(self, steps):
+        '''
+        move forward given steps
+        @param steps: number of steps
+        '''
         if not self._motor.connected:
             self.logger.log(WARNING, "Motor nie je pripojeny")
             return
@@ -279,6 +342,10 @@ class MeasurementController(QObject):
 
     @QtCore.Slot(int)
     def moveReverse(self, steps):
+        '''
+        move reverse given steps
+        @param steps: number of steps
+        '''
         if not self._motor.connected:
             self.logger.log(WARNING, "Motor nie je pripojeny")
             return
@@ -287,9 +354,16 @@ class MeasurementController(QObject):
 
     @QtCore.Slot(float)
     def initialization(self, pos):
+        '''
+        initialize position of stepped motor
+        @param pos: position, which to be used for initialization (angle)
+        '''
         self.current_motor_angle = pos
 
     def exit(self):
+        '''
+        exit measurement
+        '''
         self._measurement_thread.quit()
         self._measurement_thread.wait()
 
