@@ -4,13 +4,18 @@ import serial
 class Motor:
     STEP_DELAY = 0.16
     MOVING_CONSTANT = 100
+    MIN_STEPS_FOR_ACCELERATED_MOVEMENT = 201
     
     def __init__(self, portName, delay=0.05):
         self.delay = delay
+        self.motor = None
+        self.connected = False
 
         try:
             self.motor = serial.Serial(portName, 9600, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.5)
-        except:
+            self.connected = True
+        except Exception as e:
+            print(e)
             print('MOTOR NOT CONNECTED')
 
     def moveForward(self, steps):
@@ -26,20 +31,12 @@ class Motor:
         for char in command:
             log = self.motor.write(char.encode())
             time.sleep(self.delay)
-            print(log)
+            print(log, end=' ')
 
-        if steps > 200:
+        if steps >= self.MIN_STEPS_FOR_ACCELERATED_MOVEMENT:
             moving_time = (12220 + (steps - 130) * 30)/1000
         else:
             moving_time = steps * self.STEP_DELAY
 
         return moving_time
-
-    def setDelay(self, delay):
-        self.delay = delay
-
-    def getDelay(self, delay):
-        return self.delay
- 
-
     
