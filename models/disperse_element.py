@@ -33,7 +33,7 @@ class DisperseElement:
         if name is not None:
             self.calibration_exists = self._load()
 
-    def IsValid(self):
+    def is_valid(self):
         return self.calibration_exists
 
     def _load(self):
@@ -80,8 +80,16 @@ class DisperseElement:
         self.spectral_order = int(data.spectral)
 
         self._save()
-    def canMoveTo(self, ang):
+    def is_angle_within_min_max(self, ang):
         return self.maxAngle >= ang >= self.minAngle
+
+    def clamp_angle(self, ang):
+        if ang > self.maxAngle:
+            return self.maxAngle
+        if ang < self.minAngle:
+            return self.minAngle
+        return ang
+
     
 class Grating(DisperseElement):
     def angleToSteps(self, ang):
