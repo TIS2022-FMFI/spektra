@@ -53,13 +53,13 @@ class DataProcessingController(QObject):
         self.view.widgets.measurement_config_menu_filename_ledit.editingFinished.connect(
             lambda: self.data_processing.set_file_name(
                 self.view.widgets.measurement_config_menu_filename_ledit.text()))
-        self.view.widgets.measurement_config_menu_end_sbox.valueChanged.connect(
-            lambda: self.data_processing.set_legend_field(START_POSITION_KEY,
-                                                          self.view.widgets.measurement_config_menu_end_sbox.value())
-        )
         self.view.widgets.measurement_config_menu_start_sbox.valueChanged.connect(
-            lambda: self.data_processing.set_legend_field(END_POSITION_KEY,
+            lambda: self.data_processing.set_legend_field(START_POSITION_KEY,
                                                           self.view.widgets.measurement_config_menu_start_sbox.value())
+        )
+        self.view.widgets.measurement_config_menu_end_sbox.valueChanged.connect(
+            lambda: self.data_processing.set_legend_field(END_POSITION_KEY,
+                                                          self.view.widgets.measurement_config_menu_end_sbox.value())
         )
         self.view.widgets.measurement_integrations_sbox.valueChanged.connect(
             lambda: self.data_processing.set_legend_field(NUM_OF_INTEGRATIONS_KEY,
@@ -223,10 +223,10 @@ class DataProcessingController(QObject):
                 self.view.widgets.measurement_config_menu_time_const_dsbox.setValue(
                     float(self.data_processing.settings.legend[TIME_CONSTANT_KEY]))
             elif key == START_POSITION_KEY:
-                self.view.widgets.measurement_config_menu_end_sbox.setValue(
+                self.view.widgets.measurement_config_menu_start_sbox.setValue(
                     float(self.data_processing.settings.legend[START_POSITION_KEY]))
             elif key == END_POSITION_KEY:
-                self.view.widgets.measurement_config_menu_start_sbox.setValue(
+                self.view.widgets.measurement_config_menu_end_sbox.setValue(
                     float(self.data_processing.settings.legend[END_POSITION_KEY]))
 
         if self.data_processing.settings.legend[UNIT] == Unit.Uhol:
