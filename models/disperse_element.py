@@ -24,12 +24,17 @@ class DisperseElement:
         self.angleDelta = None
 
         self.constant = 2000
-        self.riadky_per_mm = None
+        self.lines_per_mm = None
         self.correction = 0
         self.spectral_order = 1
 
+        self.calibration_exists = False
+
         if name is not None:
-            self._load()
+            self.calibration_exists = self._load()
+
+    def IsValid(self):
+        return self.calibration_exists
 
     def _load(self):
         try:
@@ -39,7 +44,7 @@ class DisperseElement:
                 self.minAngle = float(subor.readline().strip())
                 self.maxAngle = float(subor.readline().strip())
                 self.constant = float(subor.readline().strip())
-                self.riadky_per_mm = float(subor.readline().strip())
+                self.lines_per_mm = float(subor.readline().strip())
                 self.correction = float(subor.readline().strip())
                 self.spectral_order = int(subor.readline().strip())
         except FileNotFoundError:
@@ -58,7 +63,7 @@ class DisperseElement:
                 subor.write(str(self.minAngle) + '\n')
                 subor.write(str(self.maxAngle) + '\n')
                 subor.write(str(self.constant) + '\n')
-                subor.write(str(self.riadky_per_mm) + '\n')
+                subor.write(str(self.lines_per_mm) + '\n')
                 subor.write(str(self.correction) + '\n')
                 subor.write(str(self.spectral_order) + '\n')
 
@@ -70,7 +75,7 @@ class DisperseElement:
         self.steps = int(data.steps)
 
         self.constant = data.multiplier
-        self.riadky_per_mm = data.G
+        self.lines_per_mm = data.G
         self.correction = data.correction
         self.spectral_order = int(data.spectral)
 
@@ -86,8 +91,8 @@ class Grating(DisperseElement):
         return steps * self.angleDelta / self.steps
 
     def angleToWavelength(self, ang):
-        rad = ((ang - self.correction) * math.pi) / 180
-        riadky_per_m = self.riadky_per_mm / 1000
+        rad = ((ang + self.correction) * math.pi) / 180
+        riadky_per_m = self.lines_per_mm / 1000
 
         prva_cast = self.constant / (self.spectral_order * riadky_per_m)
         wavelength = prva_cast * math.sin(rad)
@@ -96,10 +101,10 @@ class Grating(DisperseElement):
 
     def wavelengthToAngle(self, angstroms):
         nm = angstroms / 10
-        riadky_per_m = self.riadky_per_mm / 1000
-        rad = math.asin((nm * self.spectral_order * riadky_per_m) / self.constant)
+        lines_per_m = self.lines_per_mm / 1000
+        rad = math.asin((nm * self.spectral_order * lines_per_m) / self.constant)
 
-        return rad * 180 / math.pi + self.correction
+        return rad * 180 / math.pi - self.correction
         
 class Hranol(DisperseElement):
     def __new__(self):
