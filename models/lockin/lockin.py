@@ -1,7 +1,7 @@
 import serial
 
 from models.lockin.lockin_data import lockin_data
-
+from models.lockin.constants import *
 
 class Lockin:
     def __init__(self, name, port):
@@ -9,50 +9,16 @@ class Lockin:
         sc = ld['serial_connection']
         self.ser = None
         if sc:
-            try:
-                self.ser = serial.Serial(port, *sc.getsettings(), timeout=sc.timeout)
-            except:
-                print('no lockin connected')
+            self.ser = serial.Serial(port, *sc.getsettings(), timeout=sc.timeout)
 
         self.name = name
         self.gain_values = ld['gain']
-        self.pre_time_const = ld['pre_time_const']
-        self.post_time_const = ld['post_time_const']
+        self.pre_time_const = ld[PRE_TIME_CONST]
+        self.post_time_const = ld[POST_TIME_CONST]
         self.cur_gain_index = None
 
     def current_gain_value(self):
         return self.gain_values[self.cur_gain_index]
-
-    def lower_gain(self):
-        self.cur_gain_index += 1
-        input('Zmensi zisk a stlac klavesu pre pokracovanie')
-
-    def higher_gain(self):
-        self.cur_gain_index -= 1
-        input('Zvacsi zisk a stlac klavesu pre pokracovanie')
-
-    def prepare(self):
-        """Stuff that needs to be done before using lockin"""
-        self.cur_gain_index = self.get_gain()
-
-    def get_pre_time_const(self):
-        pre_t = float(input('Zadaj casovu konstantu 1'))
-        return self.pre_time_const.index(pre_t)
-
-    def get_post_time_const(self):
-        post_t = float(input('Zadaj casovu konstantu 2'))
-        return self.pre_time_const.index(post_t)
-
-    def get_gain(self):
-        cur_gain = float(input('Zadaj nastavenu citlivost'))
-        return self.gain_values.index(cur_gain)
-
-    def set_gain(self, gain_index):
-        input(f'Nastav {self.gain_values[gain_index]} a potvrd')
-
-    def read_value(self):
-        raise NotImplementedError
-
     def rcom(self, com, read=False):
         """raw command"""
         if self.ser is not None:
@@ -61,6 +27,19 @@ class Lockin:
             if read:
                 return self.ser.readline()[:-1]
 
+    def read_setting(self, setting):
+        if setting == PRE_TIME_CONST:
+            return self.get_pre_time_const()
+        elif setting == POST_TIME_CONST:
+            return self.get_post_time_const()
+        elif setting == PHASE_SHIFT:
+            return self.get_phase()
+        elif setting == REFERENCE_FREQUENCY:
+            return self.get_ref_frequency()
+        elif setting == BANDPASS_FILTER:
+            return self.get_bandpass_filter()
+
+        raise Exception("Wrong setting")
 
 class SR510(Lockin):
     def __init__(self, port):

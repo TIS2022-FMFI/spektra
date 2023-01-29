@@ -1,4 +1,5 @@
 import serial
+from models.lockin.constants import *
 
 class SerialConnectionData:
     def __init__(self, bdr, bsz, par, stb, tim):
@@ -17,8 +18,8 @@ sc = SerialConnectionData
 lockin_data = {
     '_template': {
         'gain': [],
-        'pre_time_const': [],
-        'post_time_const': [],
+        PRE_TIME_CONST: [],
+        POST_TIME_CONST: [],
         'serial_connection': None  # or sc(,,,,,,)
     }
 }
@@ -31,8 +32,8 @@ with open('models/lockin/lockin_data.txt') as file:
 
             lockin_data[name] = {
                 'gain': gain,
-                'pre_time_const': pretc,
-                'post_time_const': postc,
+                PRE_TIME_CONST: pretc,
+                POST_TIME_CONST: postc,
                 'serial_connection': None if sercon is None else sc(*sercon)
             }
     except Exception as e:
