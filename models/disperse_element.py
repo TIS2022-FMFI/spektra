@@ -18,6 +18,10 @@ class DisperseElement:
     defaultMaxAngle = 28
     
     def __init__(self, name=None):
+        '''
+        initializes disperse element object
+        @param name: the name of particular disperse element
+        '''
         self.minAngle = self.defaultMinAngle
         self.maxAngle = self.defaultMaxAngle
         self.name = name
@@ -37,6 +41,10 @@ class DisperseElement:
         return self.calibration_exists
 
     def _load(self):
+        '''
+        load parameters of disperse element
+        @return return true if load successful, else false
+        '''
         try:
             with open(f'models/elements/{self.name}.txt') as subor:
                 self.angleDelta = float(subor.readline().strip())
@@ -56,6 +64,9 @@ class DisperseElement:
         return True
 
     def _save(self):
+        '''
+        save disperse element parameters to file
+        '''
         if self.angleDelta is not None:
             with open(f'models/elements/{self.name}.txt', 'w') as subor:
                 subor.write(str(self.angleDelta) + '\n')
@@ -68,6 +79,10 @@ class DisperseElement:
                 subor.write(str(self.spectral_order) + '\n')
 
     def save_calibration(self, data):
+        '''
+        save calibration data of disperse element object
+        @param data: calibration data
+        '''
         self.minAngle = data.min_angle
         self.maxAngle = data.max_angle
         self.name = data.name
@@ -81,6 +96,10 @@ class DisperseElement:
 
         self._save()
     def is_angle_within_min_max(self, ang):
+        '''
+        inform about possibility to move to given angle
+        @param ang: angle, where to move
+        '''
         return self.maxAngle >= ang >= self.minAngle
 
     def clamp_angle(self, ang):
@@ -90,15 +109,30 @@ class DisperseElement:
             return self.minAngle
         return ang
 
-    
+
 class Grating(DisperseElement):
     def angleToSteps(self, ang):
+        '''
+        transform angle to number of steps
+        @param ang: angle to transform
+        @return: resulting number of steps
+        '''
         return int(ang * self.steps / self.angleDelta)
 
     def stepsToAngle(self, steps):
+        '''
+        transform number of steps to angle
+        @param steps: steps to transform
+        @return: resulting angle
+        '''
         return steps * self.angleDelta / self.steps
 
     def angleToWavelength(self, ang):
+        '''
+        transform angle value to wavelength
+        @param ang: angle to transform
+        @return: resulting wavelength (in Angstrom)
+        '''
         rad = ((ang + self.correction) * math.pi) / 180
         riadky_per_m = self.lines_per_mm / 1000
 
@@ -108,6 +142,11 @@ class Grating(DisperseElement):
         return wavelength * 10
 
     def wavelengthToAngle(self, angstroms):
+        '''
+        transform wavelength to angle
+        @param ang: wavelength (in Angstrom) to transform
+        @return: resulting angle
+        '''
         nm = angstroms / 10
         lines_per_m = self.lines_per_mm / 1000
         rad = math.asin((nm * self.spectral_order * lines_per_m) / self.constant)
@@ -116,4 +155,7 @@ class Grating(DisperseElement):
         
 class Hranol(DisperseElement):
     def __new__(self):
+        '''
+        placeholder for future implementation (optional)
+        '''
         raise NotImplementedError
