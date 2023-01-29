@@ -6,6 +6,11 @@ class Motor:
     MOVING_CONSTANT = 40
     
     def __init__(self, portName, delay=0.05):
+        '''
+        initializes stepped motor object
+        @param port_name: name of port, where motor is connected
+        @param delay: time delay for connection sending
+        '''
         self.delay = delay
 
         try:
@@ -14,14 +19,29 @@ class Motor:
             print('MOTOR NOT CONNECTED')
 
     def moveForward(self, steps):
+        '''
+        move motor forward
+        @param steps: number of steps
+        @return moving time for given steps
+        '''
         return self.move(steps, "F")
 
     def moveReverse(self, steps):
+        '''
+        move motor reverse (with overlap if more that SPEED_UP_STEP_BORDER number of steps)
+        @param steps: number of steps
+        @return moving time for given steps
+        '''
         added_steps = self.MOVING_CONSTANT if steps > 200 else 0            
         time.sleep(self.move(steps + added_steps, "R"))
         return self.move(added_steps, "F")
         
     def move(self, steps, direction):
+        '''
+        move motor in given direction (with speed up if more that SPEED_UP_STEP_BORDER number of steps)
+        @param steps: number of steps
+        @return moving time for given steps
+        '''
         command = f"!{steps:04d}{direction}"
  
         for char in command:
@@ -40,6 +60,10 @@ class Motor:
         self.delay = delay
 
     def getDelay(self, delay):
+        '''
+        getter method
+        @return connection delay constant
+        '''
         return self.delay
  
 
