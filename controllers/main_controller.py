@@ -4,7 +4,7 @@ from controllers.logger_controller import LoggerController
 from controllers.measurement_controller.measurement_controller import MeasurementController
 
 from models.disperse_element import Grating
-
+from models.lockin.constants import *
 
 class MainController(QObject):
     def __init__(self, view, key):
@@ -14,6 +14,7 @@ class MainController(QObject):
         self._key = key
         self.file_manager = FileManagerController(key)
         self.logger = LoggerController(key)
+        self.selected_disperse_element = Grating()
 
         self._measurement = MeasurementController()
         self._connect_measurement()
@@ -23,8 +24,8 @@ class MainController(QObject):
         self._measurement.progress_s.connect(lambda p: self.view.widgets.progressBar.setValue(p))
         self._measurement.progress_s.connect(lambda p: self.view.switch_play_button() if p == 100 else None)
 
-        self.dispElemCBox = self.view.widgets.devices_controls_devices_selection_disperse_cbox
-        self.dispElemCBox.activated.connect(self.update_disperse_element_choice)
+        disp_elem_cbox = self.view.widgets.devices_controls_devices_selection_disperse_cbox
+        disp_elem_cbox.activated.connect(self.update_disperse_element_choice)
 
         self._measurement.voltmeter_status_s.connect(self.voltmeter_status)
 
@@ -45,9 +46,11 @@ class MainController(QObject):
 
     def set_values_from_lockin(self, data):
         widgets = self.view.widgets
-        widgets.measurement_config_menu_angle_sbox.setValue(data['phase_shift'])
-        widgets.measurement_config_menu_ref_sbox.setValue(data['ref_frequency'])
-        widgets.measurement_config_menu_time_const_dsbox.setValue(data['pre_time_const'])
+        widgets.measurement_config_menu_angle_sbox.setValue(data[PHASE_SHIFT])
+        widgets.measurement_config_menu_ref_sbox.setValue(data[REFERENCE_FREQUENCY])
+        widgets.measurement_config_menu_time_const_dsbox.setValue(data[PRE_TIME_CONST])
+        widgets.measurement_config_menu_time_const_dsbox_post.setValue(data[POST_TIME_CONST])
+
         widgets.measurement_config_menu_span_dsbox.setValue(666)
 
     def clearGraph(self):
@@ -62,7 +65,11 @@ class MainController(QObject):
         # connects the file manager controller to other controllers
         self.file_manager.log_s.connect(lambda level, message, show_user: self.logger.log(level, message, show_user))
 
-    def start_measurement(self, start, stop, stepSize, correction, integrations):
+    def start_measurement(self, start, end, stepSize, correction, integrations):
+        if start is None or end is None:
+            start = 0
+            end = -1
+
         QMetaObject.invokeMethod(self._measurement, "set_arguments", Q_ARG(float, correction), Q_ARG(int, integrations))
 
         QMetaObject.invokeMethod(
@@ -70,13 +77,14 @@ class MainController(QObject):
             "start",
             Qt.QueuedConnection,
             Q_ARG(float, start),
-            Q_ARG(float, stop),
+            Q_ARG(float, end),
             Q_ARG(int, stepSize)
         )
 
     def update_disperse_element_choice(self):
         dispname = self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentText()
-        QMetaObject.invokeMethod(self._measurement, 'set_disperse_element', Qt.QueuedConnection, Q_ARG(str, dispname))
+        self.selected_disperse_element = Grating(dispname)
+        QMetaObject.invokeMethod(self._measurement, 'set_disperse_element', Q_ARG(str, dispname))
 
     def create_calibration(self, data):
         new_grating = Grating()
@@ -87,9 +95,13 @@ class MainController(QObject):
         QMetaObject.invokeMethod(self._measurement, 'stop', Qt.DirectConnection)
 
     def go_to_pos(self, pos):
+        if pos is None:
+            return
         QMetaObject.invokeMethod(self._measurement, 'moveToPos', Qt.QueuedConnection, Q_ARG(float, pos))
 
     def initialization(self, pos):
+        if pos is None:
+            return
         QMetaObject.invokeMethod(self._measurement, 'initialization', Qt.QueuedConnection, Q_ARG(float, pos))
 
     def move_forward(self, steps):

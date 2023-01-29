@@ -3,15 +3,15 @@ import sys
 import os
 from datetime import datetime
 
-from PySide6.QtCore import QThread
 from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QHeaderView
-from qtpy import QtGui, QtCore, QtWidgets
+from qtpy import QtWidgets
 
 from controllers.main_controller import MainController
 from models.disperse_element import Grating
 from view.view import View
 from settings import Settings
 from controllers.measurement_controller.data_processing_controller import DataProcessingController
+from models.logger.constants import *
 
 os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
 
@@ -30,6 +30,7 @@ class MainWindow(QMainWindow):
         self.view.widgets.actionPorovnanie.triggered.connect(self.change_current_directory)
         self.view.widgets.action_save_as.triggered.connect(self.file_save)
         self.view.widgets.action_exit.triggered.connect(lambda: self.controller.exit_measurement(self._secret))
+
         self.data_processing_controller = DataProcessingController(self.view, self._secret)
         self.data_processing_controller.add_logger(self.controller.logger)
 
@@ -73,15 +74,15 @@ class MainWindow(QMainWindow):
         changes current directory from which can user choose older measurement file for comparision
         this directory is chosen by user
         """
-        idx, directory = self.controller.file_manager.change_current_directory(QFileDialog.getExistingDirectory())
+        idx_directory = self.controller.file_manager.change_current_directory(QFileDialog.getExistingDirectory())
+        if idx_directory is None:
+            return
+        idx, directory = idx_directory
         if idx is not None:
             self.view.widgets.comparative_file_dir_tree_view.setRootIndex(idx)
 
     def _connect_logger_controller(self):
         self.controller.logger.display_log_s.connect(lambda log: self.view.display_log(log))
-        # example only to show functionality
-        self.view.widgets.comparative_file_unload_btn.clicked.connect(
-            lambda: self.controller.logger.log(40, 'User clicked on btn Zrus', True))
 
     def _connect_measurement_controller(self):
         widgets = self.view.widgets
@@ -90,56 +91,60 @@ class MainWindow(QMainWindow):
         ms_controller.link_data_processing_controller(self.data_processing_controller)
         ms_controller.link_logger(self.controller.logger)
 
-        ms_controller.state_s.connect(lambda x: self.controller.logger.log(40, x, True))
-
-        widgets.comparative_file_unload_btn.clicked.connect(self.test)
-        
-        # switch units
-        unitAngstromActive = lambda : widgets.radioButton_2.isChecked()
+        ms_controller.state_s.connect(lambda x: self.controller.logger.log(INFO, x))
 
         # moveForward/moveReverse
-        steps_box = widgets.devices_controls_engine_positioning_step_sbox
-        steps_box.setSingleStep(1)
-        noStepsValue = lambda : int(steps_box.value())
-        widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
-            lambda:self.controller.move_reverse(noStepsValue()))
-        widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
-            lambda:self.controller.move_forward(noStepsValue()))
-        
-        self.curDispElem = lambda: Grating(widgets.devices_controls_devices_selection_disperse_cbox.currentText())
+        steps_to_move = widgets.devices_controls_engine_positioning_step_sbox.value
 
-        gotoValueInRightUnits = lambda : self.curDispElem().wavelengthToAngle(gotoValue()) if unitAngstromActive() else gotoValue()
+        widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
+            lambda: self.controller.move_reverse(steps_to_move()))
+        widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
+            lambda: self.controller.move_forward(steps_to_move()))
+
+        # switch units
+        is_angstrom = widgets.radioButton_2.isChecked
+
+        def get_angle(sbox):
+            gui_value = sbox.value()
+            selected_element = self.controller.selected_disperse_element
+            if not selected_element.IsValid():
+                self.controller.logger.log(WARNING, "Neplatný alebo nevybraný disperzný prvok.")
+                return None
+            if is_angstrom():
+                return selected_element.wavelengthToAngle(gui_value)
+            return gui_value
 
         # moveToPosition
-        gotoValue = widgets.devices_controls_goto_sbox.value
         widgets.devices_controls_goto_btn.clicked.connect(
-            lambda:self.controller.go_to_pos(
-                gotoValueInRightUnits()))
+            lambda: self.controller.go_to_pos(get_angle(widgets.devices_controls_goto_sbox)))
 
         # init position
-        initValue = widgets.doubleSpinBox.value
-        initValueInRightUnits = lambda : self.curDispElem().wavelengthToAngle(initValue()) if unitAngstromActive() else initValue()
         widgets.devices_controls_calibration_btn.clicked.connect(
-            lambda:self.controller.initialization(initValueInRightUnits()))
+            lambda: self.controller.initialization(get_angle(widgets.motor_init_pos_sbox)))
 
         # meranie
-        endValue = widgets.measurement_config_menu_start_sbox.value
-        endValueInRightUnits = lambda : self.curDispElem().wavelengthToAngle(endValue()) if unitAngstromActive() else endValue()
-
-        startValue = widgets.measurement_config_menu_end_sbox.value
-        startValueInRightUnits = lambda : self.curDispElem().wavelengthToAngle(startValue()) if unitAngstromActive() else startValue()
-
-        motorStepValue = widgets.measurement_motor_step.value
+        start_angle = lambda: get_angle(widgets.measurement_config_menu_start_sbox)
+        end_angle = lambda: get_angle(widgets.measurement_config_menu_end_sbox)
+        steps_per_datapoint = widgets.measurement_motor_step.value
         correction = widgets.measurement_correction_sbox.value
         integrations = widgets.measurement_integrations_sbox.value
 
-        widgets.action_play.triggered.connect(
-            lambda: self.controller.start_measurement(startValueInRightUnits(), endValueInRightUnits(), motorStepValue(), correction(), integrations()))
-
         widgets.action_play.triggered.connect(self.view.switch_play_button)
+        widgets.action_play.triggered.connect(
+            lambda: self.controller.start_measurement(
+                start_angle(),
+                end_angle(),
+                steps_per_datapoint(),
+                correction(),
+                integrations()
+            )
+        )
+
+        # stop action
         widgets.action_stop.triggered.connect(self.view.switch_play_button)
         widgets.action_stop.triggered.connect(self.controller.stop_measurement)
 
+        # calibration window
         widgets.actionKalibr_cia.triggered.connect(self.view.show_calibration_dialog)
         widgets.calibration_dialog.calibration_data_s.connect(
             lambda data: self.controller.create_calibration(data))
@@ -147,10 +152,6 @@ class MainWindow(QMainWindow):
             lambda: self.controller.move_forward(widgets.calibration_dialog.step_size.value()))
 
         self.view.update_disperse_elements_list()
-
-    def test(self):
-        print("test() thread id: ")
-        print(QThread.currentThread())
 
     def closeEvent(self, event):
         self.controller.logger.save_logs_to_file()
