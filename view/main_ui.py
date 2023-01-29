@@ -935,7 +935,8 @@ class Ui_MainWindow(object):
         self.motor_init_pos_sbox = QDoubleSpinBox(self.devices_controls_engine_settings_widget)
         self.motor_init_pos_sbox.setObjectName(u"motor_init_pos_sbox")
         self.motor_init_pos_sbox.setFont(font2)
-        self.motor_init_pos_sbox.setRange(0, 2000)
+        self.motor_init_pos_sbox.setRange(0, 30)
+        self.motor_init_pos_sbox.setSuffix(" °")
 
         self.gridLayout_3.addWidget(self.motor_init_pos_sbox, 0, 1, 1, 1)
 
@@ -1219,7 +1220,7 @@ class Ui_MainWindow(object):
         self.devices_controls_engine_positioning_left_btn.setText("")
         self.devices_controls_engine_positioning_right_btn.setText("")
         self.devices_controls_goto_label.setText(QCoreApplication.translate("MainWindow", u"Cho\u010f na", None))
-        self.devices_controls_goto_btn.setText(QCoreApplication.translate("MainWindow", u"Nastav", None))
+        self.devices_controls_goto_btn.setText(QCoreApplication.translate("MainWindow", u"Cho\u010f", None))
         self.devices_controls_engine_settings_label.setText(
             QCoreApplication.translate("MainWindow", u"Inicializovanie polohy motora", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Uhol", None))
