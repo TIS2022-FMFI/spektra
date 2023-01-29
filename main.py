@@ -102,12 +102,39 @@ class MainWindow(QMainWindow):
             lambda: self.controller.move_forward(steps_to_move()))
 
         # switch units
+
+        motor_goto = widgets.devices_controls_goto_sbox
+        measurement_start = widgets.measurement_config_menu_start_sbox
+        measurement_end = widgets.measurement_config_menu_end_sbox
+
+        variable_sboxes = [motor_goto, measurement_start, measurement_end]
+        def sboxes_convert(toAngstroms):
+            selected_element = self.controller.selected_disperse_element
+            if not selected_element.is_valid():
+                return
+            if toAngstroms:
+                for sbox in variable_sboxes:
+                    sbox.setSuffix(" Å")
+                    sbox.setRange(0, 20000)
+                    angle = selected_element.clamp_angle(sbox.value())
+                    sbox.setValue(selected_element.angleToWavelength(angle))
+
+            else:
+                for sbox in variable_sboxes:
+                    sbox.setSuffix(" °")
+                    angle = selected_element.wavelengthToAngle(sbox.value())
+                    sbox.setValue(selected_element.clamp_angle(angle))
+                    sbox.setRange(selected_element.minAngle, selected_element.maxAngle)
+
+
         is_angstrom = widgets.radioButton_2.isChecked
+        widgets.radioButton_2.pressed.connect(lambda: sboxes_convert(True))
+        widgets.radioButton.pressed.connect(lambda: sboxes_convert(False))
 
         def get_angle(sbox):
             gui_value = sbox.value()
             selected_element = self.controller.selected_disperse_element
-            if not selected_element.IsValid():
+            if not selected_element.is_valid():
                 self.controller.logger.log(WARNING, "Neplatný alebo nevybraný disperzný prvok.")
                 return None
             if is_angstrom():
