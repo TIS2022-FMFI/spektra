@@ -44,6 +44,13 @@ class Icons:
     voltmeter_connected = qta.icon('fa5s.bolt', color='yellow')
 
     def get(self, icon_name, mode, enabled=True):
+        """
+            Returns the icon for the given mode and in a given state.
+            :param icon_name: The name of the icon to return.
+            :param mode: The mode of the application.
+            :param enabled: The state of the icon.
+        """
+
         if not enabled:
             return getattr(self, f'{icon_name}_disabled')
         if mode == NIGHT_MODE:

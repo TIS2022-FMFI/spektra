@@ -36,6 +36,9 @@ class Log:
 
     @property
     def copy(self):
+        """
+        Returns a copy of the log.
+        """
         ret = Log(self.message, LogLevel(self.level.level))
         ret.timestamp = self.timestamp
         ret.next = self.next
