@@ -1,4 +1,6 @@
 from PySide6.QtCore import QObject, QThreadPool, QMetaObject, Qt, Q_ARG
+from PySide6.QtWidgets import QMessageBox
+
 from controllers.file_manager_controller import FileManagerController
 from controllers.logger_controller import LoggerController
 from controllers.measurement_controller.measurement_controller import MeasurementController
@@ -37,6 +39,10 @@ class MainController(QObject):
         self._measurement.lockin_settings_s.connect(self.set_values_from_lockin)
 
         self._measurement.measurement_start_fail_s.connect(self.set_play_button)
+
+        self._measurement.motor_move_to_pos_s.connect(self.go_to_pos_confirmation)
+
+
 
     def voltmeter_status(self, connected):
         self.view.on_voltmeter_connection_change(connected)
@@ -82,9 +88,10 @@ class MainController(QObject):
         )
 
     def update_disperse_element_choice(self):
-        dispname = self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentText()
-        self.selected_disperse_element = Grating(dispname)
-        QMetaObject.invokeMethod(self._measurement, 'set_disperse_element', Q_ARG(str, dispname))
+        element_name = self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentText()
+        self.selected_disperse_element = Grating(element_name)
+        self.view.widgets.motor_init_pos_sbox.setRange(self.selected_disperse_element.minAngle, self.selected_disperse_element.maxAngle)
+        QMetaObject.invokeMethod(self._measurement, 'set_disperse_element', Q_ARG(str, element_name))
 
     def create_calibration(self, data):
         new_grating = Grating()
@@ -94,10 +101,18 @@ class MainController(QObject):
     def stop_measurement(self):
         QMetaObject.invokeMethod(self._measurement, 'stop', Qt.DirectConnection)
 
+    def go_to_pos_confirmation(self, steps, forward):
+        dir_text = "dopredu" if forward else "dozadu"
+        dialog_window = self.view.widgets.goto_confirmation_dialog
+        dialog_window.setText(f"Motor sa posunie o {steps} krokov {dir_text}. Je to v poriadku ?")
+
+        if dialog_window.exec() == QMessageBox.Yes:
+            QMetaObject.invokeMethod(self._measurement, 'confirmed_move_to_pos', Q_ARG(int, steps), Q_ARG(bool, forward))
+
     def go_to_pos(self, pos):
         if pos is None:
             return
-        QMetaObject.invokeMethod(self._measurement, 'moveToPos', Qt.QueuedConnection, Q_ARG(float, pos))
+        QMetaObject.invokeMethod(self._measurement, 'move_to_pos', Qt.QueuedConnection, Q_ARG(float, pos))
 
     def initialization(self, pos):
         if pos is None:

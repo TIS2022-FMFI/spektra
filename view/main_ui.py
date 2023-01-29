@@ -25,7 +25,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDockWidget,
                                QRadioButton, QScrollArea, QSizePolicy, QSpacerItem,
                                QSpinBox, QStatusBar, QTabWidget, QTextBrowser,
                                QToolBar, QToolBox, QTreeView, QVBoxLayout,
-                               QWidget, QListWidget)
+                               QWidget, QListWidget, QMessageBox)
 import pyqtgraph as pg
 
 from view.calibration_dialog import CalibrationDialog
@@ -900,6 +900,11 @@ class Ui_MainWindow(object):
         self.devices_controls_goto_sbox.setObjectName(u"devices_controls_goto_sbox")
         self.devices_controls_goto_sbox.setFont(font2)
         self.devices_controls_goto_sbox.setRange(0,20000)
+
+        self.goto_confirmation_dialog = QMessageBox()
+        self.goto_confirmation_dialog.setIcon(QMessageBox.Question)
+        self.goto_confirmation_dialog.setWindowTitle("Určite?")
+        self.goto_confirmation_dialog.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
 
         self.gridLayout_2.addWidget(self.devices_controls_goto_sbox, 1, 1, 1, 1)
 
