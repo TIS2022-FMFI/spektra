@@ -22,6 +22,9 @@ class MeasurementController(QObject):
     measurement_start_fail_s = Signal()
 
     def __init__(self):
+        '''
+        initializes measurement controller object
+        '''
         super(MeasurementController, self).__init__()
         self.angle = None
         self.running = False
@@ -47,12 +50,20 @@ class MeasurementController(QObject):
         self._measurement_thread.finished.connect(self._measurement_thread.deleteLater)
         self.moveToThread(self._measurement_thread)
         self._measurement_thread.start()
+        
     def check_motor_availability(self):
+        '''
+        check if motor is connected
+        '''
         availableComPorts = list_ports.comports()
         for acp in availableComPorts:
             for i in acp:
                 print(i)
+                
     def check_lockin_availability(self):
+        '''
+        check if lockin is connected
+        '''
         availableComPorts = list_ports.comports()
         for acp in availableComPorts:
             if acp.serial_number == self.sr510_sn:
@@ -66,6 +77,9 @@ class MeasurementController(QObject):
         self.voltmeter_status_s.emit(False)
 
     def get_important_lockin_values(self):
+        '''
+        get/load lockin parameters
+        '''
         data = {
             'pre_time_const': self._lockin.get_pre_time_const(),
             'post_time_const': self._lockin.get_post_time_const(),
@@ -75,22 +89,42 @@ class MeasurementController(QObject):
         }
         print(data)
         self.lockin_settings_s.emit(data)
+        
     def connect_lockin(self):
+        '''
+        connect milivoltmeter device
+        '''
         self._lockin = SR510(self.lockin_comport)
         self.get_important_lockin_values()
 
     def link_data_processing_controller(self, dpc):
+        '''
+        connect data processing controller object
+        @param dpc: data processing controller
+        '''
         self.data_processing_controller = dpc
 
     def link_logger(self, log):
+        '''
+        connect data logger controller object
+        @param log: logger controller
+        '''
         self.logger = log
 
     @QtCore.Slot(str)
     def set_disperse_element(self, name):
+        '''
+        set disperse element
+        @param name: name of disperse element
+        '''
         print('setting different disp elem')
         self._elem = Grating(name)
 
     def adjust_sensitivity(self, measuredValue):
+        '''
+        adjust lockin sensitivity, based on measured value
+        @param measuredValue: current measured value
+        '''
         #todo 3*pre_time_constant sleep after change
 
         if measuredValue < 0:
@@ -108,6 +142,14 @@ class MeasurementController(QObject):
             print(f'Zosilnenie sa zvysilo na {self._lockin.current_gain_value()}')
 
     def sendMeasurement(self, angle, elem, value, correction):
+        '''
+        send measurement to data processing controller
+        @param angle: angle of grid (position of measurement)
+        @param elem: used grid
+        @param value: measured value at concrete angle
+        @param correction: used correction of measurement
+        @raise data_processing_error: raises an exception when trying to send measuremnt
+        '''
         wavelength = elem.angleToWavelength(angle) + correction
 
         try:
@@ -119,16 +161,32 @@ class MeasurementController(QObject):
         self.measured_value_s.emit(wavelength, value, True)
 
     def failed_measurement(self, msg):
+        '''
+        failed measurement
+        @param msg: message to show when failed measurement
+        '''
         self.logger.log(WARNING, msg, True)
         self.measurement_start_fail_s.emit()
 
     @QtCore.Slot(float, int)
     def set_arguments(self, correction, integrations):
+        '''
+        set additional measurement arguments
+        @param correction: correction value for given measurement
+        @param integrations: integration value for given measurement
+        '''
         self.correction = correction
         self.integrations = integrations
 
     @QtCore.Slot(float, float, int)
     def start(self, start, end, stepsPerDataPoint):
+        '''
+        start overall measurement
+        @param start: start position of measurement (angle)
+        @param end: end position of measurement (angle)
+        @param stepsPerDataPoint: number of step per one measured value
+        @raise data_processing_error: raises an exception when trying to start measurement
+        '''
         print('lockin')
         if self._lockin is None:
             self.failed_measurement("Lockin nie je pripojený.")
@@ -214,6 +272,9 @@ class MeasurementController(QObject):
 
     @QtCore.Slot()
     def stop(self):
+        '''
+        stop running measurement
+        '''
         self.running = False
 
     @QtCore.Slot(float)
@@ -223,6 +284,10 @@ class MeasurementController(QObject):
 
     @QtCore.Slot(float)
     def moveToPos(self, stop):
+        '''
+        move to specified position
+        @param stop: position, where to move (angle)
+        '''
         if self.angle is None or self.angle == stop or not self._elem.canMoveTo(stop) or self.running:
             return
 
@@ -239,18 +304,33 @@ class MeasurementController(QObject):
 
     @QtCore.Slot(int)
     def moveForward(self, steps):
+        '''
+        move forward given steps
+        @param steps: number of steps
+        '''
         print(f'moveF je uspesny, pocet krokov: {steps}')
         self._motor.moveForward(steps)
 
     @QtCore.Slot(int)
     def moveReverse(self, steps):
+        '''
+        move reverse given steps
+        @param steps: number of steps
+        '''
         print(f'moveR je uspesny, pocet krokov: {steps}')
         self._motor.moveReverse(steps)
         
     @QtCore.Slot(float)
     def initialization(self, pos):
+        '''
+        initialize position of stepped motor
+        @param pos: position, which to be used for initialization (angle)
+        '''
         self.angle = pos
     
     def exit(self):
+        '''
+        exit measurement
+        '''
         self._measurement_thread.quit()
         self._measurement_thread.wait()
