@@ -18,6 +18,9 @@ os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
 
 class MainWindow(QMainWindow):
     def __init__(self):
+        """
+        initializes main object
+        """
         QMainWindow.__init__(self)
         random.seed(datetime.now().microsecond)
         self._secret = random.random()
@@ -40,13 +43,23 @@ class MainWindow(QMainWindow):
         self.show()
 
     def _connect_view_controller(self):
-        # connect the view with controllers
+        """
+        connect the view with controllers
+        """
         self._connect_file_manager_controller()
         self._connect_logger_controller()
         self._connect_measurement_controller()
 
     def _connect_file_manager_controller(self):
+        """
+        connect the view with file manager controller
+        """
+        
         def setup_file_manager_model(file_manager_model):
+            """
+            set up the file manager model
+            @param file_manager_model: file manager model instance
+            """
             self.view.widgets.comparative_file_dir_tree_view.setModel(file_manager_model)
             self.view.widgets.comparative_file_dir_tree_view.setRootIndex(
                 file_manager_model.index(file_manager_model.root_file_path))
@@ -82,9 +95,16 @@ class MainWindow(QMainWindow):
             self.view.widgets.comparative_file_dir_tree_view.setRootIndex(idx)
 
     def _connect_logger_controller(self):
+        """
+        connect the view with logger controller
+        """
         self.controller.logger.display_log_s.connect(lambda log: self.view.display_log(log))
 
     def _connect_measurement_controller(self):
+        """
+        connect the view with file measurement controller, binds all GUI objects concerning motor movement and
+        measurement with backend
+        """
         widgets = self.view.widgets
         ms_controller = self.controller._measurement
 
@@ -109,6 +129,10 @@ class MainWindow(QMainWindow):
 
         variable_sboxes = [motor_goto, measurement_start, measurement_end]
         def sboxes_convert(toAngstroms):
+            """
+            convert angle values from GUI sboxes to Angstrom
+            @param toAngstroms: if true convert to Angstrom else not
+            """
             selected_element = self.controller.selected_disperse_element
             if not selected_element.is_valid():
                 return
@@ -132,6 +156,10 @@ class MainWindow(QMainWindow):
         widgets.radioButton.pressed.connect(lambda: sboxes_convert(False))
 
         def get_angle(sbox):
+            """
+            get angle values from GUI sboxes
+            @param sbox: sbox object with value
+            """
             gui_value = sbox.value()
             selected_element = self.controller.selected_disperse_element
             if not selected_element.is_valid():
@@ -188,6 +216,10 @@ class MainWindow(QMainWindow):
         self.view.update_disperse_elements_list()
 
     def closeEvent(self, event):
+        """
+        process to be done before closing
+        @param event: event object
+        """
         self.controller.logger.save_logs_to_file()
         self.controller.exit_measurement(self._secret)
         event.accept()
