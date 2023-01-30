@@ -180,6 +180,10 @@ class MainWindow(QMainWindow):
 
         widgets.actionO_programe.triggered.connect(widgets.about_dialog.show)
         widgets.actionDokument_cia.triggered.connect(self.view.open_documentation)
+        widgets.actionDenn.triggered.connect(self.view.change_to_light_theme)
+        widgets.actionNo_n.triggered.connect(self.view.change_to_dark_theme)
+
+
 
         self.view.update_disperse_elements_list()
 
