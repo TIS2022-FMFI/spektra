@@ -7,6 +7,8 @@ from PySide6.QtWidgets import QMainWindow, QApplication, QFileDialog, QHeaderVie
 from qtpy import QtWidgets
 
 from controllers.main_controller import MainController
+from errors.data_processing_error import DataProcessingError
+from models.data_processing.dataProcessing import DataProcessing
 from models.disperse_element import Grating
 from view.view import View
 from settings import Settings
@@ -27,7 +29,7 @@ class MainWindow(QMainWindow):
         self.view.widgets.graph_view.add_views(self.view)
         self.view.widgets.graph_view.add_logger(self.controller.logger)
         self.view.widgets.graph_view.plotGraph()
-        self.view.widgets.actionPorovnanie.triggered.connect(self.change_current_directory)
+        self.view.widgets.actionPorovnanie.triggered.connect(self._load_comparative_file)
         self.view.widgets.action_save_as.triggered.connect(self.file_save)
         self.view.widgets.action_exit.triggered.connect(lambda: self.controller.exit_measurement(self._secret))
 
@@ -38,6 +40,19 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(Settings.TITLE)
 
         self.show()
+
+    def _load_comparative_file(self):
+        file_name = QFileDialog.getOpenFileName(self, "Open File", "", "Text Files (*.txt)")[0]
+        print(file_name)
+
+        try:
+            loaded_settings, measurements = DataProcessing(self.view).load_old_file(file_name)
+        except DataProcessingError as e:
+            self.controller.logger.log(WARNING, e.message, True)
+            return
+        self.view.widgets.graph_view.addMeasurement(measurements, False)
+        self.view.widgets.graph_view.plotGraph()
+        self.view.widgets.textBrowser.setText(str(loaded_settings))
 
     def _connect_view_controller(self):
         # connect the view with controllers
