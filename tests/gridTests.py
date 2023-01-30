@@ -8,6 +8,9 @@ class TestGratingMethods(unittest.TestCase):
                         {14.130: 0.75, 21.180: 1.11, 29.012: 1.49}, {13.858: 420, 21.287: 810, 28.992: 1200}]
 
     def test_angle_to_wavelength(self):
+        """
+        test if converting angles to wavelengths gives correct values
+        """
         for index in range(len(self.AVAILABLE_GRATINGS)):
             grid = self.AVAILABLE_GRATINGS[index]
 
@@ -15,6 +18,9 @@ class TestGratingMethods(unittest.TestCase):
                 self.assertEqual(round(grid.angleToWavelength(angle), 2), wavelength)
 
     def test_wavelength_to_angle(self):
+        """
+        test if converting wavelengths to angles gives correct values
+        """
         for index in range(len(self.AVAILABLE_GRATINGS)):
             grid = self.AVAILABLE_GRATINGS[index]
 
