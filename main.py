@@ -108,7 +108,7 @@ class MainWindow(QMainWindow):
         widgets = self.view.widgets
         ms_controller = self.controller._measurement
 
-        ms_controller.link_data_processing_controller(self.data_processing_controller)
+        ms_controller.link_data_processing_controller(self.data_processing_controller.data_processing)
         ms_controller.link_logger(self.controller.logger)
 
         ms_controller.state_s.connect(lambda x: self.controller.logger.log(INFO, x))

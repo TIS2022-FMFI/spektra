@@ -8,6 +8,7 @@ from controllers.measurement_controller.measurement_controller import Measuremen
 from models.disperse_element import Grating
 from models.lockin.constants import *
 
+
 class MainController(QObject):
     def __init__(self, view, key):
         """
@@ -28,7 +29,7 @@ class MainController(QObject):
         """
         connect the view with file measurement controller features
         """
-        #self.view.widgets.action_play.setEnabled(False)
+        # self.view.widgets.action_play.setEnabled(False)
         self._measurement.progress_s.connect(lambda p: self.view.widgets.progressBar.setValue(p))
         self._measurement.progress_s.connect(lambda p: self.view.switch_play_button() if p == 100 else None)
 
@@ -37,8 +38,8 @@ class MainController(QObject):
 
         self._measurement.voltmeter_status_s.connect(self.voltmeter_status)
 
-        self._measurement.measured_value_s.connect(self.updateGraph)
-        self._measurement.new_measurement_started_s.connect(self.clearGraph)
+        self._measurement.measured_value_s.connect(self.update_graph)
+        self._measurement.new_measurement_started_s.connect(self.clear_graph)
 
         self.view.widgets.action_stop.triggered.connect(self.stop_measurement)
 
@@ -56,7 +57,7 @@ class MainController(QObject):
         """
         self.view.on_voltmeter_connection_change(connected)
         self.view.widgets.action_play.setEnabled(connected)
-        
+
     def set_play_button(self):
         """
         switch between stop and play button
@@ -75,14 +76,14 @@ class MainController(QObject):
         widgets.measurement_config_menu_time_const_dsbox_post.setValue(data[POST_TIME_CONST])
         widgets.measurement_config_menu_span_dsbox.setValue(666)
 
-    def clearGraph(self):
+    def clear_graph(self):
         """
         remove all values from graph
         """
         self.view.widgets.graph_view.initialize()
         self.view.widgets.graph_view.plotGraph()
 
-    def updateGraph(self, wavelength, value, cmp):
+    def update_graph(self, wavelength, value, cmp):
         """
         update graph with given values
         @param wavelength: given wavelength value
@@ -98,7 +99,7 @@ class MainController(QObject):
         """
         self.file_manager.log_s.connect(lambda level, message, show_user: self.logger.log(level, message, show_user))
 
-    def start_measurement(self, start, end, stepSize, correction, integrations):
+    def start_measurement(self, start, end, step_size, correction, integrations):
         """
         start actual measurement process
         @param start: start position of measurement (angle)
@@ -111,15 +112,19 @@ class MainController(QObject):
             start = 0
             end = -1
 
-        QMetaObject.invokeMethod(self._measurement, "set_arguments", Q_ARG(float, correction), Q_ARG(int, integrations))
-
+        QMetaObject.invokeMethod(
+            self._measurement,
+            "set_arguments",
+            Q_ARG(float, correction),
+            Q_ARG(int, integrations)
+        )
         QMetaObject.invokeMethod(
             self._measurement,
             "start",
             Qt.QueuedConnection,
             Q_ARG(float, start),
             Q_ARG(float, end),
-            Q_ARG(int, stepSize)
+            Q_ARG(int, step_size)
         )
 
     def update_disperse_element_choice(self):
@@ -128,7 +133,8 @@ class MainController(QObject):
         """
         element_name = self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentText()
         self.selected_disperse_element = Grating(element_name)
-        self.view.widgets.motor_init_pos_sbox.setRange(self.selected_disperse_element.minAngle, self.selected_disperse_element.maxAngle)
+        min_angle, max_angle = self.selected_disperse_element.minAngle, self.selected_disperse_element.maxAngle
+        self.view.widgets.motor_init_pos_sbox.setRange(min_angle, max_angle)
         QMetaObject.invokeMethod(self._measurement, 'set_disperse_element', Q_ARG(str, element_name))
 
     def create_calibration(self, data):
@@ -157,7 +163,11 @@ class MainController(QObject):
         dialog_window.setText(f"Motor sa posunie o {steps} krokov {dir_text}. Je to v poriadku ?")
 
         if dialog_window.exec() == QMessageBox.Yes:
-            QMetaObject.invokeMethod(self._measurement, 'confirmed_move_to_pos', Q_ARG(int, steps), Q_ARG(bool, forward))
+            QMetaObject.invokeMethod(
+                self._measurement,
+                'confirmed_move_to_pos',
+                Q_ARG(int, steps),
+                Q_ARG(bool, forward))
 
     def go_to_pos(self, pos):
         """
@@ -182,14 +192,14 @@ class MainController(QObject):
         move stepped motor forward
         @param steps: number of steps to move
         """
-        QMetaObject.invokeMethod(self._measurement, 'moveForward', Qt.QueuedConnection, Q_ARG(int, steps))
+        QMetaObject.invokeMethod(self._measurement, 'move_forward', Qt.QueuedConnection, Q_ARG(int, steps))
 
     def move_reverse(self, steps):
         """
         move stepped motor reverse
         @param steps: number of steps to move
         """
-        QMetaObject.invokeMethod(self._measurement, 'moveReverse', Qt.QueuedConnection, Q_ARG(int, steps))
+        QMetaObject.invokeMethod(self._measurement, 'move_reverse', Qt.QueuedConnection, Q_ARG(int, steps))
 
     def exit_measurement(self, key):
         """
@@ -198,11 +208,3 @@ class MainController(QObject):
         """
         if key == self._key:
             self._measurement.exit()
-
-    def update_measurement_settings(self, key, value):
-        """
-        update measurement settings
-        @param key: key string
-        @param value: value to update
-        """
-        self._measurement.data_processing_controller.data_processing.set_legend_field(key, value)
