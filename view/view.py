@@ -177,3 +177,13 @@ class View(QObject):
     def open_documentation(self):
         """ Open documentation in default browser. """
         webbrowser.open(Settings.DOCUMENTATION_URL)
+
+    def change_to_light_theme(self):
+        """ Change theme to light theme."""
+        if self.mode == NIGHT_MODE:
+            self._on_ui_mode_change()
+
+    def change_to_dark_theme(self):
+        """ Change theme to dark theme."""
+        if self.mode == DAY_MODE:
+            self._on_ui_mode_change()
