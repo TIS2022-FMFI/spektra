@@ -49,7 +49,7 @@ class Mediator(ABC):
     def read_setting(self, setting):
         getter = self.get_command_or_method_map[setting]
 
-        if getter is tuple:
+        if type(getter) is tuple:
             data_type, command = getter
             return self.get_command(data_type, command)
         return getter()
