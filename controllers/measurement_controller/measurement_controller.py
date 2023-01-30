@@ -246,9 +246,6 @@ class MeasurementController(QObject):
 
         angle_per_data_point = elem.stepsToAngle(steps_per_data_point)
 
-        measured_value = self._lockin.read_value()
-        self.save_and_show_measurement(elem, measured_value, correction)
-
         for i in range(data_points):
             if self.running is False:
                 self.aborted_measurement()
