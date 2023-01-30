@@ -1,5 +1,5 @@
 class Settings:
-    DOCUMENTATION_URL = ""
+    DOCUMENTATION_URL = "Dokumentácia.pdf"
     TITLE = "Artkeps"
     VERSION = "1.0.0"
     DARK_THEME = "dark_teal"
