@@ -84,7 +84,7 @@ class MeasurementController(QObject):
 
     def lockin_read_setting_safely(self, setting):
         try:
-            self._lockin.read_setting(setting)
+            return self._lockin.read_setting(setting)
         except Exception as e:
             self.logger.log(CRITICAL, e)
 
@@ -141,12 +141,12 @@ class MeasurementController(QObject):
 
         if measured_value >= 0.7 * cur_gain:
             self._lockin.lower_gain()
-            ptc = self._lockin.get_pre_time_const()
+            ptc = self._lockin.read_setting(PRE_TIME_CONST)
             sleep(3 * ptc)
             print(f'Zosilnenie sa znizilo na {self._lockin.current_gain_value()}')
         elif measured_value <= 0.2 * cur_gain:
             self._lockin.higher_gain()
-            ptc = self._lockin.get_pre_time_const()
+            ptc = self._lockin.read_setting(PRE_TIME_CONST)
             sleep(3 * ptc)
             print(f'Zosilnenie sa zvysilo na {self._lockin.current_gain_value()}')
 
@@ -167,7 +167,7 @@ class MeasurementController(QObject):
             self.logger.log(WARNING, e.message)
             return
 
-        self.measured_value_s.emit(wavelength, value)
+        self.measured_value_s.emit(wavelength, value, True)
 
     def failed_measurement(self, msg):
         """
@@ -218,7 +218,9 @@ class MeasurementController(QObject):
             return
 
         if start != self.current_motor_angle:
-            self.move_to_pos(start, False)
+            self.failed_measurement("Nastavte motor na štartovaciu pozíciu merania")
+            return
+            #self.move_to_pos(start, False)
 
         self._lockin.prepare()
         self.get_important_lockin_values()
@@ -319,6 +321,8 @@ class MeasurementController(QObject):
         steps = self._elem.angleToSteps(abs(distance))
         forward = distance > 0
 
+        self.potential_new_angle = end_angle
+
         self.motor_move_to_pos_s.emit(steps, forward)
 
     @QtCore.Slot(int, bool)
@@ -328,6 +332,9 @@ class MeasurementController(QObject):
             self.move_forward(steps)
         else:
             self.move_reverse(steps)
+
+        self.current_motor_angle = self.potential_new_angle
+
 
     @QtCore.Slot(int)
     def move_forward(self, steps):

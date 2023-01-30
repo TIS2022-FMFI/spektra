@@ -120,7 +120,7 @@ class Lockin:
         @return:
         """
         self.mediator.read_value()
-        self.cur_gain_index = self.mediator.get_gain()
+        self.cur_gain_index = self.mediator.read_setting(GAIN)
 
     def can_auto_switch(self):
         """
