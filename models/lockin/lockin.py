@@ -55,8 +55,7 @@ class Lockin:
 
     def disconnect(self):
         """
-        Odpoji lockin
-        @return:
+        Disconnect lockin
         """
         if self.mediator is not None:
             self.mediator.disconnect()
@@ -65,17 +64,17 @@ class Lockin:
 
     def current_gain_value(self):
         """
-        Vrati hodnotu momentalne nastavenej senzitivty na zaklade lokalne ulozenej premennej self.cur_gain_index.
-        Cize ak by pouzivatel manualne menil senzitivu na lockine sa nebude vraciat spravna hodnota.
+        Return value of senzitivity based on locally saved variable in self.cur_gain_index.
+        If user change value direcly at lockin device, won't get correct value
         @return: float
         """
         return self.gain_values[self.cur_gain_index]
 
     def read_setting(self, setting):
         """
-        Precita nastavenie napr. a spracuje ak je to potrebne.
-        @param setting: jedno z nastaveni definovane v constants
-        @return: hodnota, ktoru sme vyziadali
+        Read settings (and processes it, if needed)
+        @param setting: conrete setting (define in constants)
+        @return: required value
         """
         value = self.mediator.read_setting(setting)
         if setting == GAIN:
@@ -88,15 +87,14 @@ class Lockin:
 
     def read_value(self):
         """
-        Precita namerane napatie na lockine
-        @return: momentalne napatie
+        Read measured value from lockin
+        @return: current measured value
         """
         return self.mediator.read_value()
 
     def lower_gain(self):
         """
-        Znizi senzitivitu a zaznamena to v lokalne ulozenej premennej self.cur_gain_index zmenu
-        @return:
+        Lower sensitivity (change in local variable self.cur_gain_index)
         """
         self.cur_gain_index += 1
         if self.should_auto_switch_gain and self.mediator.is_setting_gain_possible():
@@ -104,8 +102,7 @@ class Lockin:
 
     def higher_gain(self):
         """
-        Zvysi senzitivitu a zaznamena to v lokalne ulozenej premennej self.cur_gain_index zmenu
-        @return:
+        Increase sensitivity (change in local variable self.cur_gain_index)
         """
         if self.cur_gain_index >= 12:
             self.cur_gain_index -= 1
@@ -114,16 +111,15 @@ class Lockin:
 
     def prepare(self):
         """
-        priprava lockinu na zacatie merania.
-        Lokalne ulozi senzitivtu, ktoru lokalne menime aby nebolo nutne zakazdym cakat na citanie z lockinu
-        @return:
+        Prepare locking for measurement start
+        Save sensitivity locally, sensitivity is then changed locally, due to delay reasons
         """
         self.mediator.read_value()
         self.cur_gain_index = self.mediator.read_setting(GAIN)
 
     def can_auto_switch(self):
         """
-        Zisti ci je mozne automaticky menit senzitivitu
-        @return: bool
+        Check, if sensitivity can be changed automatically
+        @return: if yes return True else False
         """
         return self.mediator.is_setting_gain_possible()
