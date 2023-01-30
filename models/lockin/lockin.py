@@ -1,100 +1,130 @@
-import serial
+from .constants import *
+from .mediator import SR510, Metex
+import json
 
-from models.lockin.lockin_data import lockin_data
-from models.lockin.constants import *
 
 class Lockin:
-    def __init__(self, name, port):
-        ld = lockin_data[name]
-        sc = ld['serial_connection']
-        self.ser = None
-        if sc:
-            self.ser = serial.Serial(port, *sc.getsettings(), timeout=sc.timeout)
-
+    def __init__(self, name=None, port=None):
+        """
+        @param name: nazov lockinu, musi byt definovany v lockins_data.json
+        @param port: port na ktorom je kabel z lockinu pripojeny
+        """
         self.name = name
-        self.gain_values = ld['gain']
-        self.pre_time_const = ld[PRE_TIME_CONST]
-        self.post_time_const = ld[POST_TIME_CONST]
+
+        self.gain_values = []
+        self.pre_time_const = []
+        self.post_time_const = []
+        self.mediator_name = None
+
         self.cur_gain_index = None
+        self.should_auto_switch_gain = True
+        self.mediator = None
+        self.connected = False
+
+        if name is not None:
+            self.load_lockin_information()
+        if port is not None:
+            self.connect(port)
+
+    def load_lockin_information(self):
+        """
+        Nacita informacie o lockine z json suboru
+        @param nazov lockinu:
+        @return:
+        """
+        with open('models/lockin/lockins_data.json') as file:
+                lockin_data = json.load(file)[self.name]
+
+        self.gain_values = lockin_data[GAIN]
+        self.pre_time_const = lockin_data[PRE_TIME_CONST]
+        self.post_time_const = lockin_data[POST_TIME_CONST]
+        self.mediator_name = lockin_data['mediator_name']
+
+    def connect(self, port):
+        """
+        Pripoji sa sposob komunikacie s lockinom
+        @param port: port na ktorom je kabel z lockinu pripojeny
+        """
+        if self.mediator_name == 'SR510':
+            self.mediator = SR510(port)
+        elif self.mediator_name == 'Metex':
+            self.mediator = Metex(port)
+        else:
+            raise NotImplementedError
+
+        self.connected = True
+
+    def disconnect(self):
+        """
+        Odpoji lockin
+        @return:
+        """
+        if self.mediator is not None:
+            self.mediator.disconnect()
+        self.mediator = None
+        self.connected = False
 
     def current_gain_value(self):
+        """
+        Vrati hodnotu momentalne nastavenej senzitivty na zaklade lokalne ulozenej premennej self.cur_gain_index.
+        Cize ak by pouzivatel manualne menil senzitivu na lockine sa nebude vraciat spravna hodnota.
+        @return: float
+        """
         return self.gain_values[self.cur_gain_index]
-    def rcom(self, com, read=False):
-        """raw command"""
-        if self.ser is not None:
-            com += '\r'
-            self.ser.write(com.encode())
-            if read:
-                return self.ser.readline()[:-1]
 
     def read_setting(self, setting):
-        if setting == PRE_TIME_CONST:
-            return self.get_pre_time_const()
+        """
+        Precita nastavenie napr. a spracuje ak je to potrebne.
+        @param setting: jedno z nastaveni definovane v constants
+        @return: hodnota, ktoru sme vyziadali
+        """
+        value = self.mediator.read_setting(setting)
+        if setting == GAIN:
+            return self.gain_values[value]
+        elif setting == PRE_TIME_CONST:
+            return self.pre_time_const[value]
         elif setting == POST_TIME_CONST:
-            return self.get_post_time_const()
-        elif setting == PHASE_SHIFT:
-            return self.get_phase()
-        elif setting == REFERENCE_FREQUENCY:
-            return self.get_ref_frequency()
-        elif setting == BANDPASS_FILTER:
-            return self.get_bandpass_filter()
-
-        raise Exception("Wrong setting")
-
-class SR510(Lockin):
-    def __init__(self, port):
-        super().__init__('sr510', port)
-
-    def lower_gain(self):
-        self.cur_gain_index += 1
-        self.rcom(f'G {self.cur_gain_index}')
-
-    def higher_gain(self):
-        if self.cur_gain_index >= 12:
-            self.cur_gain_index -= 1
-            self.rcom(f'G {self.cur_gain_index}')
-
-    def prepare(self):
-        self.rcom('Q', True)  # Prve citanie sa zahodi
-        self.cur_gain_index = self.get_gain()
-
-    # T m {,n} The T command sets and reads the status of the time constants.
-    # If m is "1", the pre time constant is selected
-    # if m is "2", the post time constant is selected.
-    def get_pre_time_const(self):
-        return self.pre_time_const[int(self.rcom('T 1', True))]
-
-    def get_post_time_const(self):
-        return self.post_time_const[int(self.rcom('T 2', True))]
-
-    def get_gain(self):
-        # G {n} If n is absent, the gain setting is returned.
-        return int(self.rcom('G', True))  # uvodne nastavenie citlivosti
-
-    def set_gain(self, n):
-        if 11 <= n <= 24:
-            self.rcom(f'G {n}')
-            self.cur_gain_index = n
+            return self.post_time_const[value]
+        return value
 
     def read_value(self):
-        return float(self.rcom('Q', True))
-    def get_auto_offset(self):
-        return int(self.rcom('A', True))
+        """
+        Precita namerane napatie na lockine
+        @return: momentalne napatie
+        """
+        return self.mediator.read_value()
 
-    def get_bandpass_filter(self):
-        return int(self.rcom('B', True))
+    def lower_gain(self):
+        """
+        Znizi senzitivitu a zaznamena to v lokalne ulozenej premennej self.cur_gain_index zmenu
+        @return:
+        """
+        self.cur_gain_index += 1
+        if self.should_auto_switch_gain and self.mediator.is_setting_gain_possible():
+            self.mediator.lower_gain()
 
-    def get_refLCD_display(self):
-        return int(self.rcom('C', True))
+    def higher_gain(self):
+        """
+        Zvysi senzitivitu a zaznamena to v lokalne ulozenej premennej self.cur_gain_index zmenu
+        @return:
+        """
+        if self.cur_gain_index >= 12:
+            self.cur_gain_index -= 1
+            if self.should_auto_switch_gain and self.mediator.is_setting_gain_possible():
+                self.mediator.higher_gain()
 
-    def get_dynamic_reserve(self):
-        return int(self.rcom('D', True))
+    def prepare(self):
+        """
+        priprava lockinu na zacatie merania.
+        Lokalne ulozi senzitivtu, ktoru lokalne menime aby nebolo nutne zakazdym cakat na citanie z lockinu
+        @return:
+        """
+        self.mediator.read_value()
+        self.cur_gain_index = self.mediator.read_setting(GAIN)
 
-    def get_ref_frequency(self):
-        return float(self.rcom('F', True))
-
-    def get_preamp_status(self):
-        return int(self.rcom('H', True))
-
-    def get_phase(self):
-        return float(self.rcom('P', True))
+    def can_auto_switch(self):
+        """
+        Zisti ci je mozne automaticky menit senzitivitu
+        @return: bool
+        """
+        return self.mediator.is_setting_gain_possible()
