@@ -1,0 +1,12 @@
+Proces inštalácie:
+Je potrebné mať nainštalovaný minimálne python 3.2.
+Taktiež je potrebné nainštalovať pythonovské knižnice serial, 
+pyside 6 a PyQt5. Tieto knižnice stačí nainštalovať v command line
+nasledovne:
+pip install serial
+pip install pyserial
+pip install pyside6
+pip install pyqt5
+
+Nasledne už len stačí stiahnuť zdrojové súbory aplikácie a
+spustiť main.py.  
