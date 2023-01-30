@@ -6,8 +6,9 @@ import json
 class Lockin:
     def __init__(self, name=None, port=None):
         """
-        @param name: nazov lockinu, musi byt definovany v lockins_data.json
-        @param port: port na ktorom je kabel z lockinu pripojeny
+        initialization of Lockin model
+        @param name: name of lockin (defined in lockins_data.json)
+        @param port: port, where is lockin connected
         """
         self.name = name
 
@@ -28,9 +29,7 @@ class Lockin:
 
     def load_lockin_information(self):
         """
-        Nacita informacie o lockine z json suboru
-        @param nazov lockinu:
-        @return:
+        Load lockin info from JSON file
         """
         with open('models/lockin/lockins_data.json') as file:
                 lockin_data = json.load(file)[self.name]
@@ -42,8 +41,8 @@ class Lockin:
 
     def connect(self, port):
         """
-        Pripoji sa sposob komunikacie s lockinom
-        @param port: port na ktorom je kabel z lockinu pripojeny
+        Connect to Lockin at concrete port
+        @param port: port where is lockin connected
         """
         if self.mediator_name == 'SR510':
             self.mediator = SR510(port)
