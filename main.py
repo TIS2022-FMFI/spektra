@@ -31,7 +31,7 @@ class MainWindow(QMainWindow):
         self.view.widgets.graph_view.plotGraph()
         self.view.widgets.actionPorovnanie.triggered.connect(self._load_comparative_file)
         self.view.widgets.action_save_as.triggered.connect(self.file_save)
-        self.view.widgets.action_exit.triggered.connect(lambda: self.controller.exit_measurement(self._secret))
+        self.view.widgets.action_exit.triggered.connect(self.close)
 
         self.data_processing_controller = DataProcessingController(self.view, self._secret)
         self.data_processing_controller.add_logger(self.controller.logger)
