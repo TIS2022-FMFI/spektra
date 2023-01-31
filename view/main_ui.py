@@ -845,7 +845,6 @@ class Ui_MainWindow(object):
             self.devices_controls_devices_engine_controls_widget)
         self.devices_controls_engine_positioning_left_btn.setObjectName(u"devices_controls_engine_positioning_left_btn")
         self.devices_controls_engine_positioning_left_btn.setFont(font2)
-        self.devices_controls_engine_positioning_left_btn.setStyleSheet(u"background-color: rgba(255, 255, 255, 0);")
         icon2 = QIcon()
 
 
@@ -868,7 +867,6 @@ class Ui_MainWindow(object):
         self.devices_controls_engine_positioning_right_btn.setObjectName(
             u"devices_controls_engine_positioning_right_btn")
         self.devices_controls_engine_positioning_right_btn.setFont(font2)
-        self.devices_controls_engine_positioning_right_btn.setStyleSheet(u"background-color: rgba(255, 255, 255, 0);")
         icon3 = QIcon()
 
 
