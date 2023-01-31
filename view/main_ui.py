@@ -29,6 +29,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDockWidget,
 import pyqtgraph as pg
 
 from view.calibration_dialog import CalibrationDialog
+from view.comport_dialog import ComportDialog
 from widgets.about_dialog import AboutDialog
 from widgets.graph import Graph
 from view.constants import *
@@ -77,6 +78,8 @@ class Ui_MainWindow(object):
         self.action_exit.setObjectName(u"action_exit")
         self.actionKalibr_cia = QAction(MainWindow)
         self.actionKalibr_cia.setObjectName(u"actionKalibr_cia")
+        self.action_choose_comport = QAction(MainWindow)
+        self.action_choose_comport.setObjectName(u"action_choose_comport")
         self.actionDokument_cia = QAction(MainWindow)
         self.actionDokument_cia.setObjectName(u"actionDokument_cia")
         self.actionO_programe = QAction(MainWindow)
@@ -178,6 +181,7 @@ class Ui_MainWindow(object):
 
         self.gridLayout_11.addWidget(self.widget_3, 0, 0, 1, 1)
         self.calibration_dialog = CalibrationDialog(MainWindow)
+        self.comport_choice_dialog = ComportDialog(MainWindow)
         self.sample_notes = QWidget(self.widget_8)
         self.sample_notes.setObjectName(u"sample_notes")
         self.formLayout_2 = QFormLayout(self.sample_notes)
@@ -401,6 +405,20 @@ class Ui_MainWindow(object):
         self.measurement_config_menu_ref_sbox.setMinimumSize(QSize(0, 0))
         self.measurement_config_menu_ref_sbox.setRange(0, 1000)
         self.gridLayout_6.addWidget(self.measurement_config_menu_ref_sbox, 0, 1, 1, 1)
+
+        self.measurement_config_menu_min_sensitivity_label = QLabel(self.widget_13)
+        self.measurement_config_menu_min_sensitivity_label.setObjectName(u"measurement_config_menu_min_sensitivity_label")
+
+        self.gridLayout_6.addWidget(self.measurement_config_menu_min_sensitivity_label, 1, 0, 1, 1)
+
+        self.measurement_config_menu_min_sensitivity_sbox = QSpinBox(self.widget_13)
+        self.measurement_config_menu_min_sensitivity_sbox.setObjectName(u"measurement_config_menu_min_sensitivity_sbox")
+        sizePolicy2.setHeightForWidth(self.measurement_config_menu_min_sensitivity_sbox.sizePolicy().hasHeightForWidth())
+        self.measurement_config_menu_min_sensitivity_sbox.setSizePolicy(sizePolicy2)
+        self.measurement_config_menu_min_sensitivity_sbox.setMinimumSize(QSize(0, 0))
+        self.measurement_config_menu_min_sensitivity_sbox.setRange(0, 20)
+        self.gridLayout_6.addWidget(self.measurement_config_menu_min_sensitivity_sbox, 1, 1, 1, 1)
+
         self.measurement_config_menu_span_label = QLabel(self.widget_13)
         self.measurement_config_menu_span_label.setObjectName(u"measurement_config_menu_span_label")
         spacer = QLabel(self.widget_13)
@@ -414,7 +432,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addWidget(self.measurement_config_menu_span_dsbox, 2, 1, 1, 1)
         self.measurement_config_menu_span_auto_check = QCheckBox(self.widget_13)
         self.measurement_config_menu_span_auto_check.setObjectName(u"measurement_config_menu_span_auto_check")
-        self.gridLayout_6.addWidget(self.measurement_config_menu_span_auto_check, 2, 2, 1, 1)
+        self.gridLayout_6.addWidget(self.measurement_config_menu_span_auto_check, 1, 2, 1, 1)
         self.horizontalLayout_16.addWidget(self.widget_13)
         self.horizontalSpacer_8 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout_16.addItem(self.horizontalSpacer_8)
@@ -628,11 +646,13 @@ class Ui_MainWindow(object):
 
         self.label_16 = QLabel(self.widget_15)
         self.label_16.setObjectName(u"label_16")
+        self.label_16.setEnabled(False)
 
         self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.label_16)
 
         self.monochromator_out_in_start = QDoubleSpinBox(self.widget_15)
         self.monochromator_out_in_start.setObjectName(u"monochromator_out_in_start")
+        self.monochromator_out_in_start.setEnabled(False)
 
         self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.monochromator_out_in_start)
 
@@ -1103,6 +1123,7 @@ class Ui_MainWindow(object):
         self.menu_about.addSeparator()
         self.menu_about.addAction(self.actionO_programe)
         self.menuN_stroje.addAction(self.actionKalibr_cia)
+        self.menuN_stroje.addAction(self.action_choose_comport)
         self.measurment_controls_toolbar.addAction(self.action_stop)
         self.measurment_controls_toolbar.addAction(self.action_play)
 
@@ -1144,6 +1165,7 @@ class Ui_MainWindow(object):
         self.action_save_as.setText(QCoreApplication.translate("MainWindow", u"Ulo\u017ei\u0165 ako", None))
         self.action_exit.setText(QCoreApplication.translate("MainWindow", u"Ukon\u010di\u0165", None))
         self.actionKalibr_cia.setText(QCoreApplication.translate("MainWindow", u"Kalibr\u00e1cia", None))
+        self.action_choose_comport.setText(QCoreApplication.translate("MainWindow", u"Vyber comporty", None))
         self.actionDokument_cia.setText(QCoreApplication.translate("MainWindow", u"Dokument\u00e1cia", None))
         self.actionO_programe.setText(QCoreApplication.translate("MainWindow", u"O programe", None))
         self.actionDenn.setText(QCoreApplication.translate("MainWindow", u"Denn\u00fd", None))
@@ -1152,11 +1174,11 @@ class Ui_MainWindow(object):
         self.measurement_config_menu_sample_label.setText(
             QCoreApplication.translate("MainWindow", u"N\u00e1zov vzorky", None))
         self.measurement_config_menu_width_label_4.setText(QCoreApplication.translate("MainWindow", u"Teplota", None))
-        self.measurement_config_menu_width_label.setText(QCoreApplication.translate("MainWindow", u"Hr\u00fabka", None))
+        self.measurement_config_menu_width_label.setText(QCoreApplication.translate("MainWindow", u"Hr\u00fabka vrstvy", None))
         self.measurement_config_menu_width_label_2.setText(
             QCoreApplication.translate("MainWindow", u"Pozn\u00e1mka k technol\u00f3gii", None))
         self.measurement_config_menu_width_label_3.setText(
-            QCoreApplication.translate("MainWindow", u"Meranie vzorky", None))
+            QCoreApplication.translate("MainWindow", u"Popis vzorky", None))
         self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.sample_tab),
                                                      QCoreApplication.translate("MainWindow", u"Vzorka", None))
         self.measurement_config_menu_filename_label.setText(
@@ -1171,6 +1193,7 @@ class Ui_MainWindow(object):
             self.measurement_config_menu_tabs.indexOf(self.measurement_config_tab),
             QCoreApplication.translate("MainWindow", u"Meranie", None))
         self.measurement_config_menu_ref_label.setText(QCoreApplication.translate("MainWindow", u"Ref", None))
+        self.measurement_config_menu_min_sensitivity_label.setText(QCoreApplication.translate("MainWindow", u"Min. auto senzitivita", None))
         self.measurement_config_menu_span_label.setText(QCoreApplication.translate("MainWindow", u"Rozsah", None))
         self.measurement_config_menu_span_auto_check.setText(QCoreApplication.translate("MainWindow", u"Auto", None))
         self.measurement_config_menu_time_const_label.setText(
@@ -1188,16 +1211,16 @@ class Ui_MainWindow(object):
             QCoreApplication.translate("MainWindow", u"Pozn\u00e1mka", None))
         self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.light_source_tab),
                                                      QCoreApplication.translate("MainWindow", u"Zdroj svetla", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"PMT", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Nap\u00e4tie", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Detektor", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Detaily", None))
         self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.detector_tab),
                                                      QCoreApplication.translate("MainWindow", u"Detektor", None))
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"Vstupn\u00e1 \u0161trbina", None))
-        self.label_9.setText(QCoreApplication.translate("MainWindow", u"Za\u010diatok", None))
-        self.label_10.setText(QCoreApplication.translate("MainWindow", u"Koniec", None))
+        self.label_9.setText(QCoreApplication.translate("MainWindow", u"Šírka", None))
+        self.label_10.setText(QCoreApplication.translate("MainWindow", u"Výška", None))
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"V\u00fdstupn\u00e1 \u0161trbina", None))
-        self.label_15.setText(QCoreApplication.translate("MainWindow", u"Za\u010diatok", None))
-        self.label_16.setText(QCoreApplication.translate("MainWindow", u"Koniec", None))
+        self.label_15.setText(QCoreApplication.translate("MainWindow", u"Šírka", None))
+        self.label_16.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Optick\u00fd filter", None))
         self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.monochromator_tab),
                                                      QCoreApplication.translate("MainWindow", u"Monochrom\u00e1tor",
