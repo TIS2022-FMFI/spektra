@@ -8,6 +8,7 @@ class Mediator(ABC):
 
     def __init__(self, port):
         self.can_set_gain = False
+        self.lowest_auto_settable_gain = None
         self.serial_connection = None
         self.get_command_or_method_map = {}
         self.connect(port)
@@ -59,6 +60,7 @@ class SR510(Mediator):
     def __init__(self, port):
         super().__init__(port)
         self.can_set_gain = True
+        self.lowest_auto_settable_gain = LOWEST_AUTO_SETTABLE_GAIN_DEFAULT
         self.get_command_or_method_map = {
             GAIN: (int, 'G'),
             PRE_TIME_CONST: (int, 'T 1'),
@@ -101,7 +103,7 @@ class SR510(Mediator):
         @param new_gain: int
         @return: None
         """
-        if 11 <= new_gain <= 24:
+        if self.lowest_auto_settable_gain <= new_gain <= 24:
             self.rcom(f'G {new_gain}', False)
 
     def read_value(self):
