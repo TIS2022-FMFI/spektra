@@ -8,6 +8,8 @@ from controllers.measurement_controller.measurement_controller import Measuremen
 from models.disperse_element import Grating
 from models.lockin.constants import *
 
+from models.logger.constants import  *
+
 
 class MainController(QObject):
     def __init__(self, view, key):
@@ -39,7 +41,7 @@ class MainController(QObject):
         self._measurement.voltmeter_status_s.connect(self.voltmeter_status)
 
         self._measurement.measured_value_s.connect(self.update_graph)
-        self._measurement.new_measurement_started_s.connect(self.clear_graph)
+        self._measurement.measurement_started_s.connect(self.clear_graph)
 
         self.view.widgets.action_stop.triggered.connect(self.stop_measurement)
 
@@ -48,7 +50,143 @@ class MainController(QObject):
         self._measurement.measurement_start_fail_s.connect(self.set_play_button)
 
         self._measurement.motor_move_to_pos_s.connect(self.go_to_pos_confirmation)
+        self._measurement.measurement_started_s.connect(
+            lambda: self.view.device_control_buttons_set_enabled(False)
+        )
+        self._measurement.measurement_ended_s.connect(self.set_measurement_start_and_reenable_device_buttons)
 
+        widgets = self.view.widgets
+
+        # moveForward/moveReverse
+        steps_to_move = widgets.devices_controls_engine_positioning_step_sbox.value
+
+        widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
+            lambda: self.move_reverse(steps_to_move()))
+        widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
+            lambda: self.move_forward(steps_to_move()))
+
+        # switch units
+
+        motor_goto = widgets.devices_controls_goto_sbox
+        measurement_start = widgets.measurement_config_menu_start_sbox
+        measurement_end = widgets.measurement_config_menu_end_sbox
+
+        variable_sboxes = [motor_goto, measurement_start, measurement_end]
+
+        widgets.radioButton_2.pressed.connect(lambda: self.angle_sboxes_convert(True, variable_sboxes))
+        widgets.radioButton.pressed.connect(lambda: self.angle_sboxes_convert(False, variable_sboxes))
+
+        # moveToPosition
+        widgets.devices_controls_goto_btn.clicked.connect(
+            lambda: self.go_to_pos(self.get_angle(widgets.devices_controls_goto_sbox)))
+
+        # init position
+        widgets.devices_controls_calibration_btn.clicked.connect(
+            lambda: self.initialization(self.get_angle(widgets.motor_init_pos_sbox)))
+
+        # meranie
+        start_angle = lambda: self.get_angle(widgets.measurement_config_menu_start_sbox)
+        end_angle = lambda: self.get_angle(widgets.measurement_config_menu_end_sbox)
+        steps_per_datapoint = widgets.measurement_motor_step.value
+        correction = widgets.measurement_correction_sbox.value
+        integrations = widgets.measurement_integrations_sbox.value
+
+        widgets.action_play.triggered.connect(self.view.switch_play_button)
+        widgets.action_play.triggered.connect(
+            lambda: self.start_measurement(
+                start_angle(),
+                end_angle(),
+                steps_per_datapoint(),
+                correction(),
+                integrations()
+            )
+        )
+
+        # stop action
+        widgets.action_stop.triggered.connect(self.view.switch_play_button)
+        widgets.action_stop.triggered.connect(self.stop_measurement)
+
+        # calibration window
+        widgets.actionKalibr_cia.triggered.connect(self.view.show_calibration_dialog)
+        widgets.calibration_dialog.calibration_data_s.connect(
+            lambda data: self.create_calibration(data))
+        widgets.calibration_dialog.step_button.clicked.connect(
+            lambda: self.move_forward(widgets.calibration_dialog.step_size.value()))
+
+        # calibration window
+        widgets.action_choose_comport.triggered.connect(self.view.show_comport_choice_dialog)
+        widgets.comport_choice_dialog.comports_confirmed_s.connect(self.new_comports_chosen)
+
+        #auto sensitivity
+        widgets.measurement_config_menu_span_auto_check.clicked.connect(
+            lambda: widgets.measurement_config_menu_min_sensitivity_sbox.setEnabled(widgets.measurement_config_menu_span_auto_check.isChecked())
+        )
+        widgets.measurement_config_menu_min_sensitivity_sbox.setValue(LOWEST_AUTO_SETTABLE_GAIN_DEFAULT)
+        widgets.measurement_config_menu_min_sensitivity_sbox.valueChanged.connect(self.set_lockin_min_auto_sensitivity)
+
+    def set_lockin_min_auto_sensitivity(self, value):
+        QMetaObject.invokeMethod(
+            self._measurement,
+            "set_lockin_min_auto_sensitivity",
+            Q_ARG(int, value)
+        )
+
+    def new_comports_chosen(self, lockin, motor):
+        print('maincon', lockin, motor)
+        QMetaObject.invokeMethod(
+            self._measurement,
+            "new_comports_chosen",
+            Qt.QueuedConnection,
+            Q_ARG(str, lockin),
+            Q_ARG(str, motor)
+        )
+
+    def angstrom_unit_selected(self):
+        return self.view.widgets.radioButton_2.isChecked()
+    def get_angle(self, sbox):
+        """
+        get angle values from GUI sboxes
+        @param sbox: sbox object with value
+        """
+        gui_value = sbox.value()
+        selected_element = self.selected_disperse_element
+        if not selected_element.is_valid():
+            self.logger.log(WARNING, "Neplatný alebo nevybraný disperzný prvok.")
+            return None
+        if self.angstrom_unit_selected():
+            return selected_element.wavelengthToAngle(gui_value)
+        return gui_value
+
+    def angle_sboxes_convert(self, toAngstroms, boxes):
+        """
+        convert angle values from GUI sboxes to Angstrom
+        @param toAngstroms: if true convert to Angstrom else not
+        """
+        selected_element = self.selected_disperse_element
+
+        if not selected_element.is_valid():
+            return
+        if toAngstroms:
+            for sbox in boxes:
+                sbox.setSuffix(" Å")
+                sbox.setRange(0, 20000)
+                angle = selected_element.clamp_angle(sbox.value())
+                sbox.setValue(selected_element.angleToWavelength(angle))
+
+        else:
+            for sbox in boxes:
+                sbox.setSuffix(" °")
+                angle = selected_element.wavelengthToAngle(sbox.value())
+                sbox.setValue(selected_element.clamp_angle(angle))
+                sbox.setRange(selected_element.minAngle, selected_element.maxAngle)
+
+    def set_measurement_start_and_reenable_device_buttons(self, cur_angle):
+        if self.angstrom_unit_selected():
+            self.angle_sboxes_convert(True, [self.view.widgets.measurement_config_menu_start_sbox])
+        else:
+            self.view.widgets.measurement_config_menu_start_sbox.setValue(cur_angle)
+
+        self.view.device_control_buttons_set_enabled(True)
 
     def voltmeter_status(self, connected):
         """
@@ -74,7 +212,7 @@ class MainController(QObject):
         widgets.measurement_config_menu_ref_sbox.setValue(data[REFERENCE_FREQUENCY])
         widgets.measurement_config_menu_time_const_dsbox.setValue(data[PRE_TIME_CONST])
         widgets.measurement_config_menu_time_const_dsbox_post.setValue(data[POST_TIME_CONST])
-        widgets.measurement_config_menu_span_dsbox.setValue(666)
+        widgets.measurement_config_menu_span_dsbox.setValue(data[GAIN]) #decimals 2 of sbox isn't enough
 
     def clear_graph(self):
         """

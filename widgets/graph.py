@@ -131,7 +131,7 @@ class Graph(pg.PlotWidget):
         '''
         self.clear()
         self.plot(self.currentX, self.currentY, name="Momentálne meranie",
-                              pen='b', symbol='o', symbolSize=15,
+                              pen='b', symbol='o', symbolSize=8,
                               symbolBrush=('b'))
 
         if len(self.currentX) != 0 and len(self.currentY) != 0 and self.view is not None:
@@ -143,7 +143,7 @@ class Graph(pg.PlotWidget):
 
         if len(self.oldX) != 0 and len(self.oldY) != 0:
             self.plot(self.oldX, self.oldY, name="Staršie meranie",
-                              pen='r', symbol='o', symbolSize=15,
+                              pen='r', symbol='o', symbolSize=5,
                               symbolBrush=('r'))
         return
 

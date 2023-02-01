@@ -14,12 +14,17 @@ class Motor:
         @param delay: time delay for connection sending
         '''
         self.delay = delay
-        self.motor = None
+        self.motor_serial_connection = None
         self.connected = False
 
     def connect(self, comport):
-        self.motor = Serial(comport, 9600, EIGHTBITS, PARITY_NONE, STOPBITS_ONE, timeout=0.5)
+        self.motor_serial_connection = Serial(comport, 9600, EIGHTBITS, PARITY_NONE, STOPBITS_ONE, timeout=0.5)
         self.connected = True
+
+    def disconnect(self):
+        if self.motor_serial_connection is not None:
+            self.motor_serial_connection.close()
+        self.connected = False
 
     def move_forward(self, steps):
         '''
@@ -49,7 +54,7 @@ class Motor:
         command = f"!{steps:04d}{direction}"
 
         for char in command:
-            log = self.motor.write(char.encode())
+            log = self.motor_serial_connection.write(char.encode())
             sleep(self.delay)
             print(log, end=' ')
 

@@ -101,17 +101,17 @@ class Lockin:
         """
         self.cur_gain_index += 1
         if self.should_auto_switch_gain and self.mediator.is_setting_gain_possible():
-            self.mediator.lower_gain()
+            self.mediator.set_gain(self.cur_gain_index)
 
     def higher_gain(self):
         """
         Zvysi senzitivitu a zaznamena to v lokalne ulozenej premennej self.cur_gain_index zmenu
         @return:
         """
-        if self.cur_gain_index >= 12:
+        if self.cur_gain_index > self.mediator.lowest_auto_settable_gain:
             self.cur_gain_index -= 1
             if self.should_auto_switch_gain and self.mediator.is_setting_gain_possible():
-                self.mediator.higher_gain()
+                self.mediator.set_gain(self.cur_gain_index)
 
     def prepare(self):
         """
@@ -128,3 +128,6 @@ class Lockin:
         @return: bool
         """
         return self.mediator.is_setting_gain_possible()
+
+    def set_min_auto_sensitivity(self, value):
+        self.mediator.lowest_auto_settable_gain = value
