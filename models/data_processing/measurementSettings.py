@@ -87,8 +87,9 @@ class MeasurementSettings:
                f"{DISPERSE_ELEMENT}:\n" \
                f"{self.legend[TYPE_OF_DISPERS_ELEM_KEY]}, {self.legend[NAME_OF_DISPERS_ELEM_KEY]}\n" \
                f"{MONOCHROMATOR}:\n" \
+               f"{MONOCHROMATOR_NAME}: {self.legend[MONOCHROMATOR_NAME_KEY]}\n" \
                f"{INPUT_CREVICE}: {self.legend[INPUT_CREVICE_BEGIN_KEY]}, {self.legend[INPUT_CREVICE_END_KEY]}\n" \
-               f"{OUTPUT_CREVICE}: {self.legend[OUTPUT_CREVICE_BEGIN_KEY]}, {self.legend[OUTPUT_CREVICE_END_KEY]}\n" \
+               f"{OUTPUT_CREVICE}: {self.legend[OUTPUT_CREVICE_BEGIN_KEY]}\n" \
                f"{OPTICAL_FILTER}: {self.legend[OPTICAL_FILTER_KEY]}\n" \
                f"{DETECTOR}:\n" \
                f"{TYPE_OF_DETECTOR}: {self.legend[TYPE_OF_DETECTOR_KEY]}, {self.legend[ADDITIONAL_INFO_DETECTOR_KEY]}\n" \

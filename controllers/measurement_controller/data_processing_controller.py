@@ -119,10 +119,14 @@ class DataProcessingController(QObject):
             lambda: self.data_processing.set_legend_field(OUTPUT_CREVICE_BEGIN_KEY,
                                                           self.view.widgets.monochromator_out_out_start.value())
         )
-        self.view.widgets.monochromator_out_in_start.valueChanged.connect(
-            lambda: self.data_processing.set_legend_field(OUTPUT_CREVICE_END_KEY,
-                                                          self.view.widgets.monochromator_out_in_start.value())
-        )
+        # self.view.widgets.monochromator_out_in_start.valueChanged.connect(
+        #     lambda: self.data_processing.set_legend_field(OUTPUT_CREVICE_END_KEY,
+        #                                                   self.view.widgets.monochromator_out_in_start.value())
+        # )
+        self.view.widgets.monochromator_name_ledit.editingFinished.connect(
+            lambda: self.data_processing.set_legend_field(MONOCHROMATOR_NAME_KEY,
+                                                          self.view.widgets.monochromator_name_ledit.text()))
+
         self.view.widgets.monochromator_optical_filter_ledit.editingFinished.connect(
             lambda: self.data_processing.set_legend_field(OPTICAL_FILTER_KEY,
                                                           self.view.widgets.monochromator_optical_filter_ledit.text()))
@@ -171,9 +175,13 @@ class DataProcessingController(QObject):
             elif key == OUTPUT_CREVICE_BEGIN_KEY:
                 self.view.widgets.monochromator_out_out_start.setValue(
                     float(self.data_processing.settings.legend[OUTPUT_CREVICE_BEGIN_KEY]))
-            elif key == OUTPUT_CREVICE_END_KEY:
-                self.view.widgets.monochromator_out_in_start.setValue(
-                    float(self.data_processing.settings.legend[OUTPUT_CREVICE_END_KEY]))
+            # elif key == OUTPUT_CREVICE_END_KEY:
+            #     self.view.widgets.monochromator_out_in_start.setValue(
+            #         float(self.data_processing.settings.legend[OUTPUT_CREVICE_END_KEY]))
+
+            elif key == MONOCHROMATOR_NAME_KEY:
+                self.view.widgets.monochromator_name_ledit.setText(
+                    self.data_processing.settings.legend[MONOCHROMATOR_NAME_KEY])
             elif key == OPTICAL_FILTER_KEY:
                 self.view.widgets.monochromator_optical_filter_ledit.setText(
                     self.data_processing.settings.legend[OPTICAL_FILTER_KEY])
@@ -284,6 +292,7 @@ class DataProcessingController(QObject):
                 self.data_processing.set_unit_type_position(Unit.Uhol)
             except DataProcessingError as e:
                 self.logger.log(WARNING, e.message, True)
+        self.data_processing.settings.store_last_json_legend()
 
     def set_unit_type_angstrom(self):
         '''

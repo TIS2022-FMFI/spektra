@@ -644,17 +644,7 @@ class Ui_MainWindow(object):
 
         self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.monochromator_out_out_start)
 
-        self.label_16 = QLabel(self.widget_15)
-        self.label_16.setObjectName(u"label_16")
-        self.label_16.setEnabled(False)
 
-        self.formLayout_3.setWidget(1, QFormLayout.LabelRole, self.label_16)
-
-        self.monochromator_out_in_start = QDoubleSpinBox(self.widget_15)
-        self.monochromator_out_in_start.setObjectName(u"monochromator_out_in_start")
-        self.monochromator_out_in_start.setEnabled(False)
-
-        self.formLayout_3.setWidget(1, QFormLayout.FieldRole, self.monochromator_out_in_start)
 
         self.verticalLayout_15.addWidget(self.widget_15)
 
@@ -666,6 +656,19 @@ class Ui_MainWindow(object):
         self.widget_11.setObjectName(u"widget_11")
         self.horizontalLayout_14 = QHBoxLayout(self.widget_11)
         self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
+
+        self.label_110 = QLabel(self.widget_11)
+        self.label_110.setObjectName(u"label_110")
+
+        self.horizontalLayout_14.addWidget(self.label_110)
+
+        self.monochromator_name_ledit = QLineEdit(self.widget_11)
+        self.monochromator_name_ledit.setObjectName(u"monochromator_name_ledit")
+
+        self.horizontalLayout_14.addWidget(self.monochromator_name_ledit)
+
+
+
         self.label_11 = QLabel(self.widget_11)
         self.label_11.setObjectName(u"label_11")
 
@@ -675,6 +678,9 @@ class Ui_MainWindow(object):
         self.monochromator_optical_filter_ledit.setObjectName(u"monochromator_optical_filter_ledit")
 
         self.horizontalLayout_14.addWidget(self.monochromator_optical_filter_ledit)
+
+
+
 
         self.gridLayout_10.addWidget(self.widget_11, 0, 0, 1, 1)
 
@@ -1220,8 +1226,9 @@ class Ui_MainWindow(object):
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"Výška", None))
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"V\u00fdstupn\u00e1 \u0161trbina", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"Šírka", None))
-        self.label_16.setText(QCoreApplication.translate("MainWindow", u"--", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Optick\u00fd filter", None))
+        self.label_110.setText(QCoreApplication.translate("MainWindow", u"názov", None))
+
         self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.monochromator_tab),
                                                      QCoreApplication.translate("MainWindow", u"Monochrom\u00e1tor",
                                                                                 None))
