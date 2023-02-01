@@ -17,10 +17,12 @@ class MeasurementController(QObject):
     progress_s = Signal(float)
     voltmeter_status_s = Signal(bool)
     measured_value_s = Signal(float, float, bool)
-    new_measurement_started_s = Signal()
+    measurement_started_s = Signal()
+    measurement_ended_s = Signal(float)
     lockin_settings_s = Signal(dict)
     measurement_start_fail_s = Signal()
     motor_move_to_pos_s = Signal(int, bool)
+
 
     def __init__(self):
         """
@@ -40,8 +42,8 @@ class MeasurementController(QObject):
         # temporary hopefuly
         self.SR510_cable_serial_number = 'A7CB1935A'
 
-        self.lockin_comport = None
-        self.motor_comport = None
+        self.lockin_cable_info = None
+        self.motor_cable_info = None
 
         self.lockin_motor_connected_check = QTimer()
         self.lockin_motor_connected_check.timeout.connect(self.check_periphery)
@@ -53,30 +55,57 @@ class MeasurementController(QObject):
         self.moveToThread(self._measurement_thread)
         self._measurement_thread.start()
 
+    @QtCore.Slot(int)
+    def set_lockin_min_auto_sensitivity(self, value):
+        if self._lockin.can_auto_switch():
+            self._lockin.set_min_auto_sensitivity(value)
+
+    def comport_cable_info(self, comport):
+        return f'{comport.vid}:{comport.pid}:{comport.serial_number}'
+
+    @QtCore.Slot(str, str)
+    def new_comports_chosen(self, lockin_comport_name, motor_comport_name):
+        print(lockin_comport_name, motor_comport_name)
+        for comport in list_ports.comports():
+            if comport.name == lockin_comport_name:
+                self.lockin_cable_info = self.comport_cable_info(comport)
+            elif comport.name == motor_comport_name:
+                self.motor_cable_info = self.comport_cable_info(comport)
+
+        self._lockin.disconnect()
+        self._motor.disconnect()
+
     def check_periphery(self):
         """
         check if motor and lockin are connected and connect them
         """
-        maybe_motor_comport_listed = []
+
         found_lockin_cable = False
+        found_motor_cable = False
+
         for comport in list_ports.comports():
-            if comport.serial_number == self.SR510_cable_serial_number:
+            if self.comport_cable_info(comport) == self.lockin_cable_info:
                 found_lockin_cable = True
-                self.lockin_comport = comport.name
                 if self._lockin.connected is False:
-                    self.connect_lockin()
+                    try:
+                        self._lockin.connect(comport.name)
+                        self.get_important_lockin_values()
+                        self.voltmeter_status_s.emit(True)
+                    except Exception as e:
+                        self.logger.log(CRITICAL, f"Chyba pri pripajaní lockinu: {e}")
+            elif self.comport_cable_info(comport) == self.motor_cable_info:
 
-                self.voltmeter_status_s.emit(True)
-                continue
-            maybe_motor_comport_listed.append(comport)
+                found_motor_cable = True
+                if self._motor.connected is False:
+                    try:
+                        self._motor.connect(comport.name)
+                    except Exception as e:
+                        self.logger.log(CRITICAL, f"Chyba pri pripajaní krokového motora: {e}")
 
-        if not self._motor.connected and len(maybe_motor_comport_listed) == 1:
-            self.motor_comport = maybe_motor_comport_listed[0].name
-            try:
-                self._motor.connect(self.motor_comport)
-            except Exception as e:
-                self.logger.log(CRITICAL, f"Chyba pri pripajaní krokového motora: {e}")
-            self.logger.log(INFO, f"Pripojený {self.motor_comport}. Predpokladá sa, že je to krokový motor.")
+        if not found_motor_cable:
+            if self._motor.connected:
+                self.logger.log(WARNING, "Motor bol odpojený")
+            self._motor.disconnect()
 
         if not found_lockin_cable:
             self._lockin.disconnect()
@@ -94,17 +123,6 @@ class MeasurementController(QObject):
         """
         data = {setting: self.lockin_read_setting_safely(setting) for setting in SETTINGS_IN_GUI}
         self.lockin_settings_s.emit(data)
-
-    def connect_lockin(self):
-        """
-        connect milivoltmeter device
-        """
-        try:
-            self._lockin.connect(self.lockin_comport)
-        except Exception as e:
-            self.logger.log(CRITICAL, e)
-
-        self.get_important_lockin_values()
 
     def link_data_processing_controller(self, dpc):
         """
@@ -231,7 +249,7 @@ class MeasurementController(QObject):
             self.failed_measurement(e.message)
             return
 
-        self.new_measurement_started_s.emit()
+        self.measurement_started_s.emit()
         self.running = True
         self.progress_s.emit(0)
 
@@ -248,7 +266,7 @@ class MeasurementController(QObject):
 
         for i in range(data_points):
             if self.running is False:
-                self.aborted_measurement()
+                self.measurement_ended()
                 return
 
             self.progress_s.emit(i / data_points * 100)
@@ -279,6 +297,7 @@ class MeasurementController(QObject):
 
             print(f"pos: {self.current_motor_angle:.3f} measurement: {measured_value}")
 
+        self.measurement_ended()
         self.progress_s.emit(100)
         self.running = False
 
@@ -372,5 +391,7 @@ class MeasurementController(QObject):
         self._measurement_thread.quit()
         self._measurement_thread.wait()
 
-    def aborted_measurement(self):
-        pass
+    def measurement_ended(self):
+        self.current_motor_angle = round(self.current_motor_angle, 2)
+        self.measurement_ended_s.emit(self.current_motor_angle)
+

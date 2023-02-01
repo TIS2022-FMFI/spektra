@@ -165,6 +165,10 @@ class View(QObject):
         """ Show calibration dialog. """
         self.widgets.calibration_dialog.show()
 
+    def show_comport_choice_dialog(self):
+        """ Show comport choice dialog. """
+        self.widgets.comport_choice_dialog.show()
+
     def update_disperse_elements_list(self):
         """ Update list of elements in disperse combobox. """
         disperseElemCbox = self.widgets.devices_controls_devices_selection_disperse_cbox
@@ -187,3 +191,13 @@ class View(QObject):
         """ Change theme to dark theme."""
         if self.mode == DAY_MODE:
             self._on_ui_mode_change()
+
+    def device_control_buttons_set_enabled(self, is_enabled):
+        self.widgets.devices_controls_engine_positioning_left_btn.setEnabled(is_enabled)
+        self.widgets.devices_controls_engine_positioning_right_btn.setEnabled(is_enabled)
+        self.widgets.radioButton.setEnabled(is_enabled)
+        self.widgets.radioButton_2.setEnabled(is_enabled)
+        self.widgets.devices_controls_goto_btn.setEnabled(is_enabled)
+        self.widgets.devices_controls_calibration_btn.setEnabled(is_enabled)
+        self.widgets.devices_controls_devices_selection_disperse_cbox.setEnabled(is_enabled)
+        self.widgets.devices_controls_devices_selection_volt_cbox.setEnabled(is_enabled)

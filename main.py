@@ -120,6 +120,13 @@ class MainWindow(QMainWindow):
         connect the view with file measurement controller, binds all GUI objects concerning motor movement and
         measurement with backend
         """
+        #sometodo
+        #ulozit nazov lockinu do suboru
+        #vstup strbina = sirka, vyska, mm, setstep 1/100 for sirka
+        #vyst = sirka only, mm
+        #monochrom tab. pridat nazov monochromatora
+
+
         widgets = self.view.widgets
         ms_controller = self.controller._measurement
 
@@ -128,105 +135,10 @@ class MainWindow(QMainWindow):
 
         ms_controller.state_s.connect(lambda x: self.controller.logger.log(INFO, x))
 
-        # moveForward/moveReverse
-        steps_to_move = widgets.devices_controls_engine_positioning_step_sbox.value
-
-        widgets.devices_controls_engine_positioning_right_btn.clicked.connect(
-            lambda: self.controller.move_reverse(steps_to_move()))
-        widgets.devices_controls_engine_positioning_left_btn.clicked.connect(
-            lambda: self.controller.move_forward(steps_to_move()))
-
-        # switch units
-
-        motor_goto = widgets.devices_controls_goto_sbox
-        measurement_start = widgets.measurement_config_menu_start_sbox
-        measurement_end = widgets.measurement_config_menu_end_sbox
-
-        variable_sboxes = [motor_goto, measurement_start, measurement_end]
-        def sboxes_convert(toAngstroms):
-            """
-            convert angle values from GUI sboxes to Angstrom
-            @param toAngstroms: if true convert to Angstrom else not
-            """
-            selected_element = self.controller.selected_disperse_element
-            if not selected_element.is_valid():
-                return
-            if toAngstroms:
-                for sbox in variable_sboxes:
-                    sbox.setSuffix(" Å")
-                    sbox.setRange(0, 20000)
-                    angle = selected_element.clamp_angle(sbox.value())
-                    sbox.setValue(selected_element.angleToWavelength(angle))
-
-            else:
-                for sbox in variable_sboxes:
-                    sbox.setSuffix(" °")
-                    angle = selected_element.wavelengthToAngle(sbox.value())
-                    sbox.setValue(selected_element.clamp_angle(angle))
-                    sbox.setRange(selected_element.minAngle, selected_element.maxAngle)
-
-
-        is_angstrom = widgets.radioButton_2.isChecked
-        widgets.radioButton_2.pressed.connect(lambda: sboxes_convert(True))
-        widgets.radioButton.pressed.connect(lambda: sboxes_convert(False))
-
-        def get_angle(sbox):
-            """
-            get angle values from GUI sboxes
-            @param sbox: sbox object with value
-            """
-            gui_value = sbox.value()
-            selected_element = self.controller.selected_disperse_element
-            if not selected_element.is_valid():
-                self.controller.logger.log(WARNING, "Neplatný alebo nevybraný disperzný prvok.")
-                return None
-            if is_angstrom():
-                return selected_element.wavelengthToAngle(gui_value)
-            return gui_value
-
-        # moveToPosition
-        widgets.devices_controls_goto_btn.clicked.connect(
-            lambda: self.controller.go_to_pos(get_angle(widgets.devices_controls_goto_sbox)))
-
-        # init position
-        widgets.devices_controls_calibration_btn.clicked.connect(
-            lambda: self.controller.initialization(get_angle(widgets.motor_init_pos_sbox)))
-
-        # meranie
-        start_angle = lambda: get_angle(widgets.measurement_config_menu_start_sbox)
-        end_angle = lambda: get_angle(widgets.measurement_config_menu_end_sbox)
-        steps_per_datapoint = widgets.measurement_motor_step.value
-        correction = widgets.measurement_correction_sbox.value
-        integrations = widgets.measurement_integrations_sbox.value
-
-        widgets.action_play.triggered.connect(self.view.switch_play_button)
-        widgets.action_play.triggered.connect(
-            lambda: self.controller.start_measurement(
-                start_angle(),
-                end_angle(),
-                steps_per_datapoint(),
-                correction(),
-                integrations()
-            )
-        )
-
-        # stop action
-        widgets.action_stop.triggered.connect(self.view.switch_play_button)
-        widgets.action_stop.triggered.connect(self.controller.stop_measurement)
-
-        # calibration window
-        widgets.actionKalibr_cia.triggered.connect(self.view.show_calibration_dialog)
-        widgets.calibration_dialog.calibration_data_s.connect(
-            lambda data: self.controller.create_calibration(data))
-        widgets.calibration_dialog.step_button.clicked.connect(
-            lambda: self.controller.move_forward(widgets.calibration_dialog.step_size.value()))
-
         widgets.actionO_programe.triggered.connect(widgets.about_dialog.show)
         widgets.actionDokument_cia.triggered.connect(self.view.open_documentation)
         widgets.actionDenn.triggered.connect(self.view.change_to_light_theme)
         widgets.actionNo_n.triggered.connect(self.view.change_to_dark_theme)
-
-
 
         self.view.update_disperse_elements_list()
 
