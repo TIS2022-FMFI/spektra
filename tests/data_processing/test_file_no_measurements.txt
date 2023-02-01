@@ -7,8 +7,9 @@ teplota: 15.4
 DISPERZNÝ ELEMENT:
 mriežka, M465645
 MONOCHROMÁTOR:
-vstupná štrbina (začiatok, koniec): 2.4, 3.4
-výstupná štrbina (začiatok, koniec): 3.4, 5.3
+názov: nazov monochromatora
+vstupná štrbina (šírka, výška): 2.4, 3.4
+výstupná štrbina (šírka): 3.4
 optický filter: filter
 DETEKTOR:
 PMT: Si-fotodioda, nazov

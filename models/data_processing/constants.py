@@ -18,7 +18,7 @@ TYPE_LIGHT_KEY = "typeOfLight"
 ADDITIONAL_INFO_DETECTOR_KEY = "additionalInfoDetector"
 TYPE_OF_DETECTOR_KEY = "typeOfDetector"
 OPTICAL_FILTER_KEY = "opticalFilter"
-OUTPUT_CREVICE_END_KEY = "outputCreviceEnd"
+# OUTPUT_CREVICE_END_KEY = "outputCreviceEnd"
 OUTPUT_CREVICE_BEGIN_KEY = "outputCreviceBegin"
 INPUT_CREVICE_END_KEY = "inputCreviceEnd"
 INPUT_CREVICE_BEGIN_KEY = "inputCreviceBegin"
@@ -29,6 +29,7 @@ MEASURE_OF_SAMPLE_KEY = "measurementOfSample"
 THICKNESS_KEY = "thickness"
 NOTE_TO_TECH_KEY = "noteToTech"
 NAME_SAMPLE_KEY = "nameSample"
+MONOCHROMATOR_NAME_KEY = "monochromatorNameKey"
 UNIT = "unit"
 
 SAMPLE = "VZORKA"
@@ -43,8 +44,8 @@ NOTE_TO_TECH = "poznámka k technológií"
 THICKNESS = "hrúbka"
 MEASUREMENT_OF_SAMPLE = "meranie vzorky"
 TEMPERATURE = "teplota"
-INPUT_CREVICE = "vstupná štrbina (začiatok, koniec)"
-OUTPUT_CREVICE = "výstupná štrbina (začiatok, koniec)"
+INPUT_CREVICE = "vstupná štrbina (šírka, výška)"
+OUTPUT_CREVICE = "výstupná štrbina (šírka)"
 OPTICAL_FILTER = "optický filter"
 TYPE_OF_DETECTOR = "PMT"
 STEP_OF_MOTOR = "krok motora [v impulzoch]"
@@ -58,6 +59,7 @@ TIME_CONSTANT = "časová konštanta"
 END_OF_POSITION_LABEL = "]"
 END_POSITION = "koncová ["
 BEGIN_POSITION = "počiatočná ["
+MONOCHROMATOR_NAME = "názov"
 
 
 SAVED_MEASUREMENTS_DIR_NAME = "\\saved_measurements\\"
@@ -74,8 +76,9 @@ DEFAULT_LEGEND_FILENAME = "lastSettings.txt"
 mandatory = [NAME_SAMPLE_KEY, NOTE_TO_TECH_KEY, THICKNESS_KEY,
                  MEASURE_OF_SAMPLE_KEY, TEMPERATURE_KEY,
                  TYPE_OF_DISPERS_ELEM_KEY, NAME_OF_DISPERS_ELEM_KEY,
+                 MONOCHROMATOR_NAME_KEY,
                  INPUT_CREVICE_BEGIN_KEY, INPUT_CREVICE_END_KEY,
-                 OUTPUT_CREVICE_BEGIN_KEY, OUTPUT_CREVICE_END_KEY,
+                 OUTPUT_CREVICE_BEGIN_KEY, #OUTPUT_CREVICE_END_KEY,
                  OPTICAL_FILTER_KEY, TYPE_OF_DETECTOR_KEY,
                  ADDITIONAL_INFO_DETECTOR_KEY,
                  TYPE_LIGHT_KEY, NAME_LIGHT_KEY,
