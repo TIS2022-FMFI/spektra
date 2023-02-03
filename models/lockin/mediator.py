@@ -48,7 +48,10 @@ class Mediator(ABC):
         return self.can_set_gain
 
     def read_setting(self, setting):
-        getter = self.get_command_or_method_map[setting]
+        if setting in self.get_command_or_method_map:
+            getter = self.get_command_or_method_map[setting]
+        else:
+            raise Exception(f"Reading setting '{setting}' is not supported")
 
         if type(getter) is tuple:
             data_type, command = getter

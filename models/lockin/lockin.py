@@ -29,11 +29,10 @@ class Lockin:
     def load_lockin_information(self):
         """
         Nacita informacie o lockine z json suboru
-        @param nazov lockinu:
         @return:
         """
         with open('models/lockin/lockins_data.json') as file:
-                lockin_data = json.load(file)[self.name]
+            lockin_data = json.load(file)[self.name]
 
         self.gain_values = lockin_data[GAIN]
         self.pre_time_const = lockin_data[PRE_TIME_CONST]
