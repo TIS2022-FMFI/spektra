@@ -100,7 +100,8 @@ class Lockin:
         """
         self.cur_gain_index += 1
         if self.should_auto_switch_gain and self.mediator.is_setting_gain_possible():
-            self.mediator.set_gain(self.cur_gain_index)
+            return self.mediator.set_gain(self.cur_gain_index)
+        return False
 
     def higher_gain(self):
         """
@@ -110,7 +111,8 @@ class Lockin:
         if self.cur_gain_index > self.mediator.lowest_auto_settable_gain:
             self.cur_gain_index -= 1
             if self.should_auto_switch_gain and self.mediator.is_setting_gain_possible():
-                self.mediator.set_gain(self.cur_gain_index)
+                return self.mediator.set_gain(self.cur_gain_index)
+        return False
 
     def prepare(self):
         """

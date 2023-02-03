@@ -104,10 +104,12 @@ class SR510(Mediator):
         """
         nastavit senzitivtu s obmedzenim
         @param new_gain: int
-        @return: None
+        @return: true/false whether gain was changed
         """
         if self.lowest_auto_settable_gain <= new_gain <= 24:
             self.rcom(f'G {new_gain}', False)
+            return True
+        return False
 
     def read_value(self):
         """
