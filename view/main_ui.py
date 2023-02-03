@@ -429,6 +429,7 @@ class Ui_MainWindow(object):
         self.measurement_config_menu_span_dsbox.setObjectName(u"measurement_config_menu_span_dsbox")
         sizePolicy2.setHeightForWidth(self.measurement_config_menu_span_dsbox.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_span_dsbox.setSizePolicy(sizePolicy2)
+        self.measurement_config_menu_span_dsbox.setDecimals(9)
         self.gridLayout_6.addWidget(self.measurement_config_menu_span_dsbox, 2, 1, 1, 1)
         self.measurement_config_menu_span_auto_check = QCheckBox(self.widget_13)
         self.measurement_config_menu_span_auto_check.setObjectName(u"measurement_config_menu_span_auto_check")
@@ -600,6 +601,7 @@ class Ui_MainWindow(object):
 
         self.monochromator_in_in_start = QDoubleSpinBox(self.widget_12)
         self.monochromator_in_in_start.setObjectName(u"monochromator_in_in_start")
+        self.monochromator_in_in_start.setSingleStep(0.01)
 
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.monochromator_in_in_start)
 
@@ -610,6 +612,7 @@ class Ui_MainWindow(object):
 
         self.monochromator_in_in_start_2 = QDoubleSpinBox(self.widget_12)
         self.monochromator_in_in_start_2.setObjectName(u"monochromator_in_in_start_2")
+        self.monochromator_in_in_start_2.setSingleStep(0.01)
 
         self.formLayout.setWidget(1, QFormLayout.FieldRole, self.monochromator_in_in_start_2)
 
@@ -641,6 +644,7 @@ class Ui_MainWindow(object):
 
         self.monochromator_out_out_start = QDoubleSpinBox(self.widget_15)
         self.monochromator_out_out_start.setObjectName(u"monochromator_out_out_start")
+        self.monochromator_out_out_start.setSingleStep(0.01)
 
         self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.monochromator_out_out_start)
 
@@ -1176,7 +1180,7 @@ class Ui_MainWindow(object):
         self.actionO_programe.setText(QCoreApplication.translate("MainWindow", u"O programe", None))
         self.actionDenn.setText(QCoreApplication.translate("MainWindow", u"Denn\u00fd", None))
         self.actionNo_n.setText(QCoreApplication.translate("MainWindow", u"No\u010dn\u00fd", None))
-        self.actionPorovnanie.setText(QCoreApplication.translate("MainWindow", u"Provn\u00e1vacie meranie", None))
+        self.actionPorovnanie.setText(QCoreApplication.translate("MainWindow", u"Porovnávacie meranie", None))
         self.measurement_config_menu_sample_label.setText(
             QCoreApplication.translate("MainWindow", u"N\u00e1zov vzorky", None))
         self.measurement_config_menu_width_label_4.setText(QCoreApplication.translate("MainWindow", u"Teplota", None))

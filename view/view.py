@@ -171,12 +171,13 @@ class View(QObject):
 
     def update_disperse_elements_list(self):
         """ Update list of elements in disperse combobox. """
-        disperseElemCbox = self.widgets.devices_controls_devices_selection_disperse_cbox
-        disperseElemCbox.clear()
+        disperse_element_cbox = self.widgets.devices_controls_devices_selection_disperse_cbox
+        selected_item = disperse_element_cbox.currentText()
+        disperse_element_cbox.clear()
 
         elements = [e.rstrip('.txt') for e in os.listdir('models/elements')]
-        disperseElemCbox.addItems([' - '])
-        disperseElemCbox.addItems(elements)
+        disperse_element_cbox.addItems([' - '])
+        disperse_element_cbox.addItems(elements)
 
     def open_documentation(self):
         """ Open documentation in default browser. """
@@ -193,11 +194,14 @@ class View(QObject):
             self._on_ui_mode_change()
 
     def device_control_buttons_set_enabled(self, is_enabled):
-        self.widgets.devices_controls_engine_positioning_left_btn.setEnabled(is_enabled)
-        self.widgets.devices_controls_engine_positioning_right_btn.setEnabled(is_enabled)
         self.widgets.radioButton.setEnabled(is_enabled)
         self.widgets.radioButton_2.setEnabled(is_enabled)
-        self.widgets.devices_controls_goto_btn.setEnabled(is_enabled)
         self.widgets.devices_controls_calibration_btn.setEnabled(is_enabled)
         self.widgets.devices_controls_devices_selection_disperse_cbox.setEnabled(is_enabled)
         self.widgets.devices_controls_devices_selection_volt_cbox.setEnabled(is_enabled)
+        self.motor_control_buttons_set_enabled(is_enabled)
+
+    def motor_control_buttons_set_enabled(self, is_enabled):
+        self.widgets.devices_controls_engine_positioning_left_btn.setEnabled(is_enabled)
+        self.widgets.devices_controls_engine_positioning_right_btn.setEnabled(is_enabled)
+        self.widgets.devices_controls_goto_btn.setEnabled(is_enabled)

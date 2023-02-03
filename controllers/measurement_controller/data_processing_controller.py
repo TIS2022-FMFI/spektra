@@ -131,7 +131,7 @@ class DataProcessingController(QObject):
             lambda: self.data_processing.set_legend_field(OPTICAL_FILTER_KEY,
                                                           self.view.widgets.monochromator_optical_filter_ledit.text()))
 
-        self.view.widgets.devices_controls_devices_selection_volt_cbox.currentIndexChanged.connect(
+        self.view.widgets.devices_controls_devices_selection_volt_cbox.activated.connect(
             lambda: self.data_processing.set_legend_field(LOCK_IN_KEY,
                                                           self.view.widgets.devices_controls_devices_selection_volt_cbox.currentText()))
         self.view.widgets.devices_controls_devices_selection_disperse_cbox.currentIndexChanged.connect(
