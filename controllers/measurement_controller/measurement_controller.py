@@ -19,7 +19,7 @@ class MeasurementController(QObject):
     motor_move_to_angle_s = Signal(int, bool)
     measurement_start_fail_s = Signal()
     measurement_started_s = Signal()
-    measured_value_s = Signal(float, float, bool)
+    measured_value_s = Signal(float, float, float, bool)
     progress_s = Signal(float)
     measurement_ended_s = Signal(float)
 
@@ -160,15 +160,17 @@ class MeasurementController(QObject):
         self.status_report_s.emit(INFO, f'Namerana hodnota: {measured_value} so senzitivitou {cur_gain}')
 
         if measured_value >= 0.7 * cur_gain:
-            self._lockin.lower_gain()
-            ptc = self._lockin.read_setting(PRE_TIME_CONST)
-            sleep(3 * ptc)
-            self.status_report_s.emit(INFO, f'Senzitivita sa znížila na {self._lockin.current_gain_value()}')
+            if self._lockin.lower_gain():
+                settle_delay = 5 * self._lockin.read_setting(PRE_TIME_CONST)
+                gain_val = self._lockin.current_gain_value()
+                self.status_report_s.emit(INFO, f'SENZITIVITA sa znížila na {gain_val} čaká sa {settle_delay}s')
+                sleep(settle_delay)
         elif measured_value <= 0.2 * cur_gain:
-            self._lockin.higher_gain()
-            ptc = self._lockin.read_setting(PRE_TIME_CONST)
-            sleep(3 * ptc)
-            self.status_report_s.emit(INFO, f'Senzitivita sa zvýšila na {self._lockin.current_gain_value()}')
+            if self._lockin.higher_gain():
+                settle_delay = 5 * self._lockin.read_setting(PRE_TIME_CONST)
+                gain_val = self._lockin.current_gain_value()
+                self.status_report_s.emit(INFO, f'SENZITIVITA sa zvýšila na {gain_val} čaká sa {settle_delay}s')
+                sleep(settle_delay)
 
     def save_and_show_measurement(self, elem, value, correction):
         """
@@ -187,7 +189,7 @@ class MeasurementController(QObject):
             self.status_report_s.emit(WARNING, e.message)
             return
 
-        self.measured_value_s.emit(wavelength, value, True)
+        self.measured_value_s.emit(angle, wavelength, value, True)
 
     def failed_measurement(self, msg):
         """
@@ -283,8 +285,7 @@ class MeasurementController(QObject):
             motor_movement_duration = self._motor.move_forward(steps)
             sleep(motor_movement_duration)
 
-        self.status_report_s.emit(
-            f"dĺžka merania: {distance}°, počet krokov: {total_motor_steps}, počet meraní: {number_of_measurements}")
+        self.status_report_s.emit(INFO, f"dĺžka merania: {distance}°, počet krokov: {total_motor_steps}, počet meraní: {number_of_measurements}")
         measurement_no = 1
         measure()
 
@@ -295,14 +296,15 @@ class MeasurementController(QObject):
                 self.measurement_ended()
                 return
             move_motor_forward(steps_per_measurement)
-            measure()
             self.current_motor_angle += angle_change_per_move
+            measure()
 
         if last_irregular_movement_needed:
             if self.measurement_in_progress is False:
                 self.measurement_ended()
                 return
             move_motor_forward(last_movement_remaining_steps)
+            self.current_motor_angle = end
             measure()
 
         self.current_motor_angle = end

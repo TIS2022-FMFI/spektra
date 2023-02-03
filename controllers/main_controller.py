@@ -132,7 +132,7 @@ class MainController(QObject):
         )
 
     def new_comports_chosen(self, lockin, motor):
-        print('maincon', lockin, motor)
+        self.logger.log(INFO, f'Vybranté comporty lockin: {lockin}, motor: {motor}')
         QMetaObject.invokeMethod(
             self._measurement,
             "new_comports_chosen",
@@ -217,13 +217,14 @@ class MainController(QObject):
         self.view.widgets.graph_view.initialize()
         self.view.widgets.graph_view.plotGraph()
 
-    def update_graph(self, wavelength, value, cmp):
+    def update_graph(self, angle, wavelength, value, cmp):
         """
         update graph with given values
         @param wavelength: given wavelength value
         @param value: given measured value
         @param cmp: if true current measurement else older measurement
         """
+        self.view.widgets.motor_init_pos_sbox.setValue(angle)
         self.view.widgets.graph_view.addMeasurement([[wavelength, value]], cmp)
         self.view.widgets.graph_view.plotGraph()
 
