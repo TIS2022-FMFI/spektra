@@ -134,6 +134,7 @@ class MeasurementController(QObject):
         get/load lockin parameters
         """
         data = {setting: self.lockin_read_setting_safely(setting) for setting in SETTINGS_IN_GUI}
+        data[SETTABLE_GAIN] = self._lockin.can_auto_switch()
         self.lockin_settings_s.emit(data)
 
     def link_data_processing_controller(self, dpc):

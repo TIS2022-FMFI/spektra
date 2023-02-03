@@ -115,14 +115,18 @@ class MainController(QObject):
         widgets.comport_choice_dialog.comports_confirmed_s.connect(self.new_comports_chosen)
 
         # auto sensitivity
-        widgets.measurement_config_menu_span_auto_check.clicked.connect(
-            lambda: widgets.measurement_config_menu_min_sensitivity_sbox.setEnabled(widgets.measurement_config_menu_span_auto_check.isChecked())
-        )
+        widgets.measurement_config_menu_span_auto_check.clicked.connect(self.auto_sensitivity_checkbox)
         widgets.measurement_config_menu_min_sensitivity_sbox.setValue(LOWEST_AUTO_SETTABLE_GAIN_DEFAULT)
         widgets.measurement_config_menu_min_sensitivity_sbox.valueChanged.connect(self.set_lockin_min_auto_sensitivity)
 
         # logger
         self._measurement.status_report_s.connect(lambda level, message: self.logger.log(level, message))
+
+
+    def auto_sensitivity_checkbox(self):
+        is_enabled = self.view.widgets.measurement_config_menu_span_auto_check.isChecked()
+        self.view.widgets.measurement_config_menu_min_sensitivity_sbox.setEnabled(is_enabled)
+        self.view.widgets.measurement_config_menu_span_dsbox.setEnabled(not is_enabled)
 
     def set_lockin_min_auto_sensitivity(self, value):
         QMetaObject.invokeMethod(
@@ -208,7 +212,14 @@ class MainController(QObject):
         widgets.measurement_config_menu_ref_sbox.setValue(data[REFERENCE_FREQUENCY])
         widgets.measurement_config_menu_time_const_dsbox.setValue(data[PRE_TIME_CONST])
         widgets.measurement_config_menu_time_const_dsbox_post.setValue(data[POST_TIME_CONST])
-        widgets.measurement_config_menu_span_dsbox.setValue(data[GAIN]) #decimals 2 of sbox isn't enough
+        widgets.measurement_config_menu_span_dsbox.setValue(data[GAIN])
+
+        is_settable_gain = data[SETTABLE_GAIN]
+
+        self.view.widgets.measurement_config_menu_min_sensitivity_sbox.setEnabled(is_settable_gain)
+        self.view.widgets.measurement_config_menu_span_auto_check.setChecked(is_settable_gain)
+        self.view.widgets.measurement_config_menu_span_auto_check.setEnabled(is_settable_gain)
+        self.view.widgets.measurement_config_menu_span_dsbox.setEnabled(not is_settable_gain)
 
     def clear_graph(self):
         """

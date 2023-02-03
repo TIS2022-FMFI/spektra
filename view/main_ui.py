@@ -429,6 +429,7 @@ class Ui_MainWindow(object):
         self.measurement_config_menu_span_dsbox.setObjectName(u"measurement_config_menu_span_dsbox")
         sizePolicy2.setHeightForWidth(self.measurement_config_menu_span_dsbox.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_span_dsbox.setSizePolicy(sizePolicy2)
+        self.measurement_config_menu_span_dsbox.setDecimals(9)
         self.gridLayout_6.addWidget(self.measurement_config_menu_span_dsbox, 2, 1, 1, 1)
         self.measurement_config_menu_span_auto_check = QCheckBox(self.widget_13)
         self.measurement_config_menu_span_auto_check.setObjectName(u"measurement_config_menu_span_auto_check")
