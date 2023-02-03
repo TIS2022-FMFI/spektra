@@ -600,6 +600,7 @@ class Ui_MainWindow(object):
 
         self.monochromator_in_in_start = QDoubleSpinBox(self.widget_12)
         self.monochromator_in_in_start.setObjectName(u"monochromator_in_in_start")
+        self.monochromator_in_in_start.setSingleStep(0.01)
 
         self.formLayout.setWidget(0, QFormLayout.FieldRole, self.monochromator_in_in_start)
 
@@ -610,6 +611,7 @@ class Ui_MainWindow(object):
 
         self.monochromator_in_in_start_2 = QDoubleSpinBox(self.widget_12)
         self.monochromator_in_in_start_2.setObjectName(u"monochromator_in_in_start_2")
+        self.monochromator_in_in_start_2.setSingleStep(0.01)
 
         self.formLayout.setWidget(1, QFormLayout.FieldRole, self.monochromator_in_in_start_2)
 
@@ -641,6 +643,7 @@ class Ui_MainWindow(object):
 
         self.monochromator_out_out_start = QDoubleSpinBox(self.widget_15)
         self.monochromator_out_out_start.setObjectName(u"monochromator_out_out_start")
+        self.monochromator_out_out_start.setSingleStep(0.01)
 
         self.formLayout_3.setWidget(0, QFormLayout.FieldRole, self.monochromator_out_out_start)
 
