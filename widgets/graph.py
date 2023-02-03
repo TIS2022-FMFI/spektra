@@ -136,7 +136,7 @@ class Graph(pg.PlotWidget):
 
         if len(self.currentX) != 0 and len(self.currentY) != 0 and self.view is not None:
             self.view.widgets.devices_controls_current_wavelength_widget.setText(
-                f"x = {self.currentX[-1]:.2} y = {self.currentY[-1]:.2}"
+                f"x = {self.currentX[-1]:.2f} y = {self.currentY[-1]}"
             )
 
 
