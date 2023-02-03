@@ -9,7 +9,6 @@ from qtpy import QtWidgets
 from controllers.main_controller import MainController
 from errors.data_processing_error import DataProcessingError
 from models.data_processing.dataProcessing import DataProcessing
-from models.disperse_element import Grating
 from view.view import View
 from settings import Settings
 from controllers.measurement_controller.data_processing_controller import DataProcessingController
@@ -23,15 +22,17 @@ class MainWindow(QMainWindow):
         """
         initializes main object
         """
-        QMainWindow.__init__(self)
+        super().__init__()
         random.seed(datetime.now().microsecond)
         self._secret = random.random()
+
         self.view = View(self)
         self.controller = MainController(self.view, self._secret)
 
         self.view.widgets.graph_view.add_views(self.view)
         self.view.widgets.graph_view.add_logger(self.controller.logger)
         self.view.widgets.graph_view.plotGraph()
+
         self.view.widgets.actionPorovnanie.triggered.connect(self._load_comparative_file)
         self.view.widgets.action_save_as.triggered.connect(self.file_save)
         self.view.widgets.action_exit.triggered.connect(self.close)
@@ -99,7 +100,7 @@ class MainWindow(QMainWindow):
 
     def change_current_directory(self):
         """
-        changes current directory from which can user choose older measurement file for comparision
+        changes current directory from which can user choose older measurement file for comparison
         this directory is chosen by user
         """
         idx_directory = self.controller.file_manager.change_current_directory(QFileDialog.getExistingDirectory())
@@ -120,20 +121,9 @@ class MainWindow(QMainWindow):
         connect the view with file measurement controller, binds all GUI objects concerning motor movement and
         measurement with backend
         """
-        #sometodo
-        #ulozit nazov lockinu do suboru
-        #vstup strbina = sirka, vyska, mm, setstep 1/100 for sirka
-        #vyst = sirka only, mm
-        #monochrom tab. pridat nazov monochromatora
-
-
         widgets = self.view.widgets
-        ms_controller = self.controller._measurement
-
-        ms_controller.link_data_processing_controller(self.data_processing_controller.data_processing)
-        ms_controller.link_logger(self.controller.logger)
-
-        ms_controller.state_s.connect(lambda x: self.controller.logger.log(INFO, x))
+        self.controller._measurement.link_data_processing_controller(
+            self.data_processing_controller.data_processing)
 
         widgets.actionO_programe.triggered.connect(widgets.about_dialog.show)
         widgets.actionDokument_cia.triggered.connect(self.view.open_documentation)
