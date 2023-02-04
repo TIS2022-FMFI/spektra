@@ -1,11 +1,10 @@
-from serial import Serial, PARITY_NONE
+from serial import Serial, PARITY_NONE, EIGHTBITS, STOPBITS_TWO
 from abc import ABC, abstractmethod
 
 from .constants import *
 
 
 class Mediator(ABC):
-
     def __init__(self, port):
         self.can_set_gain = False
         self.lowest_auto_settable_gain = None
@@ -16,7 +15,7 @@ class Mediator(ABC):
     @abstractmethod
     def connect(self, port):
         """
-        Pripoji sa mediator cez seriovy port
+        Method that connects to passed comport
         @param port:
         @return: None
         """
@@ -25,7 +24,7 @@ class Mediator(ABC):
     @abstractmethod
     def read_value(self):
         """
-        Citanie nameraneho napatia
+        Read voltage
         @return: float
         """
         ...
@@ -33,7 +32,7 @@ class Mediator(ABC):
     @abstractmethod
     def get_command(self, data_type, command):
         """
-        Vseobecna metoda na posielanie commandu na mediator a citanie hodnoty
+        Sends command over serial connection and returns the returned value as type data_type
         @param data_type: type
         @param command: str
         @return:
@@ -48,6 +47,11 @@ class Mediator(ABC):
         return self.can_set_gain
 
     def read_setting(self, setting):
+        """
+        Read passed setting from lockin if possible
+        @param setting:
+        @return:
+        """
         if setting in self.get_command_or_method_map:
             getter = self.get_command_or_method_map[setting]
         else:
@@ -77,22 +81,16 @@ class SR510(Mediator):
         }
 
     def connect(self, port):
-        self.serial_connection = Serial(port, 9600, 8, PARITY_NONE, 2, timeout=0.5)
+        self.serial_connection = Serial(port, 9600, EIGHTBITS, PARITY_NONE, STOPBITS_TWO, timeout=0.5)
 
     def get_command(self, data_type, command):
-        """
-        Dostane typ, ktory ma vraciat a command, ktory vyziada nejaku hodnotu
-        @param data_type: type
-        @param command: str
-        @return: data_type
-        """
         return data_type(self.rcom(command))
 
     def rcom(self, command, read=True):
         """
-        Command upraveny do potrebnej podoby pre sr510
+        Command converted to needed format to send over serial connection
         @param command: str
-        @param read: bool urcujuci ci treba citat odpoved a nasledne vratit danu hodnotu
+        @param read: bool - wait for return value from serial connection ?
         @return:
         """
         command += '\r'
@@ -102,7 +100,7 @@ class SR510(Mediator):
 
     def set_gain(self, new_gain):
         """
-        nastavit senzitivtu s obmedzenim
+        Set sensitivity
         @param new_gain: int
         @return: true/false whether gain was changed
         """
@@ -112,10 +110,6 @@ class SR510(Mediator):
         return False
 
     def read_value(self):
-        """
-        Poziadaj o precitanie napatia
-        @return: float
-        """
         return float(self.rcom('Q'))
 
 
