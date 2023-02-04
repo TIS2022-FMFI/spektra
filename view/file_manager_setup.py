@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QTreeView
 def setup_filemanager_view(tree_view: QTreeView):
     """
     Setup file manager view.
-    :param tree_view: QTreeView instance to setup.
+    @param tree_view: QTreeView instance to set up.
     """
     tree_view.setRootIsDecorated(False)
     tree_view.setAlternatingRowColors(False)

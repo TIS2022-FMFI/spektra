@@ -16,7 +16,7 @@ class LogBuffer:
     def add(self, log: Log):
         """
             Add a log to the buffer.
-            :param log: Log to add.
+            @param log: Log to add.
         """
         self._lock.lock()
         if self._length == self.MAX_BUFFER_SIZE:
