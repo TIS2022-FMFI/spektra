@@ -45,7 +45,7 @@ class View(QObject):
     def display_log(self, log):
         """
         Display log in the log list view.
-        :param log: Log to display.
+        @param log: Log to display.
         """
         task = View._DisplayLog(log)
         self.threadpool.start(task)
@@ -66,6 +66,8 @@ class View(QObject):
             theme = Settings.LIGHT_THEME + '.xml'
         elif self.mode == NIGHT_MODE:
             theme = Settings.DARK_THEME + '.xml'
+        else:
+            theme = Settings.LIGHT_THEME + '.xml'
         apply_stylesheet(QApplication.instance(), theme=theme, invert_secondary=True)
         self.display_icons()
         self.set_font(self._get_font())
@@ -125,7 +127,7 @@ class View(QObject):
     def on_voltmeter_connection_change(self, connected):
         """
         Update voltmeter indicator in toolbar. Also update status bar message.
-        :param connected: True if voltmeter is connected, False otherwise.
+        @param connected: True if voltmeter is connected, False otherwise.
         """
         self._voltmeter_connected = connected
         self._update_voltmeter_indicator()
@@ -172,7 +174,7 @@ class View(QObject):
     def update_disperse_elements_list(self):
         """ Update list of elements in disperse combobox. """
         disperse_element_cbox = self.widgets.devices_controls_devices_selection_disperse_cbox
-        selected_item = disperse_element_cbox.currentText()
+        # selected_item = disperse_element_cbox.currentText() todo later
         disperse_element_cbox.clear()
 
         elements = [e.rstrip('.txt') for e in os.listdir('models/elements')]
@@ -205,3 +207,4 @@ class View(QObject):
         self.widgets.devices_controls_engine_positioning_left_btn.setEnabled(is_enabled)
         self.widgets.devices_controls_engine_positioning_right_btn.setEnabled(is_enabled)
         self.widgets.devices_controls_goto_btn.setEnabled(is_enabled)
+        

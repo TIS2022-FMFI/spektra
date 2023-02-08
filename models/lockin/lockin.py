@@ -64,8 +64,8 @@ class Lockin:
 
     def current_gain_value(self):
         """
-        Return value of senzitivity based on locally saved variable in self.cur_gain_index.
-        If user change value direcly at lockin device, won't get correct value
+        Return value of sensitivity based on locally saved variable in self.cur_gain_index.
+        If user change value directly at lockin device, won't get correct value
         @return: float
         """
         return self.gain_values[self.cur_gain_index]
@@ -73,7 +73,7 @@ class Lockin:
     def read_setting(self, setting):
         """
         Read settings (and processes it, if needed)
-        @param setting: conrete setting (define in constants)
+        @param setting: setting defined in constants
         @return: required value
         """
         value = self.mediator.read_setting(setting)

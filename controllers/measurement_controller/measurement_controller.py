@@ -327,8 +327,8 @@ class MeasurementController(QObject):
     @QtCore.Slot(float)
     def move_to_angle(self, end_angle, from_gui=True):
         """
-        move to specified position
-        @param from_gui: ci bola metoda zavola z gui
+        move to specified angle
+        @param from_gui: bool called from gui?
         @param end_angle: position, where to move (angle)
         """
         if self.current_motor_angle is None:
@@ -359,6 +359,12 @@ class MeasurementController(QObject):
 
     @QtCore.Slot(int, bool)
     def confirmed_move_to_angle(self, steps, forward):
+        """
+        Called after user confirmed motor movement steps and direction
+        @param steps: int
+        @param forward: bool
+        @return: None
+        """
         if forward:
             self.move_forward(steps)
         else:

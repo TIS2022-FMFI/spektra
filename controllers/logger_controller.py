@@ -15,9 +15,9 @@ class LoggerController(QObject):
     def log(self, level, message, show_user=True):
         """
         Log a message to the logger.
-        :param level: The level of the log.
-        :param message: The message to log.
-        :param show_user: Whether to show the log to the user.
+        @param level: The level of the log.
+        @param message: The message to log.
+        @param show_user: Whether to show the log to the user.
         """
         log = self._logger.log(message, level)
         if show_user:

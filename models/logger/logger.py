@@ -17,38 +17,38 @@ class Logger:
 
     def critical(self, message):
         """ Log a critical message.
-        :param message: Message to log."""
+        @param message: Message to log."""
         return self.log(message, CRITICAL)
 
     def error(self, message):
         """ Log an error message.
-        :param message: Message to log."""
+        @param message: Message to log."""
         return self.log(message, ERROR)
 
     def warning(self, message):
         """ Log a warning message.
-        :param message: Message to log."""
+        @param message: Message to log."""
         return self.log(message, WARNING)
 
     def success(self, message):
         """ Log a success message.
-        :param message: Message to log."""
+        @param message: Message to log."""
         return self.log(message, SUCCESS)
 
     def info(self, message):
         """ Log an info message.
-        :param message: Message to log."""
+        @param message: Message to log."""
         return self.log(message, INFO)
 
     def debug(self, message):
         """ Log a debug message.
-        :param message: Message to log."""
+        @param message: Message to log."""
         return self.log(message, DEBUG)
 
     def log(self, message, level):
         """ Log a message.
-        :param message: Message to log.
-        :param level: Level of the message."""
+        @param message: Message to log.
+        @param level: Level of the message."""
         log = Log(message, LogLevel(level))
         if Settings.DEBUG and level == DEBUG:
             print(log)
