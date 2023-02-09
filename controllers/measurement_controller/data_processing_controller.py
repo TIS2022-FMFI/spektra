@@ -53,8 +53,7 @@ class DataProcessingController(QObject):
                                                           self.view.widgets.sample_measurement_ledit.text()))
 
         self.view.widgets.measurement_config_menu_filename_ledit.editingFinished.connect(
-            lambda: self.data_processing.set_file_name(
-                self.view.widgets.measurement_config_menu_filename_ledit.text()))
+            self.set_file_name)
         self.view.widgets.measurement_config_menu_start_sbox.valueChanged.connect(
             lambda: self.data_processing.set_legend_field(START_POSITION_KEY,
                                                           self.view.widgets.measurement_config_menu_start_sbox.value())
@@ -258,6 +257,12 @@ class DataProcessingController(QObject):
         @return: filename of the current measurement file
         """
         return self.data_processing.file_name
+
+    def set_file_name(self):
+        self.data_processing.set_file_name(
+            self.view.widgets.measurement_config_menu_filename_ledit.text())
+        self.view.widgets.graph_view.change_label_name(self.data_processing.file_name, True)
+        self.view.widgets.graph_view.plotGraph()
 
     def clear_comparing_measurement(self):
         """

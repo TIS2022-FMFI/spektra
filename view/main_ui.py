@@ -498,6 +498,7 @@ class Ui_MainWindow(object):
         self.measurement_config_menu_halogen_cbox.setObjectName(u"measurement_config_menu_halogen_cbox")
         sizePolicy1.setHeightForWidth(self.measurement_config_menu_halogen_cbox.sizePolicy().hasHeightForWidth())
         self.measurement_config_menu_halogen_cbox.setSizePolicy(sizePolicy1)
+        self.measurement_config_menu_halogen_cbox.setMinimumWidth(120)
 
         self.gridLayout_8.addWidget(self.measurement_config_menu_halogen_cbox, 0, 2, 1, 1)
 
@@ -1231,7 +1232,7 @@ class Ui_MainWindow(object):
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"V\u00fdstupn\u00e1 \u0161trbina", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"Šírka", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Optick\u00fd filter", None))
-        self.label_110.setText(QCoreApplication.translate("MainWindow", u"názov", None))
+        self.label_110.setText(QCoreApplication.translate("MainWindow", u"Názov", None))
 
         self.measurement_config_menu_tabs.setTabText(self.measurement_config_menu_tabs.indexOf(self.monochromator_tab),
                                                      QCoreApplication.translate("MainWindow", u"Monochrom\u00e1tor",

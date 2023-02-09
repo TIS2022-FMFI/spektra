@@ -22,6 +22,7 @@ class MeasurementController(QObject):
     measured_value_s = Signal(float, float, float, bool)
     progress_s = Signal(float)
     measurement_ended_s = Signal(float)
+    min_sens_unit_s = Signal(str)
 
     def __init__(self):
         """
@@ -60,8 +61,9 @@ class MeasurementController(QObject):
         @param value: int (index of the sensitivity based on list inside lockinds_data.json)
         @return: None
         """
-        if self._lockin.can_auto_switch():
+        if self._lockin.connected and self._lockin.can_auto_switch():
             self._lockin.set_min_auto_sensitivity(value)
+            self.min_sens_unit_s.emit(self._lockin.friendly_gain_values[value])
 
     def comport_cable_info(self, comport):
         return f'{comport.vid}:{comport.pid}:{comport.serial_number}'

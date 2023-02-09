@@ -67,6 +67,8 @@ class Graph(pg.PlotWidget):
         self.setLabel('bottom', 'Vlnová dĺžka [A°]', **self.styles)
         self.addLegend()
         self.showGrid(x=True, y=True)
+        self.old_label_name = "Staršie meranie"
+        self.current_label_name = "Momentálne meranie"
         self.plotGraph()
 
     def add_views(self, views):
@@ -87,6 +89,12 @@ class Graph(pg.PlotWidget):
     def initialize(self):
         self.currentX = []
         self.currentY = []
+
+    def change_label_name(self, name, current = True):
+        if current:
+            self.current_label_name = name
+        else:
+            self.old_label_name = name
 
     def addMeasurement(self, measurements, current):
         '''
@@ -130,9 +138,9 @@ class Graph(pg.PlotWidget):
         @return:
         '''
         self.clear()
-        self.plot(self.currentX, self.currentY, name="Momentálne meranie",
-                              pen='b', symbol='o', symbolSize=8,
-                              symbolBrush=('b'))
+        self.plot(self.currentX, self.currentY, name=self.current_label_name,
+                  pen='b', symbol='o', symbolSize=8,
+                  symbolBrush=('b'))
 
         if len(self.currentX) != 0 and len(self.currentY) != 0 and self.view is not None:
             self.view.widgets.devices_controls_current_wavelength_widget.setText(
@@ -141,9 +149,9 @@ class Graph(pg.PlotWidget):
 
 
         if len(self.oldX) != 0 and len(self.oldY) != 0:
-            self.plot(self.oldX, self.oldY, name="Staršie meranie",
-                              pen='r', symbol='o', symbolSize=5,
-                              symbolBrush=('r'))
+            self.plot(self.oldX, self.oldY, name=self.old_label_name,
+                      pen='r', symbol='o', symbolSize=5,
+                      symbolBrush=('r'))
         return
 
     def dragEnterEvent(self, event):
@@ -192,6 +200,12 @@ class Graph(pg.PlotWidget):
             self.logger.log(WARNING, e.message, True)
             event.accept()
             return
+        self.view.widgets.graph_view.addMeasurement(measurements, False)
+        name = file_path.split("\\")
+        if "/" in file_path:
+            name = file_path.split("/")
+        name = name[-1]
+        self.view.widgets.graph_view.change_label_name(name, False)
 
         self.addMeasurement(measurements, False)
         self.plotGraph()

@@ -47,7 +47,6 @@ class MainWindow(QMainWindow):
 
     def _load_comparative_file(self):
         file_name = QFileDialog.getOpenFileName(self, "Open File", "", "Text Files (*.txt)")[0]
-        print(file_name)
 
         try:
             loaded_settings, measurements = DataProcessing(self.view).load_old_file(file_name)
@@ -55,6 +54,11 @@ class MainWindow(QMainWindow):
             self.controller.logger.log(WARNING, e.message, True)
             return
         self.view.widgets.graph_view.addMeasurement(measurements, False)
+        name = file_name.split("\\")
+        if "/" in file_name:
+            name = file_name.split("/")
+        name = name[-1]
+        self.view.widgets.graph_view.change_label_name(name, False)
         self.view.widgets.graph_view.plotGraph()
         self.view.widgets.textBrowser.setText(str(loaded_settings))
 
