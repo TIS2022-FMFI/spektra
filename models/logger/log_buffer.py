@@ -20,6 +20,7 @@ class LogBuffer:
         """
         self._lock.lock()
         if self._length == self.MAX_BUFFER_SIZE:
+            self._lock.unlock()
             raise BufferError("Buffer is full")
         if self.head is None:
             self.head = log
@@ -111,4 +112,5 @@ class LogBuffer:
             file.write(log_text)
         self.head = None
         self.tail = None
+        self._length = 0
         self._lock.unlock()

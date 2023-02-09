@@ -2,7 +2,7 @@ import os
 import unittest
 from models.logger.logger import Logger
 from models.logger.log_level import LogLevel
-from models.logger.constants import DEBUG, INFO, SUCCESS, WARNING, ERROR, CRITICAL, MIN_LOG_LEVEL
+from models.logger.constants import DEBUG, INFO, SUCCESS, WARNING, ERROR, CRITICAL, MIN_LOG_LEVEL, MAX_BUFFER_SIZE
 
 
 class LoggerTests(unittest.TestCase):
@@ -120,6 +120,12 @@ class LoggerTests(unittest.TestCase):
             content = file.read()
         # Assert
         self.assertEqual(content, str(log) + "\n")
+
+    def test_more_than_max_logs(self):
+        logger = Logger()
+        for i in range(0, 2 * MAX_BUFFER_SIZE + 1):
+            logger.critical("test")
+        self.assertEqual(logger.size(), 1)
 
 if __name__ == '__main__':
     unittest.main()
