@@ -29,6 +29,9 @@ class LoggerController(QObject):
         else:
             raise ValueError("Invalid key")
 
+    def is_logger_empty(self):
+        return self._logger.size()  == 0
+
     def save_logs_to_file(self):
         """Save the logs to a file."""
         self._logger.save()
