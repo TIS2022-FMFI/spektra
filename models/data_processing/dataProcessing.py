@@ -5,11 +5,12 @@ from models.data_processing.measurementSettings import MeasurementSettings
 from errors.data_processing_error import DataProcessingError
 import os
 
+
 class DataProcessing(QObject):
     def __init__(self, view):
-        '''
+        """
         initializes data processing object
-        '''
+        """
         super(DataProcessing, self).__init__()
         self.file_name = ""
         self.view = view
@@ -60,11 +61,11 @@ class DataProcessing(QObject):
         Checks if measurement setting in self.setting is complete. If it is
         creates new file and writes legend to the file. At last stores current
         measurement setting to the json legend file.
-        @raise data_processing_error: raises an exception if legend isn't complete or it's not
+        @raise data_processing_error: raises an exception if legend isn't complete, or it's not
                                         possible to create new file
         """
         if not self.settings.check_completness_of_legend():
-            raise DataProcessingError("Legenda nie je kompletne vyplnená. Nie je možne vytvoriť nový súbor pre meranie.")
+            raise DataProcessingError("Legenda nie je kompletne vyplnená. Nemožno vytvoriť nový súbor pre meranie.")
         self.write_legend(True)
         self.settings.store_last_json_legend()
 
@@ -82,11 +83,11 @@ class DataProcessing(QObject):
             raise DataProcessingError("Nie je vyplnené meno súboru. Nie je možné pridať najnovšie meranie do súboru.")
 
         with open(self.path + self.file_name, 'a', encoding="utf-8") as current_file:
-            #line = '\n{: <20s}\t{: <20s}\t{}'.format(str(angle), str(wave_length * 10), str(intensity))
+            # line = '\n{: <20s}\t{: <20s}\t{}'.format(str(angle), str(wave_length * 10), str(intensity))
             line = '\n{: <20s}\t{: <20s}\t{}'.format(str(angle), str(wave_length), str(intensity))
             current_file.write(line)
 
-    def write_legend(self, postfix = False):
+    def write_legend(self, postfix=False):
         """
         creates new file and writes string representation of the measurement settings in it.
         @raise data_processing_error: raises an exception if there was no name of the
@@ -106,10 +107,10 @@ class DataProcessing(QObject):
                 )
 
     def increase_postfix(self):
-        '''
+        """
         finds out if there already exists file with the same name. If there is,
         adds number postfix
-        '''
+        """
         filename = self.path + self.file_name.replace(self.postfix + ".txt", "")
         if self.postfix == "":
             postfix = 0
@@ -129,10 +130,10 @@ class DataProcessing(QObject):
         self.set_postfix(postfix_str)
 
     def set_postfix(self, postfix_str):
-        '''
+        """
         set value of postfix and adds postfix to filename
         @param postfix_str: postfix of filename
-        '''
+        """
         self.file_name = self.file_name.replace(self.postfix + ".txt", postfix_str + ".txt")
         self.postfix = postfix_str
 
@@ -164,7 +165,7 @@ class DataProcessing(QObject):
         @return: measurement setting object loaded from file and a list of measurement data
         @raise data_processing_error: raises an exception if file is in wrong format (no data,
                                         wrong format of data, no legend or wromg format of the legend)
-                                        or it doesn't exists
+                                        or it doesn't exist
         """
         try:
             with open(file_name, 'r', encoding="utf-8") as f:
@@ -174,7 +175,7 @@ class DataProcessing(QObject):
         except FileNotFoundError:
             raise DataProcessingError("Neexistujúci súbor.")
 
-        if measurements == []:
+        if len(measurements) == 0:
             raise DataProcessingError("Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
 
         return loaded_settings, measurements
@@ -223,4 +224,3 @@ class DataProcessing(QObject):
             raise DataProcessingError("Načítaný súbor nie je v správnom formáte. Neobsahuje nameraná údaje.")
 
         return string_legend
-

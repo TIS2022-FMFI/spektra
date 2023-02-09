@@ -11,26 +11,28 @@ class DataProcessingController(QObject):
     settings_changed_s = Signal(dict)
 
     def __init__(self, view, key):
-        '''
+        """
         initializes DataProcessingController
         @param view: reference to all widgets in the user interface
         @param key: secret key
-        '''
+        """
         super(DataProcessingController, self).__init__()
         self._key = key
         self.data_processing = DataProcessing(view)
         self.view = view
         self.view.widgets.comparative_file_unload_btn.clicked.connect(self.clear_comparing_measurement)
 
+        self.logger = None
+
         self.connect_formular()
         self.initialize_formular()
 
     def connect_formular(self):
-        '''
+        """
         connects itself to each element in legend formular in the user interface, so it can
         automatically update stored legend of the measurement
         @return:
-        '''
+        """
 
         self.view.widgets.saple_name_ledit.editingFinished.connect(
             lambda: self.data_processing.set_legend_field(NAME_SAMPLE_KEY, self.view.widgets.saple_name_ledit.text()))
@@ -143,11 +145,11 @@ class DataProcessingController(QObject):
             self.set_unit_type_angstrom)
 
     def initialize_formular(self):
-        '''
+        """
         fills the legend formular in user interface with measurement settings used the last time
         the app was used
         @return:
-        '''
+        """
         for key, value in self.data_processing.settings.legend.items():
             if key == NOTE_TO_TECH_KEY:
                 self.view.widgets.sample_note_ledit.setText(self.data_processing.settings.legend[NOTE_TO_TECH_KEY])
@@ -242,18 +244,18 @@ class DataProcessingController(QObject):
             self.view.widgets.radioButton_2.click()
 
     def add_logger(self, logger):
-        '''
+        """
         stores reference to logger
         @param logger: reference to logger
         @return:
-        '''
+        """
         self.logger = logger
 
     def get_file_name(self):
-        '''
+        """
         getter of filename of the current measurement file
         @return: filename of the current measurement file
-        '''
+        """
         return self.data_processing.file_name
 
     def set_file_name(self):
@@ -263,21 +265,21 @@ class DataProcessingController(QObject):
         self.view.widgets.graph_view.plotGraph()
 
     def clear_comparing_measurement(self):
-        '''
+        """
         deletes data of compared old measurement from the graph and
         its measurement legend from the textBrowser
         @return:
-        '''
+        """
         self.view.widgets.graph_view.addMeasurement([], False)
         self.view.widgets.graph_view.plotGraph()
         self.view.widgets.textBrowser.clear()
 
     def set_auto_check_value(self):
-        '''
+        """
         stores the type of the sensitivity based on whether the elements displaying
         type of sensitivity is checked or not
         @return:
-        '''
+        """
         try:
             if self.view.widgets.measurement_config_menu_span_auto_check.isChecked():
                 self.data_processing.set_legend_field(TYPE_SENSITIVITY_KEY, AUTO)
@@ -287,11 +289,11 @@ class DataProcessingController(QObject):
             self.logger.log(WARNING, e.message, True)
 
     def set_unit_type_angle(self):
-        '''
+        """
         stores that the angle unit is used in measurement based on whether its
         radio button is checked
         @return:
-        '''
+        """
         if self.view.widgets.radioButton.isChecked():
             try:
                 self.data_processing.set_unit_type_position(Unit.Uhol)
@@ -300,11 +302,11 @@ class DataProcessingController(QObject):
         self.data_processing.settings.store_last_json_legend()
 
     def set_unit_type_angstrom(self):
-        '''
+        """
         stores that the angstrom unit is used in measurement based on whether its
         radio button is checked
         @return:
-        '''
+        """
         if self.view.widgets.radioButton_2.isChecked():
             try:
                 self.data_processing.set_unit_type_position(Unit.Angstrom)
@@ -312,15 +314,15 @@ class DataProcessingController(QObject):
                 self.logger.log(WARNING, e.message, True)
 
     def save_as(self, name):
-        '''
+        """
         saves currently stored contents of a measurement file as a copy in a new location
         chosen by the user
         @param name: name of the new copy of the measurement file
         @return:
-        '''
+        """
         try:
             if not self.data_processing.settings.check_completness_of_legend():
-                raise DataProcessingError("Legenda nie je kompletne vyplnená. Nie je možne vytvoriť nový súbor pre meranie.")
+                raise DataProcessingError("Legenda nie je kompletne vyplnená. Nemožno vytvoriť nový súbor pre meranie.")
         except DataProcessingError as e:
             self.logger.log(WARNING, e.message, True)
             return
@@ -331,12 +333,12 @@ class DataProcessingController(QObject):
             self.save_legend_to_file(name)
 
     def save_legend_to_file(self, name):
-        '''
+        """
         saves legend of a measurement file as a copy in a new location
-        chosen by the user (if user haven't yet started measurment and stored measurement file)
+        chosen by the user (if user haven't yet started measurement and stored measurement file)
         @param name: name of the new copy of the measurement file
         @return:
-        '''
+        """
         path = "\\".join(name.split("/")[:-1])
         file_name = name.split("/")[-1:][0].replace(".txt", "")
         old_path = self.data_processing.path
@@ -354,12 +356,12 @@ class DataProcessingController(QObject):
         self.view.widgets.measurement_config_menu_filename_ledit.setText(old_filename.replace(".txt", ""))
 
     def copy_of_current_file(self, name):
-        '''
+        """
         saves currently stored contents of a measurement file as a copy in a new location
         chosen by the user
         @param name: name of the new copy of the measurement file
         @return:
-        '''
+        """
         with open(self.data_processing.path + self.data_processing.file_name, 'r', encoding="utf-8") as current_file:
             text = current_file.read()
             if name[-4:] != ".txt":
@@ -369,14 +371,13 @@ class DataProcessingController(QObject):
         return name
 
     def get_model(self, key):
-        '''
+        """
         returns model
         @param key: secret key
         @return: model
         @raise ValueError: when the key is invalid
-        '''
+        """
         if key == self._key:
             return self.data_processing
         else:
             raise ValueError("Invalid key")
-

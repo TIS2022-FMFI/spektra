@@ -8,7 +8,7 @@ from controllers.measurement_controller.measurement_controller import Measuremen
 from models.disperse_element import Grating
 from models.lockin.constants import *
 
-from models.logger.constants import  *
+from models.logger.constants import *
 
 
 class MainController(QObject):
@@ -33,14 +33,14 @@ class MainController(QObject):
         """
         widgets = self.view.widgets
 
-        #disperse element combobox
+        # disperse element combobox
         disp_elem_cbox = widgets.devices_controls_devices_selection_disperse_cbox
         disp_elem_cbox.activated.connect(self.update_disperse_element_choice)
 
-        #lockin connection status
+        # lockin connection status
         self._measurement.voltmeter_status_s.connect(self.voltmeter_status)
 
-        #measurement signals
+        # measurement signals
         self._measurement.progress_s.connect(widgets.progressBar.setValue)
         self._measurement.lockin_settings_s.connect(self.set_values_from_lockin)
         self._measurement.measurement_start_fail_s.connect(self.view.switch_play_button)
@@ -51,7 +51,7 @@ class MainController(QObject):
         self._measurement.measured_value_s.connect(self.update_graph)
         self._measurement.measurement_ended_s.connect(self.set_measurement_start_and_reenable_device_buttons)
 
-        #go to pos with confirmation
+        # go to pos with confirmation
         self._measurement.motor_move_to_angle_s.connect(self.move_to_angle_confirmation)
 
         # moveForward/moveReverse
@@ -122,6 +122,9 @@ class MainController(QObject):
         # logger
         self._measurement.status_report_s.connect(lambda level, message: self.logger.log(level, message))
 
+        #
+        self._measurement.min_sens_unit_s.connect(
+            lambda s: self.view.widgets.measurement_config_menu_min_sensitivity_sbox.setSuffix(f'  ( {s} )'))
 
     def auto_sensitivity_checkbox(self):
         is_enabled = self.view.widgets.measurement_config_menu_span_auto_check.isChecked()
@@ -162,16 +165,17 @@ class MainController(QObject):
             return selected_element.wavelengthToAngle(gui_value)
         return gui_value
 
-    def angle_sboxes_convert(self, toAngstroms, boxes):
+    def angle_sboxes_convert(self, to_angstroms, boxes):
         """
         convert angle values from GUI sboxes to Angstrom
-        @param toAngstroms: if true convert to Angstrom else not
+        @param to_angstroms: if true convert to Angstrom else not
+        @param boxes: list of boxes to change
         """
         selected_element = self.selected_disperse_element
 
         if not selected_element.is_valid():
             return
-        if toAngstroms:
+        if to_angstroms:
             for sbox in boxes:
                 sbox.setSuffix(" Å")
                 sbox.setRange(0, 20000)
@@ -231,6 +235,7 @@ class MainController(QObject):
     def update_graph(self, angle, wavelength, value, cmp):
         """
         update graph with given values
+        @param angle: current angle
         @param wavelength: given wavelength value
         @param value: given measured value
         @param cmp: if true current measurement else older measurement
@@ -250,7 +255,7 @@ class MainController(QObject):
         start actual measurement process
         @param start: start position of measurement (angle)
         @param end: end position of measurement (angle)
-        @param stepSize: number of unit steps for one measurement
+        @param step_size: number of unit steps for one measurement
         @param correction: correction parameter value
         @param integrations: integration parameter value
         """

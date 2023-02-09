@@ -3,8 +3,10 @@ from PySide6.QtCore import Qt, Signal
 
 from serial.tools import list_ports
 
+
 class ComportDialog(QDialog):
     comports_confirmed_s = Signal(str, str)
+
     def __init__(self, parent=None):
         super(ComportDialog, self).__init__(parent)
         self.setWindowTitle("Výber comportov")
@@ -64,6 +66,7 @@ class ComportDialog(QDialog):
 
     def clear_error(self):
         self.error_text.setText("")
+
     def update_comport_list(self):
         comport_names = [' - ']
         comports = list_ports.comports()
@@ -79,7 +82,6 @@ class ComportDialog(QDialog):
         lockin_port = self.lockin_comport_cbox.currentText()
         motor_port = self.motor_comport_cbox.currentText()
 
-
         if lockin_port == motor_port:
             if lockin_port == ' - ':
                 self.error_text.setText("Nevybral si žiadne porty!")
@@ -88,8 +90,3 @@ class ComportDialog(QDialog):
             return
 
         self.comports_confirmed_s.emit(lockin_port, motor_port)
-
-
-
-
-

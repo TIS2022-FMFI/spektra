@@ -22,6 +22,7 @@ class MeasurementController(QObject):
     measured_value_s = Signal(float, float, float, bool)
     progress_s = Signal(float)
     measurement_ended_s = Signal(float)
+    min_sens_unit_s = Signal(str)
 
     def __init__(self):
         """
@@ -60,8 +61,9 @@ class MeasurementController(QObject):
         @param value: int (index of the sensitivity based on list inside lockinds_data.json)
         @return: None
         """
-        if self._lockin.can_auto_switch():
+        if self._lockin.connected and self._lockin.can_auto_switch():
             self._lockin.set_min_auto_sensitivity(value)
+            self.min_sens_unit_s.emit(self._lockin.friendly_gain_values[value])
 
     def comport_cable_info(self, comport):
         return f'{comport.vid}:{comport.pid}:{comport.serial_number}'
@@ -327,8 +329,8 @@ class MeasurementController(QObject):
     @QtCore.Slot(float)
     def move_to_angle(self, end_angle, from_gui=True):
         """
-        move to specified position
-        @param from_gui: ci bola metoda zavola z gui
+        move to specified angle
+        @param from_gui: bool called from gui?
         @param end_angle: position, where to move (angle)
         """
         if self.current_motor_angle is None:
@@ -359,6 +361,12 @@ class MeasurementController(QObject):
 
     @QtCore.Slot(int, bool)
     def confirmed_move_to_angle(self, steps, forward):
+        """
+        Called after user confirmed motor movement steps and direction
+        @param steps: int
+        @param forward: bool
+        @return: None
+        """
         if forward:
             self.move_forward(steps)
         else:
