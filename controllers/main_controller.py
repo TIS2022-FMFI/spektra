@@ -122,6 +122,10 @@ class MainController(QObject):
         # logger
         self._measurement.status_report_s.connect(lambda level, message: self.logger.log(level, message))
 
+        #
+        self._measurement.min_sens_unit_s.connect(
+            lambda s: self.view.widgets.measurement_config_menu_min_sensitivity_sbox.setSuffix(f'  ( {s} )'))
+
     def auto_sensitivity_checkbox(self):
         is_enabled = self.view.widgets.measurement_config_menu_span_auto_check.isChecked()
         self.view.widgets.measurement_config_menu_min_sensitivity_sbox.setEnabled(is_enabled)

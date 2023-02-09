@@ -13,6 +13,7 @@ class Lockin:
         self.name = name
 
         self.gain_values = []
+        self.friendly_gain_values = []
         self.pre_time_const = []
         self.post_time_const = []
         self.mediator_name = None
@@ -35,6 +36,7 @@ class Lockin:
             lockin_data = json.load(file)[self.name]
 
         self.gain_values = lockin_data[GAIN]
+        self.friendly_gain_values = lockin_data['gain_friendly']
         self.pre_time_const = lockin_data[PRE_TIME_CONST]
         self.post_time_const = lockin_data[POST_TIME_CONST]
         self.mediator_name = lockin_data['mediator_name']
