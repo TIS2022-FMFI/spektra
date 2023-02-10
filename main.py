@@ -141,7 +141,8 @@ class MainWindow(QMainWindow):
         process to be done before closing
         @param event: event object
         """
-        self.controller.logger.save_logs_to_file()
+        if not self.controller.logger.is_logger_empty():
+            self.controller.logger.save_logs_to_file()
         self.controller.exit_measurement(self._secret)
         event.accept()
 
